@@ -10,6 +10,7 @@ import os
 import importlib
 import inspect
 import glob
+from importlib import util
 
 
 def load_library(ltype, basepath):
@@ -17,7 +18,7 @@ def load_library(ltype, basepath):
     for f in filter(lambda x: not x.endswith('/__init__.py'), glob.glob(f'{basepath}/{ltype}/*.py')):
         module_name = f'{ltype}.' + os.path.basename(f)[0:-3]
         module_spec = importlib.util.spec_from_file_location(module_name, f)
-        module = importlib.util.module_from_spec(module_spec)
+        module = util.module_from_spec(module_spec)
         module_spec.loader.exec_module(module)
         for o in inspect.getmembers(module):
             if ((inspect.isfunction(o[1]) or inspect.isclass(o[1])) 
