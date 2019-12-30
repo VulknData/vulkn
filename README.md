@@ -23,19 +23,29 @@ The initial release (19.0.0) is a Proof Of Concept. Expect APIs to change in the
     apt install clickhouse-server clickhouse-client clickhouse-common python3
     ```
 
-2. Install Vulkn
+2. Install Vulkn (note pip not yet supported)
 
     ```bash
-    pip install vulkn
+    git clone https://github.com/VulknData/vulkn.git
+    cd vulkn
     ```
 
-3. Start the Vulkn CLI. This creates a temporary Vulkn Workspace.
+3. Install required packages
 
     ```bash
-    vulkn
+    pip install -r requirements.txt
     ```
 
-4. Let's try out the Python API with a 25 million row time-series table. In this example we'll create a table from a group of ArrayVectors with 10,000 unique series, a random DateTime dimension over the course of a day and two metrics (temperature, bytes). For the metrics we'll simulate a double peak day by generating concatenated normal distribution curves. These operations should execute in several seconds on any modern computer with 4-8GB of RAM.
+4. Start the Vulkn CLI. This creates a temporary Vulkn Workspace.
+
+    ```bash
+    cd scripts
+    ./v --local
+
+    # Or use ./v to connect to your running local ClickHouse instance
+    ```
+
+5. Let's try out the Python API with a 25 million row time-series table. In this example we'll create a table from a group of ArrayVectors with 10,000 unique series, a random DateTime dimension over the course of a day and two metrics (temperature, bytes). For the metrics we'll simulate a double peak day by generating concatenated normal distribution curves. These operations should execute in several seconds on any modern computer with 4-8GB of RAM.
 
     ```python
     # Create four ArrayVectors simulating a time-series
@@ -140,7 +150,7 @@ The initial release (19.0.0) is a Proof Of Concept. Expect APIs to change in the
     dtype: object
     ```
 
-5. Explore the Python API
+6. Explore the Python API
 
     ```python
     # Native Vulkn functions/ClickHouse SQL in the Python API
