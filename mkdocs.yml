@@ -1,0 +1,63 @@
+site_name: VULKИ Documentation
+theme:
+  name: material
+markdown_extensions:
+  - admonition
+  - codehilite
+extra_css:
+  - css/extra.css
+
+nav:
+  - Welcome to VULKИ: index.md
+  - Getting Started: getting_started.md
+  - Data Types:
+    - Introduction: types/introduction.md
+    - Tables: types/tables.md
+    - Types:
+      - Scalars:
+        - String: types/scalars/string.md
+        - DateTimes: types/scalars/datetimes.md
+        - Booleans: types/scalars/booleans.md
+        - Integers: types/scalars/string.md
+        - Floats: types/scalars/floats.md
+        - UUID: types/scalars/uuid.md
+        - URL: types/scalars/url.md
+        - JSON: types/scalars/json.md
+      - Arrays: types/arrays.md
+      - Vectors: types/vectors.md
+    - Type Conversion: types/conversion.md
+  - Functions:
+      - Misc functions: data/functions/misc_functions.md
+      - Array functions: data/functions/array_functions.md
+      - Geo functions: data/functions/geo_functions.md
+      - Encoding functions: data/functions/encoding.md
+      - Bitmap functions: data/functions/bitmap.md
+      - Aggregate functions: data/functions/agg.md
+      - Extensions:
+        - Vector functions: data/functions/vector.md
+  - DataFrames: dataframes/dataframes.md
+  - SQL: sql/overview.md
+  - SQL Extensions:
+    - Introduction: extensions/introduction.md
+    - CHUNK BY: extensions/chunk_by.md
+    - VECTORIZE BY: extensions/vectorize_by.md
+  - Data Management: datamanagement/datamanagement.md
+
+  - Data Storage:
+    - Engines Overview: engines/overview.md
+    - Memory: engines/memory.md
+    - Log Engines:
+      - TinyLog: engines/log/tinylog.md
+      - Log: engines/log/log.md
+      - StripeLog: engines/log/stripelog.md
+    - Specialised Engines:
+      - Set: engines/special/set.md
+      - Join: engines/special/join.md
+    - MergeTree Engines:
+      - MergeTree: engines/mergetree/mergetree.md
+      - ReplacingMergeTree: engines/mergetree/replacingmergetree.md
+      - SummingMergeTree: engines/mergetree/summingmergetree.md
+      - AggregatingMergeTree: engines/mergetree/aggregatingmergetree.md
+      - CollapsingMergeTree: engines/mergetree/collapsingmergetree.md
+  - Workspaces: workspaces.md
+  - System Management: systems_management.md

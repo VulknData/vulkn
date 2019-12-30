@@ -1,0 +1,9 @@
+from numpy import random
+from sklearn import linear_model
+n = 1200300
+X = random.random((n,3))
+y = 1+2*X[:,0]+3*X[:,1]+4*X[:,2]
+y = y[:,None]
+reg = linear_model.LinearRegression()
+reg.fit(X,y)
+print(reg.intercept_,reg.coef_)

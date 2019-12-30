@@ -1,0 +1,143 @@
+Copyright (C) 2019 Jason Godden
+Copyright (C) 2019 VulknData Pty Ltd.
+
+The GNU GPL v3, Section 7 allows for Additional Terms to be specified. This document outlines any 
+Additional Permissions and Supplemental Terms permitted under the GPLv3 Section 7.
+
+1. Additional Permissions:
+
+1.1. Linking exceptions
+
+    1.1.1 As a Special Exception, the Licensors grants permission to link/use the covered (unmodified) 
+    work with aggregate software licensed under any of the following OSI approved licenses, without 
+    any requirement for the aggregate itself to be licensed under the GPLv3, and convey said work:
+
+    * Apache License 2.0 (Apache-2.0)
+    * 3-clause BSD license (BSD-3-Clause)
+    * 2-clause BSD license (BSD-2-Clause)
+    * GNU General Public License (GPL)
+    * GNU Lesser General Public License (LGPL)
+    * MIT license (MIT)
+    * Mozilla Public License 2.0 (MPL-2.0)
+    * Common Development and Distribution License 1.0 (CDDL-1.0)
+    * Eclipse Public License 2.0 (EPL-2.0)
+  
+    Not withstanding this exception, all other requirements regarding Copyright, notices, 
+    modification, attribution and the license of the individual component/covered work MUST BE 
+    MAINTAINED and the original covered work component shall remain licensed under the GPL and not 
+    as part of the aggregate. This covered work and license MUST be noted in the aggregate / conveyed 
+    work and a link provided to the source code of the original covered work. This link must be 
+    available publicly from the aggregate works source code repository and any 'About' section (or 
+    similar) on the aggregate works website.
+
+    1.1.2 If the covered work is modified and/or the aggregate / linked software is not licensed under
+    those listed in 1.1.1 above then this linking exception does not apply and all rights/conditions 
+    pertain as per the GPLv3.
+
+    If you believe there is an approved OSI license that should be listed in clause 1.1.1 please 
+    contact admin@vulkndata.io.
+
+2. Supplemental Terms:
+
+2.1. Network condition
+
+    This Supplemental Term is permitted under GNU GPL v3, Section 7 b) and Section 7 c).
+    
+    The Licensors will not restrict your ability to use this software as part of an external/'cloud' 
+    hosted SaaS application. However we note a Special Condition for both externally hosted and 
+    on-prem SaaS and data applications/protocols. As a Special Condition, the Licensors require that 
+    when the covered (unmodified) work, modified work or parts thereof is used within a web portal, 
+    online service or Software As A Service component across a network that the Vulkn source code 
+    repository link and the following notice is displayed publicly and prominently in documentation 
+    and via any URL/links in service sign-up systems and user-account on-boarding email notifications.
+    
+    The notice for all countries excluding Australia is:
+
+        This service made possible by Vulkn, Copyright (C) 2019 VulknData Pty Ltd.
+
+    In Australia the following notice applies:
+
+        This service made possible by Vulkn, Copyright (C) 2019 Jason Godden & VulknData Pty Ltd.
+
+2.2. TRADEMARKS; LEGAL NOTICES; ORIGIN
+
+    2.2.1 This Supplemental Term is permitted under GNU GPL v3, Section 7 d) and e).
+    
+    Vulkn (TM) is a registered trademark of VulknData Pty Ltd. This license allows limited use 
+    of these trademarks under the following terms:
+
+        a) All the trademarks of the licensor under consideration for the agreement including 
+        'vulkndata.io' and 'Vulkn' shall be used exclusively for the purpose of this agreement and 
+        shall not be used for any other purpose/s unless a written consent is obtained from the 
+        licensors.
+
+        b) The use must not be detrimental, i.e. harmful or damaging, to the value of the 
+        VulknData.io brand or any other VulknData marks, or to Vulkn, its brand integrity, reputation 
+        or goodwill, as determined by VulknData in its sole discretion.
+
+    Please report any possible infringement and/or misuse of any vulkndata.io and/or Vulkn trade 
+    marks and/or a violation of this Trademark Policy at admin@vulkndata.io.
+
+    2.2.2 This Supplemental Term is permitted under GNU GPL v3, Section 7 c), d) and e).
+
+    Further to term 2.2.1.
+
+    LEGAL NOTICES; NO TRADEMARK LICENSE; ORIGIN. You must reproduce faithfully all trademark, 
+    copyright and other proprietary and legal notices on any copies of the Program or any other 
+    required author attributions. This license does not grant you rights to use any copyright holder 
+    or any other party’s name, logo, or trademarks unless otherwise specified. Neither the name of 
+    the copyright holder or its affiliates, or any other party who modifies and/or conveys the Program
+    may be used to endorse or promote products derived from this software without specific prior 
+    written permission. The origin of the Program must not be misrepresented; you must not claim 
+    that you wrote the original Program. Altered source versions must be plainly marked as such, 
+    and must not be misrepresented as being the original Program.
+
+2.3. Warranty, Liability and Indemnification
+
+    2.3.1 This Supplemental Term is permitted under GNU GPL v3, Section 7 a).
+    
+    Replacement of Section 15. Section 15 of the GPL shall be deleted in its entirety and replaced 
+    with the following:
+    
+    "15. Disclaimer of Warranty.
+    
+    THE PROGRAM IS PROVIDED WITHOUT ANY WARRANTIES, WHETHER EXPRESSED OR IMPLIED,INCLUDING, WITHOUT 
+    LIMITATION, IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, TITLE AND 
+    MERCHANTABILITY. THE PROGRAM IS BEING DELIVERED OR MADE AVAILABLE "AS IS", "WITH ALL FAULTS" 
+    AND WITHOUT WARRANTY OR REPRESENTATION. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE
+    PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY 
+    SERVICING, REPAIR OR CORRECTION."
+    
+    2.3.2 This Supplemental Term is permitted under GNU GPL v3, Section 7 a).
+
+    Replacement of Section 16. Section 16 of the GPL shall be deleted in its entirety and replaced 
+    with the following:
+    
+    "16. LIMITATION OF LIABILITY. UNDER NO CIRCUMSTANCES SHALL ANY COPYRIGHT HOLDER OR ITS AFFILIATES, 
+    OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU, 
+    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, FOR ANY DAMAGES OR OTHER LIABILITY, INCLUDING 
+    ANY GENERAL, DIRECT, INDIRECT, SPECIAL, INCIDENTAL, CONSEQUENTIAL OR PUNITIVE DAMAGES ARISING FROM, 
+    OUT OF OR IN CONNECTION WITH THE USE OR INABILITY TO USE THE PROGRAM OR OTHER DEALINGS WITH THE 
+    PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES 
+    SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS), 
+    WHETHER OR NOT ANY COPYRIGHT HOLDER OR SUCH OTHER PARTY RECEIVES NOTICE OF ANY SUCH DAMAGES AND 
+    WHETHER OR NOT SUCH DAMAGES COULD HAVE BEEN FORESEEN."
+
+    2.3.3 This Supplemental Term is permitted under GNU GPL v3, Section 7 f).
+
+    INDEMNIFICATION. IF YOU CONVEY A COVERED WORK TO ANY RECIPIENT, YOU AGREE THAT YOU WILL ASSUME
+    ANY LIABILITY FOR THAT COVERED WORK, REGARDLESS OF AGREEMENT WITH THE RECIPIENT, WRITTEN OR
+    OTHERWISE. AS WELL, YOU HEREBY AGREE TO INDEMNIFY, DEFEND AND HOLD HARMLESS THE OTHER LICENSORS
+    AND AUTHORS OF THAT COVERED WORK FOR ANY DAMAGES, DEMANDS, CLAIMS, LOSSES, CAUSES OF ACTION,
+    LAWSUITS, JUDGMENTS, EXPENSES (INCLUDING WITHOUT LIMITATION REASONABLE ALL LEGAL FEES AND
+    EXPENSES) OR ANY OTHER LIABILITY ARISING FROM, RELATED TO OR IN CONNECTION WITH YOUR
+    ASSUMPTIONS OF LIABILITY.
+
+3. Supplemental Statement
+
+3.1. Multi-licensing
+
+    3.1.1 VulknData hereby reserve the right to diverge and/or modify and/or expand their product to 
+    have a closed source / proprietary version of the product along with a open source version in 
+    future. Irrespective of any multi-licensing arrangement - VulknData asserts that ALL ACCEPTED
+    CONTRIBUTIONS WILL BE MADE AVAILABLE UNDER AN APPROVED OSI LICENSE.

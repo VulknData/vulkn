@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<yandex>
+    <logger>
+        <level>trace</level>
+        <log>{log_file}</log>
+        <errorlog>{error_log_file}</errorlog>
+        <size>1000M</size>
+        <count>10</count>
+	<console>0</console>
+    </logger>
+    <display_name>{session_name}</display_name>
+    <http_port>{http_port}</http_port>
+    <tcp_port>{tcp_port}</tcp_port>
+
+    <max_connections>32</max_connections>
+    <keep_alive_timeout>3</keep_alive_timeout>
+    <max_concurrent_queries>100</max_concurrent_queries>
+    <uncompressed_cache_size>8589934592</uncompressed_cache_size>
+    <mark_cache_size>5368709120</mark_cache_size>
+    <path>{data_directory}</path>
+    <tmp_path>{tmp_directory}</tmp_path>
+    <user_files_path>{user_files_directory}</user_files_path>
+    <users_config>users.xml</users_config>
+    <default_profile>default</default_profile>
+    <default_database>default</default_database>
+    <timezone>UTC</timezone>
+    <mlock_executable>true</mlock_executable>
+    <builtin_dictionaries_reload_interval>3600</builtin_dictionaries_reload_interval>
+    <max_session_timeout>3600</max_session_timeout>
+    <default_session_timeout>60</default_session_timeout>
+
+    <query_log>
+        <database>system</database>
+        <table>query_log</table>
+        <partition_by>toYYYYMM(event_date)</partition_by>
+        <flush_interval_milliseconds>7500</flush_interval_milliseconds>
+    </query_log>
+
+    <query_thread_log>
+        <database>system</database>
+        <table>query_thread_log</table>
+        <partition_by>toYYYYMM(event_date)</partition_by>
+        <flush_interval_milliseconds>7500</flush_interval_milliseconds>
+    </query_thread_log>
+    <dictionaries_config>*_dictionary.xml</dictionaries_config>
+
+    <max_table_size_to_drop>0</max_table_size_to_drop>
+    <max_partition_size_to_drop>0</max_partition_size_to_drop>
+    <format_schema_path>{format_schema_directory}</format_schema_path>
+</yandex>

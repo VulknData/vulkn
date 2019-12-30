@@ -1,0 +1,218 @@
+# -*- coding: utf-8 -*-
+
+# Copyright (c) 2019, Jason Godden <jason@godden.id.au>
+# Copyright (c) 2019, VulknData Pty Ltd
+# GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+# SPDX-License-Identifier: GPL-3.0-only
+
+
+def quote_literal(value: any) -> any:
+    if isinstance(value, str):
+        return "'{}'".format(value)
+    elif is_literal_type(value):
+        return value
+    else:
+        if isinstance(value, list):
+            a = []
+            for v in value:
+                if isinstance(v, str):
+                    a.append("'{}'".format(str(v).encode('unicode-escape').decode()))
+                else:
+                    a.append(str(v))
+            return '[{}]'.format(', '.join(a))
+            #return '[{}]'.format(','.join(["'{}'".format(str(v).encode('unicode-escape').decode()) for v in value]))
+            #return '[{}]'.format(','.join(["{}".format(str(v).encode('unicode-escape').decode()) for v in value]))
+        else:
+            return str(value)
+
+
+format_python_type = quote_literal
+
+
+class ColumnBaseMixIn:
+    def alias(self, alias: str) -> any:
+        r = type(self)(FunctionExpression('alias', str(self), alias))
+        return r
+
+    def cast(self, type_arg: str) -> any:
+        from vulkn.types.string import String
+        from vulkn.types.array import Array
+        from vulkn.types.boolean import Boolean
+        from vulkn.types.integer import Int8, Int16, Int32, Int64
+        from vulkn.types.integer import UInt8, UInt16, UInt32, UInt64
+        from vulkn.types.date import Date, DateTime
+                
+        k = getattr(type_arg, 'CAST', type_arg)
+        return locals()[k](FunctionExpression('cast', Literal(str(self)), k))
+
+
+class Literal(ColumnBaseMixIn):
+    def __init__(self, value: any) -> None:
+        self._value = value
+
+    def __str__(self) -> str:
+        return str(self._value)
+
+
+Expression = Literal
+
+
+class FunctionExpression:
+    def __init__(self, el: str, *args: list) -> None:
+        self._el = el
+        self._args = args
+
+    def __str__(self) -> str:
+        if self._el == 'alias':
+            return '{} AS `{}`'.format(str(self._args[0]), self._args[1])
+        else:
+            args = ["'{}'".format(a) if isinstance(a, str) else str(a) for a in self._args]
+            return '{}({})'.format(self._el, ','.join(map(str, args)))
+
+
+func = FunctionExpression
+
+
+def is_literal_type(t) -> bool:
+    return (isinstance(t, Literal) or 
+            isinstance(t, Expression) or 
+            isinstance(t, FunctionExpression))
+
+
+class TypeBase(ColumnBaseMixIn):
+    _METHODS = {}
+    TYPE = 'String'
+    CAST = TYPE
+
+    def __init__(self, value: any=None, name: str=None, n: str=None) -> None:
+        self._value = Literal('"{}"'.format(name or n)) if (name or n) else value
+
+    def __str__(self) -> str:
+        return (str(self._value) if is_literal_type(self._value) 
+                else format_python_type(self._value))
+
+    @property
+    def sql(self):
+        return str(self)
+
+    @property
+    def methods(self) -> dict:
+        r = {}
+        if 'methods' in dir(super()):
+            r.update(super().methods)
+        r.update(self._METHODS)
+        return r
+
+    def __getattr__(self, name: str) -> any:
+        def _method():
+            from vulkn.types.string import String
+            from vulkn.types.array import Array
+            from vulkn.types.boolean import Boolean
+            from vulkn.types.integer import Int8, Int16, Int32, Int64
+            from vulkn.types.integer import UInt8, UInt16, UInt32, UInt64
+            from vulkn.types.date import Date, DateTime
+
+            rtype = (locals()[self.methods[name]] 
+                if self.methods[name] is not None
+                else type(self))
+            
+            return rtype(FunctionExpression(name, self._value))
+
+        if name in self.methods:
+            return _method
+        else:
+            raise AttributeError
+ 
+    def _in(self, operator, right):
+        from vulkn.types.integer import UInt8
+        from vulkn.dataframe import VulknDataFrame
+        in_arg = None
+        if isinstance(right, VulknDataFrame):
+            in_arg = right.show_sql()[0:-1]
+        if isinstance(right, list):
+            if isinstance(right[0], str):
+                in_arg = "'{}'".format("','".join(map(str, right)))
+            in_arg = ','.join(map(str, right))
+        else:
+            in_arg = str(right)
+        return UInt8(Literal('{} {} ({})'.format(self._value, operator, in_arg)))
+
+    def In(self, right):
+        return self._in('IN', right)
+
+    def notIn(self, right):
+        return self._in('NOT IN', right)
+
+    def globalIn(self, right):
+        return self._in('GLOBAL IN', right)
+
+    def globalNotIn(self, right):
+        return self._in('GLOBAL NOT IN', right)
+
+    def isNull(self):
+        from vulkn.types.integer import UInt8
+        return UInt8(func('isNull', self._value))
+
+    def isNotNull(self):
+        from vulkn.types.integer import UInt8
+        return UInt8(func('isNotNull', self._value))
+
+    def ifNull(self, other):
+        return Literal(func('ifNull', self._value, other))
+
+    def nullIf(self, test):
+        return Literal(func('nullIf', self._value, test))
+
+    def assumeNotNull(self):
+        return type(self)(func('assumeNotNull', self._value))
+
+    def toNullable(self):
+        return type(self)(func('toNullable', self._value))
+
+    def between(self, start, end):
+        from vulkn.types.integer import UInt8
+        return UInt8(Literal('{} BETWEEN {} AND {}'.format(self._value, start, end)))
+
+    def notBetween(self, start, end):
+        from vulkn.types.integer import UInt8
+        return UInt8(Literal('{} NOT BETWEEN {} AND {}'.format(self._value, start, end)))
+
+    def __eq__(self, right) -> any:
+        from vulkn.types.integer import UInt8
+        return UInt8(func('equals', self._value, right))
+        
+    def __ne__(self, right) -> any:
+        from vulkn.types.integer import UInt8
+        return UInt8(func('notEquals', self._value, right))
+
+    def __gt__(self, right) -> any:
+        from vulkn.types.integer import UInt8
+        return UInt8(func('greater', self._value, right))
+        
+    def __lt__(self, right) -> any:
+        from vulkn.types.integer import UInt8
+        return UInt8(func('less', self._value, right))
+
+    def __ge__(self, right) -> any:
+        from vulkn.types.integer import UInt8
+        return UInt8(func('greaterOrEquals', self._value, right))
+        
+    def __le__(self, right) -> any:
+        from vulkn.types.integer import UInt8
+        return UInt8(func('lessOrEquals', self._value, right))
+
+    def __and__(self, right) -> any:
+        from vulkn.types.integer import UInt8
+        return UInt8(func('and', self._value, right))
+
+    def __or__(self, right) -> any:
+        from vulkn.types.integer import UInt8
+        return UInt8(func('or', self._value, right))
+        
+    def __invert__(self) -> any:
+        from vulkn.types.integer import UInt8
+        return UInt8(func('not', self._value))
+
+    def __xor__(self, right) -> any:
+        from vulkn.types.integer import UInt8
+        return UInt8(func('xor', self._value, right))
