@@ -20,7 +20,7 @@ setup(
     author='Jason Godden',
     author_email='jason@vulkndata.io',
     url='https://github.com/VulknData/vulkn',
-    download_url=f'https://github.com/VulknData/vulkn/archive/v{VERSION}.tar.gz',
+    download_url=f'https://github.com/VulknData/vulkn/archive/v{VERSION}-alpha.tar.gz',
     license='gpl-3.0',
     include_package_data=True,
     packages=[
