@@ -15,28 +15,41 @@ The initial release (19.0.0) is a Proof Of Concept. Expect APIs to change in the
 - SQL extensions - CHUNK BY, VECTORIZE BY
 - SQL vector functions (basic SQL:2003 Window Functions)
 
-### Getting Started
+### Installation
 
-1. Install ClickHouse and Python 3.x. Note you don't need to start the ClickHouse server to use Vulkn.
+Vulkn has only been tested with recent versions of Ubuntu and Python 3.7. You will need to have a
+working Python 3.7.x environment with pip.
+
+Ensure you have installed ClickHouse (both server and client):
+
+```bash
+apt install clickhouse-server clickhouse-client clickhouse-common
+```
+
+#### Installation with pip
+
+1. Install Vulkn via pip.
 
     ```bash
-    apt install clickhouse-server clickhouse-client clickhouse-common python3
+    pip install vulkn
     ```
 
-2. Install Vulkn (note pip not yet supported).
+#### Installation from source (for developers)
+
+1. Install Vulkn via ```git clone```.
 
     ```bash
     git clone https://github.com/VulknData/vulkn.git
     cd vulkn
     ```
 
-3. Install required packages. Note that it may make sense to do this within a virtual environment.
+2. Install required packages. Note that it may make sense to do this within a virtual environment.
 
     ```bash
     pip install -r requirements.txt
     ```
 
-4. Start the Vulkn CLI. This creates a temporary Vulkn Workspace.
+3. You can start the Vulkn CLI using the following. This creates a temporary Vulkn Workspace.
 
     ```bash
     cd scripts
@@ -46,170 +59,214 @@ The initial release (19.0.0) is a Proof Of Concept. Expect APIs to change in the
     # Or use ./v to connect to your running local ClickHouse instance
     ```
 
-5. Let's try out the Python API with a 25 million row time-series table. In this example we'll create a table from a group of ArrayVectors with 10,000 unique series, a random DateTime dimension over the course of a day and two metrics (temperature, bytes). For the metrics we'll simulate a double peak day by generating concatenated normal distribution curves. These operations should execute in several seconds on any modern computer with 4-8GB of RAM.
+### Getting Started
 
-    ```python
-    # Create four ArrayVectors simulating a time-series
+Let's try out the Python API with a 25 million row time-series table. In this example we'll create a table from a group of ArrayVectors with 10,000 unique series, a random DateTime dimension over the course of a day and two metrics (temperature, bytes). For the metrics we'll simulate a double peak day by generating concatenated normal distribution curves. These operations should execute in several seconds on any modern computer with 4-8GB of RAM.
 
-    series_key = (ArrayVector
-        .range(1,10000).cast('String').map('concat', String('device-')).take(25000000)
-        .cache().alias('series_key'))
-    timestamp = (ArrayVector
-        .rand(DateTime('2019-01-01 00:00:00'), DateTime('2019-01-01 23:59:59'), 25000000)
-        .cache().alias('timestamp'))
-    temperature = (ArrayVector.norm(80,10,12500000).join(ArrayVector.norm(95,5,12500000))
-        .cache().alias('temperature'))
-    bytes = ArrayVector.rand(1, 8192, 25000000).cache().alias('bytes')
+If you installed Vulkn via pip use ```vulkn --local``` to start a local session (or follow Step 3. from the source installation option above).
 
-    # Combine the ArrayVectors to create a table, returning a DataFrame
+```bash
+ironman@hulk ~/ $ vulkn --local
 
-    data = v.table.fromVector('default.mydata', 
-        (series_key, timestamp, temperature, bytes), engines.Memory(), replace=True)
+2020.01.01 11:52:14.072561 [ 1 ] {} <Trace> Pipe: Pipe capacity is 1.00 MiB
+2020.01.01 11:52:14.072619 [ 1 ] {} <Information> : Starting ClickHouse 19.19.1.2024 with revision 54430
+2020.01.01 11:52:14.072651 [ 1 ] {} <Information> Application: starting up
+2020.01.01 11:52:14.078485 [ 1 ] {} <Trace> Application: Will mlockall to prevent executable memory from being paged out. It may take a few seconds.
+2020.01.01 11:52:14.103994 [ 1 ] {} <Trace> Application: The memory map of clickhouse executable has been mlock'ed
+2020.01.01 11:52:14.104171 [ 1 ] {} <Debug> Application: Set max number of file descriptors to 1048576 (was 1024).
+2020.01.01 11:52:14.104180 [ 1 ] {} <Debug> Application: Initializing DateLUT.
+2020.01.01 11:52:14.104182 [ 1 ] {} <Trace> Application: Initialized DateLUT with time zone 'UTC'.
+2020.01.01 11:52:14.105815 [ 1 ] {} <Debug> ConfigReloader: Loading config '/tmp/jason-1f1b3dd6-703c-40d8-9573-f0f07fcda44a/etc/users.xml'
+2020.01.01 11:52:14.106233 [ 1 ] {} <Information> Application: Loading metadata from /tmp/jason-1f1b3dd6-703c-40d8-9573-f0f07fcda44a/clickhouse/
+2020.01.01 11:52:14.106817 [ 1 ] {} <Information> DatabaseOrdinary (default): Total 0 tables and 0 dictionaries.
+2020.01.01 11:52:14.106827 [ 1 ] {} <Information> DatabaseOrdinary (default): Starting up tables.
+2020.01.01 11:52:14.106876 [ 1 ] {} <Debug> Application: Loaded metadata.
+2020.01.01 11:52:14.106887 [ 1 ] {} <Information> BackgroundSchedulePool: Create BackgroundSchedulePool with 16 threads
+2020.01.01 11:52:14.109096 [ 1 ] {} <Information> Application: Listening for http://[::1]:8124
+2020.01.01 11:52:14.109151 [ 1 ] {} <Information> Application: Listening for connections with native protocol (tcp): [::1]:9001
+2020.01.01 11:52:14.109202 [ 1 ] {} <Information> Application: Listening for http://127.0.0.1:8124
+2020.01.01 11:52:14.109235 [ 1 ] {} <Information> Application: Listening for connections with native protocol (tcp): 127.0.0.1:9001
+2020.01.01 11:52:14.109584 [ 1 ] {} <Information> Application: Available RAM: 62.60 GiB; physical cores: 8; logical cores: 16.
+2020.01.01 11:52:14.109597 [ 1 ] {} <Information> Application: Ready for connections.
 
-    data.count().show()
+Добро пожаловать to VULKИ version 19.0.1!
 
-    # Use SQL to aggregations and other queries
+██╗   ██╗██╗   ██╗██╗     ██╗  ██╗███╗   ██╗
+██║   ██║██║   ██║██║     ██║ ██╔╝████╗  ██║
+██║   ██║██║   ██║██║     █████╔╝ ██╔██╗ ██║
+╚██╗ ██╔╝██║   ██║██║     ██╔═██╗ ██║╚██╗██║
+ ╚████╔╝ ╚██████╔╝███████╗██║  ██╗██║ ╚████║
+  ╚═══╝   ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝                    
 
-    v.q("""
-        SELECT
-            series_key,
-            max(timestamp),
-            avg(temperature),
-            min(bytes)
-        FROM default.mydata
-        GROUP BY series_key""").show()
+The developer friendly real-time analytics engine powered by ClickHouse.
 
-    # Use Vulkn time-series SQL extensions - calculate the moving average using the current row and two behind/ahead (5 value window)
+VULKИ entrypoint initialized as 'v'.
 
-    v.q("""
-        SELECT
-            series_key, 
-            timestamp, 
-            bytes,
-            vectorWindowAgg(avg, bytes, -2, 2) AS moving_avg 
-        FROM default.mydata
-        WHERE series_key = 'device-1'
-        VECTORIZE BY (series_key, timestamp)""").limit(20).show()
+>>> 
+```
 
-    # You can also use the DataFrame interface to build up complex queries
+```python
+# Create four ArrayVectors simulating a time-series
 
-    v.table('default.mydata').select(funcs.agg.max(col('bytes')).alias('max_bytes')).s
+series_key = (ArrayVector
+    .range(1,10000).cast('String').map('concat', String('device-')).take(25000000)
+    .cache().alias('series_key'))
+timestamp = (ArrayVector
+    .rand(DateTime('2019-01-01 00:00:00'), DateTime('2019-01-01 23:59:59'), 25000000)
+    .cache().alias('timestamp'))
+temperature = (ArrayVector.norm(80,10,12500000).join(ArrayVector.norm(95,5,12500000))
+    .cache().alias('temperature'))
+bytes = ArrayVector.rand(1, 8192, 25000000).cache().alias('bytes')
 
-    # Results can be returned as a 'pretty print' table (.s, .show()), list of dictionaries (a record) (.r, .to_records()) or a Pandas DataFrame (.p, .to_pandas())
+# Combine the ArrayVectors to create a table, returning a DataFrame
 
-    v.table('default.mydata').all().limit(4).r
+data = v.table.fromVector('default.mydata', 
+    (series_key, timestamp, temperature, bytes), engines.Memory(), replace=True)
 
-    [
-        {'series_key': 'device-1', 'timestamp': '2019-01-01 08:42:29', 'temperature': 94.10629119151686, 'bytes': 6206},
-        {'series_key': 'device-2', 'timestamp': '2019-01-01 08:32:24', 'temperature': 75.25278421080404, 'bytes': 5070},
-        {'series_key': 'device-3', 'timestamp': '2019-01-01 09:47:07', 'temperature': 83.09766288572209, 'bytes': 3617},
-        {'series_key': 'device-4', 'timestamp': '2019-01-01 17:37:49', 'temperature': 77.4298465579733, 'bytes': 3283}
-    ]
+data.count().show()
 
-    # Data sets are also discoverable via the 'data' dictionary
+# Use SQL to aggregations and other queries
 
-    [t for t in v.data.keys() if t == 'default.mydata']
-    mydata = v.data['default.mydata']
-    mydata
+v.q("""
+    SELECT
+        series_key,
+        max(timestamp),
+        avg(temperature),
+        min(bytes)
+    FROM default.mydata
+    GROUP BY series_key""").show()
 
-    # <vulkn.dataframe.BaseTableDataFrame object at 0x7f587af97908>
+# Use Vulkn time-series SQL extensions - calculate the moving average using the current row and two behind/ahead (5 value window)
 
-    # Inspect the DataFrame properties
+v.q("""
+    SELECT
+        series_key, 
+        timestamp, 
+        bytes,
+        vectorWindowAgg(avg, bytes, -2, 2) AS moving_avg 
+    FROM default.mydata
+    WHERE series_key = 'device-1'
+    VECTORIZE BY (series_key, timestamp)""").limit(20).show()
 
-    mydata.desc().s
+# You can also use the DataFrame interface to build up complex queries
 
-    row  name         type        default_type    default_expression    comment    codec_expression    ttl_expression
-    -----  -----------  --------  --------------  --------------------  ---------  ------------------  ----------------
-        1  series_key   String               nan                   nan        nan                 nan               nan
-        2  timestamp    DateTime             nan                   nan        nan                 nan               nan
-        3  temperature  Float64              nan                   nan        nan                 nan               nan
-        4  bytes        UInt64               nan                   nan        nan                 nan               nan
+v.table('default.mydata').select(funcs.agg.max(col('bytes')).alias('max_bytes')).s
 
-    (4 rows)
+# Results can be returned as a 'pretty print' table (.s, .show()), list of dictionaries (a record) (.r, .to_records()) or a Pandas DataFrame (.p, .to_pandas())
 
-    # Create Pandas DataFrames from a Vulkn query
+v.table('default.mydata').all().limit(4).r
 
-    mydata.all().limit(10).p
+[
+    {'series_key': 'device-1', 'timestamp': '2019-01-01 08:42:29', 'temperature': 94.10629119151686, 'bytes': 6206},
+    {'series_key': 'device-2', 'timestamp': '2019-01-01 08:32:24', 'temperature': 75.25278421080404, 'bytes': 5070},
+    {'series_key': 'device-3', 'timestamp': '2019-01-01 09:47:07', 'temperature': 83.09766288572209, 'bytes': 3617},
+    {'series_key': 'device-4', 'timestamp': '2019-01-01 17:37:49', 'temperature': 77.4298465579733, 'bytes': 3283}
+]
 
-    series_key            timestamp  temperature  bytes
-    0   device-1  2019-01-01 19:47:24    92.573274   7759
-    1   device-2  2019-01-01 10:10:34    97.795875   6372
-    2   device-3  2019-01-01 12:43:20    92.769747   7692
-    3   device-4  2019-01-01 22:57:42    98.037090   5498
-    4   device-5  2019-01-01 04:47:13    86.352442   3664
-    5   device-6  2019-01-01 09:09:17    86.679861   4997
-    6   device-7  2019-01-01 12:01:05    99.481727   6189
-    7   device-8  2019-01-01 17:03:07    90.488295   4991
-    8   device-9  2019-01-01 05:28:43    92.532215    653
-    9  device-10  2019-01-01 10:47:38    98.021234    192
+# Data sets are also discoverable via the 'data' dictionary
 
-    mydata.all().limit(10).p.dtypes
-    series_key      object
-    timestamp       object
-    temperature    float64
-    bytes            int64
-    dtype: object
-    ```
+[t for t in v.data.keys() if t == 'default.mydata']
+mydata = v.data['default.mydata']
+mydata
 
-6. Explore the Python API
+# <vulkn.dataframe.BaseTableDataFrame object at 0x7f587af97908>
 
-    ```python
-    # Native Vulkn functions/ClickHouse SQL in the Python API
+# Inspect the DataFrame properties
 
-    print((UInt8(8).alias('v') != 3).alias('k').cast('String').startswith('a').intDiv(3))
+mydata.desc().s
 
-    # Using and re-using aliases and variables
+row  name         type        default_type    default_expression    comment    codec_expression    ttl_expression
+-----  -----------  --------  --------------  --------------------  ---------  ------------------  ----------------
+    1  series_key   String               nan                   nan        nan                 nan               nan
+    2  timestamp    DateTime             nan                   nan        nan                 nan               nan
+    3  temperature  Float64              nan                   nan        nan                 nan               nan
+    4  bytes        UInt64               nan                   nan        nan                 nan               nan
 
-    s = String('abc,foo').split(',')
-    col1 = s[1].alias('col1')
-    clone_col1 = String(name='a')
+(4 rows)
 
-    # Tying it all together with lambdas
+# Create Pandas DataFrames from a Vulkn query
 
-    func = funcs.arrayMap(lambda x=String(n='x'), y=String(n='y'): x.length() > 3, s, col1, clone_col1)
+mydata.all().limit(10).p
 
-    # Preview the rendered function.
+series_key            timestamp  temperature  bytes
+0   device-1  2019-01-01 19:47:24    92.573274   7759
+1   device-2  2019-01-01 10:10:34    97.795875   6372
+2   device-3  2019-01-01 12:43:20    92.769747   7692
+3   device-4  2019-01-01 22:57:42    98.037090   5498
+4   device-5  2019-01-01 04:47:13    86.352442   3664
+5   device-6  2019-01-01 09:09:17    86.679861   4997
+6   device-7  2019-01-01 12:01:05    99.481727   6189
+7   device-8  2019-01-01 17:03:07    90.488295   4991
+8   device-9  2019-01-01 05:28:43    92.532215    653
+9  device-10  2019-01-01 10:47:38    98.021234    192
 
-    print(func)
+mydata.all().limit(10).p.dtypes
+series_key      object
+timestamp       object
+temperature    float64
+bytes            int64
+dtype: object
+```
 
-    # arrayMap((x, y) -> greater(length("x"),3), splitByString(',','abc,foo'), arrayElement(splitByString(',','abc,foo'),1) AS `col1`, "a")
+Let's explore the python API.
 
-    # You can also create libraries of re-usable functions using the Python API.
-    # Note - Native Python functions and the ability to register functions with the SQL engine are coming in a future release.
+```python
+# Native Vulkn functions/ClickHouse SQL in the Python API
 
-    def extract_key(column, alias):
-        key_id = String(n=column).lower().split('-')[2]
-        key = key_id.cast('UInt64').alias(alias)
-        return key
+print((UInt8(8).alias('v') != 3).alias('k').cast('String').startswith('a').intDiv(3))
 
-    def apply_cutoff(arg1, arg2, arg3):
-        return funcs.if_(col(arg1) > arg2, arg3, arg2)
+# Using and re-using aliases and variables
 
-    # Python dataframes
+s = String('abc,foo').split(',')
+col1 = s[1].alias('col1')
+clone_col1 = String(name='a')
 
-    df = (v
-        .table('default.mydata')
-        .select(
-            extract_key('series_key', 'key'),
-            apply_cutoff('bytes', 100, 100).alias('newcolumn')
-        ).orderBy('key'))
+# Tying it all together with lambdas
 
-    df.show_sql()
+func = funcs.arrayMap(lambda x=String(n='x'), y=String(n='y'): x.length() > 3, s, col1, clone_col1)
 
-    "SELECT cast(splitByString('-', lower(series_key))[2], 'UInt64') AS key, if(bytes > 100, 100, 100) AS newcolumn FROM default.mydata ORDER BY key ASC;"
+# Preview the rendered function.
 
-    # Load external data
+print(func)
 
-    external_data = (v
-        .read.format('csv')
-        .options(header=True,
-                overwrite=True,
-                infer_schema=True,
-                engine=engines.MergeTree())
-        .load('file:///data/my-example-data.csv', database='default', table='example'))
+# arrayMap((x, y) -> greater(length("x"),3), splitByString(',','abc,foo'), arrayElement(splitByString(',','abc,foo'),1) AS `col1`, "a")
 
-    external_data.count().show()
-    ```
+# You can also create libraries of re-usable functions using the Python API.
+# Note - Native Python functions and the ability to register functions with the SQL engine are coming in a future release.
+
+def extract_key(column, alias):
+    key_id = String(n=column).lower().split('-')[2]
+    key = key_id.cast('UInt64').alias(alias)
+    return key
+
+def apply_cutoff(arg1, arg2, arg3):
+    return funcs.if_(col(arg1) > arg2, arg3, arg2)
+
+# Python dataframes
+
+df = (v
+    .table('default.mydata')
+    .select(
+        extract_key('series_key', 'key'),
+        apply_cutoff('bytes', 100, 100).alias('newcolumn')
+    ).orderBy('key'))
+
+df.show_sql()
+
+"SELECT cast(splitByString('-', lower(series_key))[2], 'UInt64') AS key, if(bytes > 100, 100, 100) AS newcolumn FROM default.mydata ORDER BY key ASC;"
+
+# Load external data
+
+external_data = (v
+    .read.format('csv')
+    .options(header=True,
+            overwrite=True,
+            infer_schema=True,
+            engine=engines.MergeTree())
+    .load('file:///data/my-example-data.csv', database='default', table='example'))
+
+external_data.count().show()
+```
 
 ### Limitations
 

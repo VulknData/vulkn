@@ -1,3 +1,19 @@
+## VULKИ release 19.0.1, 2020-01-01
+
+### New Features
+
+* Added basic PyPy support for installation through pip
+
+### Improvements
+
+### Bug Fixes
+
+### Backward Incompatible Changes
+
+### Performance Improvements
+
+### Build/Testing/Packaging Improvements
+
 ## VULKИ release 19.0.0, 2019-12-30
 
 Alpha Proof Of Concept release.
