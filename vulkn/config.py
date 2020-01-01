@@ -11,7 +11,10 @@ VulknConfig = {
     'tmp': 'vulkn_tmp'
 }
 
-VERSION = '0.1.0'
+VERSION_MAJOR = 19
+VERSION_MINOR = 0
+VERSION_PATCH = 0
+VERSION = '.'.join([str(VERSION_MAJOR), str(VERSION_MINOR), str(VERSION_PATCH)])
 
 FLAGS = [
     'secure'

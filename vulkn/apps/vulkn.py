@@ -22,6 +22,7 @@ from vulkn.funcs import and_, or_, not_, xor_, if_, multiIf, switch
 from vulkn.types import *
 from vulkn.utils import get_next_free_socket
 from vulkn.dataframe import WriteMode, JoinStrictness
+from vulkn.config import VERSION
 
 
 log = logging.getLogger()
@@ -85,7 +86,7 @@ tags = [
     "ClickHouse - an analytics database for the 21st century."
 ]
 
-print("""Добро пожаловать to VULKИ version 2019.0.0!
+print(f"""Добро пожаловать to VULKИ version {VERSION}!
 
 ██╗   ██╗██╗   ██╗██╗     ██╗  ██╗███╗   ██╗
 ██║   ██║██║   ██║██║     ██║ ██╔╝████╗  ██║

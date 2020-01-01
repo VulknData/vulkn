@@ -23,14 +23,14 @@ The initial release (19.0.0) is a Proof Of Concept. Expect APIs to change in the
     apt install clickhouse-server clickhouse-client clickhouse-common python3
     ```
 
-2. Install Vulkn (note pip not yet supported)
+2. Install Vulkn (note pip not yet supported).
 
     ```bash
     git clone https://github.com/VulknData/vulkn.git
     cd vulkn
     ```
 
-3. Install required packages
+3. Install required packages. Note that it may make sense to do this within a virtual environment.
 
     ```bash
     pip install -r requirements.txt
@@ -40,6 +40,7 @@ The initial release (19.0.0) is a Proof Of Concept. Expect APIs to change in the
 
     ```bash
     cd scripts
+    source env.sh
     ./v --local
 
     # Or use ./v to connect to your running local ClickHouse instance

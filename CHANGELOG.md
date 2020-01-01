@@ -1,13 +1,3 @@
-* Unsupported:
-    - Table functions other than numbers, one.
-    - All input formats other than CSV/CSVWithNames.
-    - median aggregation function variants.
-    - quantile aggregation function variants.
-    - Type conversion of nested types. POC working with Python however is too slow using Pandas.
-    - SQL:2003 window functions RANK and NTILE.
-    - Tuple and matrix types
-    - All interactions with MergeVectors - experimental API/internal POC implementation only
-
 ## VULKИ release 19.0.0, 2019-12-30
 
 Alpha Proof Of Concept release.
@@ -72,6 +62,15 @@ Note: VULKИ 19.0.0 is a Proof Of Concept release. Expect APIs to change in the 
     - Finance:
         - vectorElliotWaveOscillator(column) - Calculate the Elliot Wave Oscillator of the vector
         - vectorDollarValue(price, volume) - Calculate the Dollar Value
+* Note the following are unsupported in this release:
+    - Table functions other than numbers, one.
+    - All input formats other than CSV/CSVWithNames.
+    - median aggregation function variants.
+    - quantile aggregation function variants.
+    - Type conversion of nested types. POC working with Python however is too slow using Pandas.
+    - SQL:2003 window functions RANK and NTILE.
+    - Tuple and matrix types
+    - All interactions with MergeVectors - experimental API/internal POC implementation only
 
 ### Improvements
 
