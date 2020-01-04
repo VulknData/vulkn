@@ -4,6 +4,10 @@ VULKИ (Vulkn) is a specialized, environmentally friendly, eco-system for manipu
 
 Vulkn is underpinned by the high-performance Open Source OLAP database, Yandex ClickHouse. Rather than re-invent the wheel (or mask the amazing technology that is ClickHouse), Vulkn focuses on the areas of DataOps, simplification and automation. Users can easily extend Vulkn, and the SQL layer, with their own SQL clauses and functions via Python as well as use Python bindings to work with ClickHouse in much the same way they would other modern data systems, specifically those based on functional programming.
 
+### Documentation
+
+Documentation is available at http://docs.vulkndata.io. Note this is currently incomplete and content will be updated/provided over the coming weeks.
+
 ### Initial Release
 
 The initial release (19.0.0) is a Proof Of Concept. Expect APIs to change in the coming releases as Vulkn reaches stability. The following features are available:
@@ -564,6 +568,10 @@ The following limitations apply to the 19.0.0 Proof Of Concept release and will 
 
 ## FAQ
 
+### Isn't this just an ORM?
+
+No. The SQL / object interface is only one minor / enabling feature. By having a tightly integrated SQL / object / type interface that is free from the usual constraints of an ORM we can implement mechanisms that blur the lines between ORMs, BigData frameworks (like Spark), time-series systems, APL systems, DBMS management utilities, API generation, ML, AI and DataOps orchestration/automation. Vulkn also enables DataOps extensions, that leverage many of the ideas found within DevOps, to allow users to shape the query language itself. The POC release only targets SELECT statements where the AST can be transformed into single statement however we will be extending this to encompass a wider range of possibilities.
+
 ### Does Vulkn compete with Hadoop, Spark, Flink?
 
 Spark, Hadoop etc.. have a large, mature and established eco-system with a specific trajectory and path. ClickHouse is capable of ingesting and querying massive volumes of data in real-time (at velocities that exceed the aforementioned systems) however it has a very rigid API that does not allow for custom code without re-compiling the framework (unlike Spark or Hadoop). Custom code has advantages with performance being the limitation. If, at some point, users see benefit in Vulkn or ClickHouse over other tools, we suspect it will be to compliment their respective strengths.
@@ -623,6 +631,8 @@ The allowable OSI licenses are:
 * Mozilla Public License 2.0 (MPL-2.0)
 * Common Development and Distribution License 1.0 (CDDL-1.0)
 * Eclipse Public License 2.0 (EPL-2.0)
+
+The GPLv3 enables you to use Vulkn internally within your organization or as part of a web service with no requirement to share your application code or licence it under the GPLv3.
 
 If you modify Vulkn you will have to either contribute your changes or adhere to the requirements of the GPLv3.
 

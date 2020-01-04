@@ -45,17 +45,24 @@ Additional Permissions and Supplemental Terms permitted under the GPLv3 Section 
     
     The Licensors will not restrict your ability to use this software as part of an external/'cloud' 
     hosted SaaS application. However we note a Special Condition for both externally hosted and 
-    on-prem SaaS and data applications/protocols. As a Special Condition, the Licensors require that 
-    when the covered (unmodified) work, modified work or parts thereof is used within a web portal, 
-    online service or Software As A Service component across a network that the Vulkn source code 
-    repository link and the following notice is displayed publicly and prominently in documentation 
-    and via any URL/links in service sign-up systems and user-account on-boarding email notifications.
+    on-prem SaaS and data applications/protocols.
     
-    The notice for all countries excluding Australia is:
+    Outside of Australia and it's respective territories the following applies:
 
-        This service made possible by Vulkn, Copyright (C) 2019 VulknData Pty Ltd.
+        As a special condition the Licensors require that when the covered (unmodified) work, 
+        modified work or parts thereof is used within a web portal, online service or Software As A
+        Service component across a network that the Vulkn source code repository link and the 
+        following notice is displayed publicly with your documentation:
+            
+        This service uses Vulkn, Copyright (C) 2019 VulknData Pty Ltd.
 
-    In Australia the following notice applies:
+    Within Australia and it's respective territories the following applies:
+
+        As a special condition, the Licensors require that when the covered (unmodified) work, 
+        modified work or parts thereof is used within a web portal, online service or Software As A 
+        Service component across a network that the Vulkn source code repository link and the following 
+        notice is displayed publicly and prominently in documentation and via any URL/links in service 
+        sign-up systems and user-account on-boarding email notifications.
 
         This service made possible by Vulkn, Copyright (C) 2019 Jason Godden & VulknData Pty Ltd.
 
