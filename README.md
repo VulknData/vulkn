@@ -69,6 +69,8 @@ Let's try out the Python API with a 25 million row time-series table. In this ex
 
 If you installed Vulkn via pip use ```vulkn --local``` to start a local session (or follow Step 3. from the source installation option above).
 
+Note that if you are connecting to a remote (or local ClickHouse instance not managed by Vulkn) you may need to manually create the "vulkn" database and ensure the connecting user can create tables under this database.
+
 ```bash
 ironman@hulk ~/ $ vulkn --local
 
