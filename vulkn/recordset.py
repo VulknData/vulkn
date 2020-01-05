@@ -95,6 +95,7 @@ class RecordSet():
         self._pytypes = None
         self._pdtypes = None
         self._marshall_info_ = None
+        self._result = None
 
     @property
     def columns(self):
@@ -149,17 +150,27 @@ class RecordSet():
         return self._marshall_info_
 
     def to_pandas(self):
-        return pd.read_csv(io.StringIO(self._data),
-                           skiprows=([1]), sep='\t',
-                           header=0,
-                           na_values='\\N',
-                           parse_dates=True,
-                           infer_datetime_format=True)
+        if not self._result:
+            self._result = pd.read_csv(
+                io.StringIO(self._data),
+                skiprows=([1]), sep='\t',
+                header=0,
+                na_values='\\N',
+                parse_dates=True,
+                engine='c',
+                infer_datetime_format=True)
+        return self._result
+
+    def to_dict(self):
+        return self.to_pandas().to_dict('record')
 
     def to_records(self):
         return self.to_pandas().to_dict('record')
  
-    def to_raw_list(self):
+    def to_list(self):
+        return self.to_recarray().tolist()
+
+    def to_recarray(self):        
         return self.to_pandas().to_records(index=False)
 
     def show(self):        
@@ -174,6 +185,9 @@ class RecordSet():
     s = property(show)
     r = property(to_records)
     p = property(to_pandas)
+    d = property(to_dict)
+    l = property(to_list)
+    n = property(to_recarray)
 
     def __len__(self):
         return len(self.to_pandas())

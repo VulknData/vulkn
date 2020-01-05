@@ -10,19 +10,18 @@ extra_css:
 nav:
   - Welcome to VULKИ: index.md
   - Getting Started: getting_started.md
-  - Data Types:
+  - Data Types & Variables:
     - Introduction: types/introduction.md
     - Tables: types/tables.md
     - Types:
-      - Scalars:
-        - String: types/scalars/string.md
-        - DateTimes: types/scalars/datetimes.md
-        - Booleans: types/scalars/booleans.md
-        - Integers: types/scalars/string.md
-        - Floats: types/scalars/floats.md
-        - UUID: types/scalars/uuid.md
-        - URL: types/scalars/url.md
-        - JSON: types/scalars/json.md
+      - String: types/string.md
+      - DateTimes: types/datetimes.md
+      - Booleans: types/booleans.md
+      - Integers: types/integers.md
+      - Floats: types/floats.md
+      - UUID: types/uuid.md
+      - URL: types/url.md
+      - JSON: types/json.md
       - Arrays: types/arrays.md
       - Vectors: types/vectors.md
     - Type Conversion: types/conversion.md
