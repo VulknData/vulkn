@@ -78,8 +78,10 @@ class String(TypeBase):
             return String(func('substringUTF8', self._value, offset, length))
         return String(func('substringUTF8', self._value, offset))
 
-    def trim(self, trim_str: str='//s*'):
+    def trim(self, trim_str: str='\\\s*'):
         return self.replaceRegexpAll('^{}|{}$'.format(trim_str, trim_str), '')
+
+    strip = trim
         
     def isnumeric(self):
         return self.match('^[0-9]*$')
@@ -87,11 +89,15 @@ class String(TypeBase):
     def isdecimal(self):
         return self.match('^[0-9]*\.[0-9]*$')
 
-    def ltrim(self, trim_str: str='//s*'):
+    def ltrim(self, trim_str: str='\\\s*'):
         return self.replaceRegexpOne('^{}'.format(trim_str), '')
+
+    lstrip = ltrim
         
-    def rtrim(self, trim_str: str=None):
+    def rtrim(self, trim_str: str='\\\s*'):
         return self.replaceRegexpOne('{}$'.format(trim_str), '')
+
+    rstrip = rtrim
             
     def position(self, needle: str):
         return String(func('position', self._value, needle))

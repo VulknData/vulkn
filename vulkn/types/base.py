@@ -177,6 +177,10 @@ class TypeBase(ColumnBaseMixIn):
         from vulkn.types.integer import UInt8
         return UInt8(Literal('{} NOT BETWEEN {} AND {}'.format(self._value, start, end)))
 
+    def typename(self):
+        from vulkn.types.string import String
+        return String(Literal(f'toTypeName({self._value})'))
+
     def __eq__(self, right) -> any:
         from vulkn.types.integer import UInt8
         return UInt8(func('equals', self._value, right))
