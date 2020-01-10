@@ -26,7 +26,7 @@ String types are used to represent any non-numeric data
 The Vulkn String object supports all common operators. Operators are valid between both Python, Vulkn
 and ClickHouse SQL types.
 
-* equals, ```==```, ```v.select(String('ClickHouse') < 'clickhouse').s```
+* equals, ```==```, ```v.select(String('ClickHouse') == 'clickhouse').s```
 * not equals, ```!=```, ```v.select(String('ClickHouse') != 'clickhouse').s```
 * greater than, ```>```, ```v.select(String('ClickHouse') > 'clickhouse').s```
 * less than, ```<```, ```v.select(String('ClickHouse') < 'clickhouse').s```

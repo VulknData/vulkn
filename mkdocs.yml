@@ -4,59 +4,80 @@ theme:
 markdown_extensions:
   - admonition
   - codehilite
+  - pymdownx.arithmatex
+  - pymdownx.betterem
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:pymdownx.emoji.to_svg
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tasklist
+  - pymdownx.tilde
 extra_css:
   - css/extra.css
 
 nav:
   - Welcome to VULKИ: index.md
   - Getting Started: getting_started.md
+
   - Data Types & Variables:
-    - Introduction: types/introduction.md
-    - Tables: types/tables.md
+    - Overview: types/overview.md
+    - Operators: types/operators.md
     - Types:
       - String: types/string.md
-      - DateTimes: types/datetimes.md
-      - Booleans: types/booleans.md
-      - Integers: types/integers.md
-      - Floats: types/floats.md
+      - Date & Time: todo.md
+      - Boolean: todo.md
+      - Integers: todo.md
+      - Floats: todo.md
       - UUID: types/uuid.md
-      - URL: types/url.md
-      - JSON: types/json.md
-      - Arrays: types/arrays.md
-      - Vectors: types/vectors.md
-    - Type Conversion: types/conversion.md
+      - URL: todo.md
+      - JSON: todo.md
+      - Arrays: todo.md
+      - Vectors: todo.md
+      - Tables: todo.md
+    - Type Conversion: todo.md
   - Functions:
-      - Misc functions: data/functions/misc_functions.md
-      - Array functions: data/functions/array_functions.md
-      - Geo functions: data/functions/geo_functions.md
-      - Encoding functions: data/functions/encoding.md
-      - Bitmap functions: data/functions/bitmap.md
-      - Aggregate functions: data/functions/agg.md
+      - Misc functions: todo.md
+      - Array functions: todo.md
+      - Geo functions: todo.md
+      - Encoding functions: todo.md
+      - Bitmap functions: todo.md
+      - Aggregate functions: todo.md
       - Extensions:
-        - Vector functions: data/functions/vector.md
-  - DataFrames: dataframes/dataframes.md
-  - SQL: sql/overview.md
-  - SQL Extensions:
-    - Introduction: extensions/introduction.md
-    - CHUNK BY: extensions/chunk_by.md
-    - VECTORIZE BY: extensions/vectorize_by.md
-  - Data Management: datamanagement/datamanagement.md
-
-  - Data Storage:
-    - Engines Overview: engines/overview.md
-    - Memory: engines/memory.md
-    - Log Engines:
-      - TinyLog: engines/log/tinylog.md
-      - Log: engines/log/log.md
-      - StripeLog: engines/log/stripelog.md
-    - Specialised Engines:
-      - Set: engines/special/set.md
-      - Join: engines/special/join.md
-    - MergeTree Engines:
-      - MergeTree: engines/mergetree/mergetree.md
-      - ReplacingMergeTree: engines/mergetree/replacingmergetree.md
-      - SummingMergeTree: engines/mergetree/summingmergetree.md
-      - AggregatingMergeTree: engines/mergetree/aggregatingmergetree.md
-      - CollapsingMergeTree: engines/mergetree/collapsingmergetree.md
+        - Vector functions: todo.md
+  - DataFrames:
+    - Overview: dataframes/overview.md
+    - Reference: dataframes/reference.md
+    - Joins: dataframes/joins.md
+    - Query Execution, Parameters and Caching: dataframes/execution.md
+    - Working with results: dataframes/recordset.md
+  - Importing Data: loading.md
   - Workspaces: workspaces.md
-  - System Management: systems_management.md
+  - SQL Extensions:
+    - Introduction: todo.md
+    - CHUNK BY: todo.md
+    - VECTORIZE BY: todo.md
+  - Data Storage:
+    - Engines Overview: todo.md
+    - Memory: todo.md
+    - Log Engines:
+      - TinyLog: todo.md
+      - Log: todo.md
+      - StripeLog: todo.md
+    - Specialised Engines:
+      - Set: todo.md
+      - Join: todo.md
+    - MergeTree Engines:
+      - MergeTree: todo.md
+      - ReplacingMergeTree: todo.md
+      - SummingMergeTree: todo.md
+      - AggregatingMergeTree: todo.md
+      - CollapsingMergeTree: todo.md
+  - System Management: todo.md
+  - Data Management: todo.md
+  - Examples: todo.md

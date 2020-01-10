@@ -8,7 +8,10 @@
 
 ## Installation
 
-Vulkn itself is a pure Python application and can be installed using pip:
+Vulkn itself is a pure Python application and can be installed using pip.
+
+!!! note
+    VULKИ 19.0.0 has only been used / tested within the latest Ubuntu and Mint LTS environments and is unlikely to function as expected under other distributions.
 
 ```bash
 pip install vulkn

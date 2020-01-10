@@ -107,14 +107,18 @@ class Numeric(TypeBase):
     def bitXor(self, right) -> any:
         return type(self)(func('bitXor', self._value, right))
 
-    def bitNot(self, right) -> any:
-        return type(self)(func('bitNot', self._value, right))
+    def bitNot(self) -> any:
+        return type(self)(func('bitNot', self._value))
 
     def bitShiftLeft(self, right) -> any:
         return type(self)(func('bitShiftLeft', self._value, right))
 
+    __lshift__ = bitShiftLeft
+
     def bitShiftRight(self, right) -> any:
         return type(self)(func('bitShiftRight', self._value, right))
+
+    __rshift__ = bitShiftRight
 
     def bitRotateLeft(self, right) -> any:
         return type(self)(func('bitRotateLeft', self._value, right))
