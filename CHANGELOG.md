@@ -1,3 +1,26 @@
+## VULKИ release 19.0.2, 2020-01-11
+
+### Improvements
+
+- RecordSets now support plain lists and numpy ndarrays
+- Allow Vulkn to take Workspace objects and determine the backend automatically
+- Numeric types now support lshift and rshift bitwise operations
+- Numerous documentation updates:
+    - Variables and declarations
+    - Operators
+    - DataFrames (overview, general reference, extensions, execution, joins, working with results)
+    - Extensions (vectorize_by, chunk_by)
+    - Workspaces (local, remote, programmatically and via vulkn CLI)
+    - Data Loading (CSV only at this stage)
+
+### Bug Fixes
+
+- DataFrame copy_set operations set bool values correctly (fixes .distinct() operation)
+- Avoid potential divide by zero error with RandomDataFrames
+- Fix string formatting in funcs.not
+- Fix confusion with bitwise and logical operators
+- Disable compile_expressions in Workspace templates (issue with linking?)
+
 ## VULKИ release 19.0.1, 2020-01-01
 
 ### Build/Testing/Packaging Improvements
