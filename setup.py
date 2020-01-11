@@ -12,7 +12,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read().strip()
 
 with open(path.join(this_directory, 'requirements.txt'), encoding='utf-8') as f:
-    install_requires = [r.split('==')[0] for r in f.read().strip().split('\n')]
+    install_requires = f.read().strip().split('\n')
 
 setup(
     name='vulkn',
