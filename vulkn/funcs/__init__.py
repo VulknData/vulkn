@@ -28,7 +28,7 @@ def or_(*args):
     return c('({})'.format(' OR '.join(map(str, args))))
 
 def not_(args):
-    return c('NOT ({})'.format(str(arg)))
+    return c('NOT ({})'.format(str(args)))
 
 def xor_(*args):
     return c('({})'.format(' XOR '.join(map(str, args))))

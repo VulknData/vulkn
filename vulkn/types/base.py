@@ -184,39 +184,79 @@ class TypeBase(ColumnBaseMixIn):
     def __eq__(self, right) -> any:
         from vulkn.types.integer import UInt8
         return UInt8(func('equals', self._value, right))
+
+    eq = __eq__
+    equals = __eq__
         
     def __ne__(self, right) -> any:
         from vulkn.types.integer import UInt8
         return UInt8(func('notEquals', self._value, right))
 
+    ne = __ne__
+    notEquals = __ne__
+
     def __gt__(self, right) -> any:
         from vulkn.types.integer import UInt8
         return UInt8(func('greater', self._value, right))
+
+    gt = __gt__
+    greater = __gt__
         
     def __lt__(self, right) -> any:
         from vulkn.types.integer import UInt8
         return UInt8(func('less', self._value, right))
 
+    lt = __lt__
+    less = __lt__
+
     def __ge__(self, right) -> any:
         from vulkn.types.integer import UInt8
         return UInt8(func('greaterOrEquals', self._value, right))
         
+    ge = __ge__
+    greaterOrEquals = __ge__
+
     def __le__(self, right) -> any:
         from vulkn.types.integer import UInt8
         return UInt8(func('lessOrEquals', self._value, right))
 
-    def __and__(self, right) -> any:
+    le = __le__
+    lessOrEquals = __le__
+
+    def and_(self, right) -> any:
         from vulkn.types.integer import UInt8
         return UInt8(func('and', self._value, right))
 
-    def __or__(self, right) -> any:
+    def __and__(self, right) -> any:
+        from vulkn.types.integer import UInt8
+        return UInt8(func('bitAnd', self._value, right))
+
+    bitAnd = __and__
+
+    def or_(self, right) -> any:
         from vulkn.types.integer import UInt8
         return UInt8(func('or', self._value, right))
+
+    def __or__(self, right) -> any:
+        from vulkn.types.integer import UInt8
+        return UInt8(func('bitOr', self._value, right))
+
+    bitOr = __or__
         
-    def __invert__(self) -> any:
+    def not_(self) -> any:
         from vulkn.types.integer import UInt8
         return UInt8(func('not', self._value))
+
+    def __invert__(self) -> any:
+        from vulkn.types.integer import UInt8
+        return UInt8(func('bitNot', self._value))
+
+    bitNot = __invert__
 
     def __xor__(self, right) -> any:
         from vulkn.types.integer import UInt8
         return UInt8(func('xor', self._value, right))
+
+    xor = __xor__
+    xor_ = __xor__
+    bitXor = __xor__

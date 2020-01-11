@@ -24,8 +24,12 @@ log = logging.getLogger()
 
 
 def copy_set(obj, key, *value):
+    bool_keys = ['_distinct']
     this = copy.deepcopy(obj)
-    setattr(this, key, value)
+    if key in bool_keys:
+        setattr(this, key, True)
+    else:
+        setattr(this, key, value)
     return this
 
 
@@ -92,7 +96,7 @@ def NumbersDataFrame(ctx, count, system=False, mt=False):
 
 
 def RandomDataFrame(ctx, count, start=0, end=18446744073709551615, system=False, mt=False):
-    q = f'{start} + rand()%({end}-({start})+1) AS number'
+    q = f'{start} + rand()%(if(mod == 0, mod - 1, ({end}-({start})+1) AS mod)) AS number'
     if system:
         t = 'system.numbers' + ('_mt' if mt else '')
         return SelectQueryDataFrame(ctx, t).limit(count).select(q)
@@ -282,6 +286,7 @@ class SelectQueryDataFrame(VulknDataFrame,
             'distinct': None, 
             #'table': None,
             'From': '_table',
+            'from_': '_table',
             'preWhere': None,
             'where': None,
             'filter': '_where',
@@ -324,7 +329,7 @@ class SelectQueryDataFrame(VulknDataFrame,
         return copy_set(self, '_limit', rows)
 
     def limitBy(self, limit, by):
-        return copy_set(self, '_limitby', (limit, by))
+        return copy_set(self, '_limitby', limit, by)
 
     def vectorizeBy(self, key, sort, attributes=None):
         return copy_set(self, '_vectorizeby', key, attributes, sort)
@@ -359,7 +364,7 @@ class SelectQueryDataFrame(VulknDataFrame,
         if self._with_:
             q = 'WITH {} {}'.format(', '.join(map(str, self._with_)), q)
         if self._distinct:
-            q = '{} DISTINCT'
+            q = f'{q} DISTINCT'
         if self._columns:
             q = '{} {}'.format(q, ', '.join(map(str, self._columns)))
         if self._join:
