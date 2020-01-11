@@ -57,11 +57,11 @@ nav:
     - Query Execution, Parameters and Caching: dataframes/execution.md
     - Working with results: dataframes/recordset.md
   - Importing Data: loading.md
-  - Workspaces: workspaces.md
+  - The Vulkn CLI & Workspaces: workspaces.md
   - SQL Extensions:
     - Introduction: todo.md
-    - CHUNK BY: todo.md
-    - VECTORIZE BY: todo.md
+    - CHUNK BY: extensions/chunk_by.md
+    - VECTORIZE BY: extensions/vectorize_by.md
   - Data Storage:
     - Engines Overview: todo.md
     - Memory: todo.md

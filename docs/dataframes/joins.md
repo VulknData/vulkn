@@ -261,7 +261,9 @@ The following functions can be used to join multiple DataFrames.
 
 - **Parameters**
     - ```dataframes``` - list - a list of dataframes to perform the ASOF join on.
-    - ```keys``` - tuple(keys, ...) - the keys to use in the join condition.
+    - ```keys``` - tuple(keys, ...) - the keys to use in the join condition. The last value in the 
+    tuple is assumed to be the time or integer dimension used for the ASOF join. Other values are assumed
+    to be key columns.
     - ```global_mode``` - Boolean value indicating whether to use GLOBAL mode. Default - False.
 - **Returns**
     - ```vulkn.dataframe.SelectQueryDataFrame```
@@ -281,3 +283,4 @@ The following functions can be used to join multiple DataFrames.
     df = aj(devices, ('id', 'ts'))
     df.limit(30).s
     ```
+---

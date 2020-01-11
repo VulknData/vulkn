@@ -462,7 +462,7 @@ The following are equivalent:
 
 The following are Vulkn core extensions not found within the ClickHouse SQL dialect.
 
-### vectorizeBy(key, [non-key-columns, ..,] sort)
+### *vectorizeBy(key, [non-key-columns, ..,] sort)*
 
 * Parameters
     - ```key``` - key to group vector columns by.

@@ -66,7 +66,16 @@ class VulknDataFramesMixIn:
 
 @singleton
 class Vulkn(VulknDataFramesMixIn, VulknClickHouseDatabaseMixIn):
-    def __init__(self, user='default', password='', host='localhost', port=9000, database='default'):
+    def __init__(self,
+                 user='default',
+                 password='',
+                 host='localhost',
+                 port=9000,
+                 database='default',
+                 workspace=None):
+        if workspace is not None:
+            port = workspace._port
+            http_port = workspace._http_port
         self._user = user
         self._password = password
         self._host = host

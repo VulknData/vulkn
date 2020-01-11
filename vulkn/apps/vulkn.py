@@ -64,15 +64,10 @@ if args.save_auth:
 
 ce = None
 if args.local:
-    args.port = get_next_free_socket('127.0.0.1', list(range(9001,10000)))
-    args.http_port = get_next_free_socket('127.0.0.1', list(range(8124,8999)))
     ce = LocalWorkSpace(persist=args.persist,
                         name=args.name,
                         workspace=args.workspace,
-                        folio=args.folio,
-                        port=args.port,
-                        http_port=args.http_port)
-    atexit.register(ce.stop)
+                        folio=args.folio)
 
 v = vulkn.Vulkn(host=args.host, port=args.port)
 
