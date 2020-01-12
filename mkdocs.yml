@@ -38,7 +38,7 @@ nav:
       - URL: todo.md
       - JSON: todo.md
       - Arrays: todo.md
-      - Vectors: todo.md
+      - Array Vectors: types/array_vectors.md
       - Tables: todo.md
     - Type Conversion: todo.md
   - Functions:
@@ -56,12 +56,14 @@ nav:
     - Joins: dataframes/joins.md
     - Query Execution, Parameters and Caching: dataframes/execution.md
     - Working with results: dataframes/recordset.md
+    - Creating tables: dataframes/creating.md
   - Importing Data: loading.md
   - The Vulkn CLI & Workspaces: workspaces.md
-  - SQL Extensions:
-    - Introduction: todo.md
-    - CHUNK BY: extensions/chunk_by.md
-    - VECTORIZE BY: extensions/vectorize_by.md
+  - DataOps Extensions:
+    - Introduction: extensions/about.md
+    - SQL:
+      - CHUNK BY: extensions/chunk_by.md
+      - VECTORIZE BY: extensions/vectorize_by.md
   - Data Storage:
     - Engines Overview: todo.md
     - Memory: todo.md

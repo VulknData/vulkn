@@ -5,9 +5,42 @@ Exporting is not yet supported. It is also dependant on shell pipelines with ```
 ```clickhouse-client``` using only a single thread. This will be converted to a multi-processing 
 pure python method in future releases.
 
-## Loading CSV files
+## Reader Interface
 
-TODO: Provide more information here.
+Vulkn has a simple reader interface available under Vulkn.read. The read object encapsulates a 
+Data Management function that instantiates the format handler with the necessary options. The 
+DataManager then orchestrates retrieving the data and passing it off to the format handler. In the 
+future this will be used to extend ClickHouse / Vulkn to perform pluggable, complex data orchestration
+and management.
+
+## CSV Format
+
+### *v.read.format('csv').options(\*\*opts)*
+
+Available options are:
+
+* ```delimiter``` - the delimiter to use in the CSV file - default ','
+* ```allow_single_quotes``` - allow single quoted columns - default True
+* ```allow_double_quotes``` - allow double quoted columns - default True
+* ```unquoted_null_literal_is_null``` - interpret an unquoted NULL literal (\N) as NULL - default True
+* ```input_format_defaults_for_omitted_fields``` - use default values for omitted fields - default False
+* ```header``` - input file has headers - default False
+* ```infer_schema``` - automatically perform type and schema inference - default False
+* ```allow_enums``` - allow type inference to choose Enum types - default False
+* ```column_format``` - reformat column names to specified format - default - 'snake_case'
+* ```overwrite``` - overwrite the target table if it exists - default False
+* ```engine``` - use the specified engine profile/strategy - default Memory()
+* ```sample_engine``` - use the specified engine when performing type inference/sampling - default Memory()
+* ```sample_size``` - maximum number of rows to sample - default 50000
+* ```sample_preload``` - pre-load the entire dataset for sampling. Allows for re-using the input data after inference. Default True
+* ```schema``` - the predefined schema to use if type inference is not enabled - default None
+
+### *load(uri, database, table)*
+
+* Parameters
+    * ```uri``` - the file URI to load - note that only 'file://' URIs are supported as of this release.
+    * ```database``` - the target database to load the data to
+    * ```table``` - the target table to load the data to
 
 ### Examples
 

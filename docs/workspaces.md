@@ -173,7 +173,7 @@ v = Vulkn(host='baby.yoda.net', port=9000, user='mando', password='thermaldetena
 
 ## Managing Folios and Workspaces
 
-TODO: Provide more information here.
+The Vulkn CLI can be used to manage folios and workspaces.
 
 ```
 vulkn --help
@@ -200,3 +200,54 @@ optional arguments:
   --log-level LOGLEVEL
   --timing
 ```
+
+### Options
+
+#### Local Workspaces
+
+* ```--list-folios```, ```--list```
+    * Displays all folios and workspaces within each folio.
+    * Example
+    ```shell
+    vulkn --list
+    {'folios': {'/home/ironman/.vulkn/default': [{'name': 'test',
+                                            'uuid': 'ef8782cd-b1fa-4fe4-85d1-d280ca7f87dc',
+                                            'workspace': '/home/ironman/.vulkn/ef8782cd-b1fa-4fe4-85d1-d280ca7f87dc'},
+                                           {'name': 'IOT investigation',
+                                            'uuid': 'f585977a-50c1-468f-8d3c-23d499ac7e50',
+                                            'workspace': '/home/ironman/.vulkn/f585977a-50c1-468f-8d3c-23d499ac7e50'},
+                                           {'name': 'SensorData',
+                                            'uuid': 'd5bedf5b-e397-4668-9ea2-8fa4c7699508',
+                                            'workspace': '/home/ironman/.vulkn/d5bedf5b-e397-4668-9ea2-8fa4c7699508'}]}}
+    ```
+* ```--local```
+    * Specify that a local WorkSpace should be instantiated.
+* ```--persist```
+    * When using local WorkSpaces specify that the WorkSpace should persist after exit. Default is to remove the WorkSpace when the session ends.
+* ```--save-auth```
+    * Save the specified authentication. Note used. Reserved for future functionality.
+* ```--folio FOLIO```
+    * Specify the folio (DataSpace) to create the WorkSpace in. By default - /home/$USER/.vulkn/default.
+* ```--workspace WORKSPACE```
+    * Used for reviving an existing WorkSpace. Specify the full path to the workspace.
+* ```--name NAME```
+    * Provide a name for the WorkSpace.
+
+#### Remote Instances
+
+* ```--host HOST```
+    * Remote mode - used when connecting to a remote ClickHouse or Vulkn instance. Specify the hostname.
+* ```--port PORT```
+    * Remote mode - used when connecting to a remote ClickHouse or Vulkn instance. Specify the port.
+* ```--user USERNAME```
+    * Remote mode - used when connecting to a remote ClickHouse or Vulkn instance. Specify the username.
+* ```--password PASSWORD```
+    * Remote mode - used when connecting to a remote ClickHouse or Vulkn instance. Specify the password.
+
+#### Other options
+
+* ```--log-level LOGLEVEL```
+    * Specify the LOGLEVEL. Can also be set within the session via ```vulkn.session.log.setLevel('SQL')``` etc..
+    * Available options are ```SQL```, ```CRITICAL```, ```ERROR```, ```WARNING```, ```INFO```, ```DEBUG```, ```NOTSET```.
+* ```--timing```
+    * Enable printing query timings. Can also be set within the session via ```vulkn.session.timing = True```
