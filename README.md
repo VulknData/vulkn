@@ -27,7 +27,7 @@ working Python 3.7.x environment with pip.
 Ensure you have installed ClickHouse (both server and client):
 
 ```bash
-apt install clickhouse-server clickhouse-client clickhouse-common
+sudo apt install clickhouse-server clickhouse-client clickhouse-common
 ```
 
 #### Installation with pip
@@ -35,7 +35,10 @@ apt install clickhouse-server clickhouse-client clickhouse-common
 1. Install Vulkn via pip.
 
     ```bash
-    pip install vulkn
+    sudo add-apt-repository ppa:deadsnakes/ppa
+    sudo apt update
+    sudo apt install -y python3.7 python3.7-dev python3-pip
+    sudo python3.7 -m pip install vulkn
     ```
 
 #### Installation from source (for developers)
