@@ -85,7 +85,9 @@ tags = [
     "ClickHouse - an analytics database for the 21st century."
 ]
 
-print(f"""Добро пожаловать to VULKИ version {VERSION}!
+print(f"""Copyright (C) 2019,2020 Jason Godden / VulknData Pty Ltd.
+
+Добро пожаловать to VULKИ version {VERSION}!
 
 ██╗   ██╗██╗   ██╗██╗     ██╗  ██╗███╗   ██╗
 ██║   ██║██║   ██║██║     ██║ ██╔╝████╗  ██║

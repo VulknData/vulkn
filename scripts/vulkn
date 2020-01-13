@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Copyright (c) 2019, Jason Godden <jason@godden.id.au>
 # Copyright (c) 2019, VulknData Pty Ltd
@@ -6,8 +6,17 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 
-VULKN_ROOT=$(dirname $(python3 -c 'import vulkn; print(vulkn.__file__)'))
+for P in $(which python3.7 python3.8 python3.9 | sort)
+do
+        VULKN_APP=$($P -c 'import vulkn; print(vulkn.__file__)' 2>/dev/null)
+        if [[ $VULKN_APP != "" ]]
+        then
+                PYTHON=$P
+                VULKN_ROOT=$(dirname $VULKN_APP)
+                break
+        fi
+done
 
 export PYTHONSTARTUP=$VULKN_ROOT/apps/vulkn.py
 
-exec python3 -q - "$@"
+exec $PYTHON -q - "$@"
