@@ -4,7 +4,7 @@
 
 - Any recent Linux supported by ClickHouse and Python
 - Latest ClickHouse server and client binaries (>= 19.15.x). See the [ClickHouse documentation](https://clickhouse.yandex/docs/en/getting_started/#installation) for details on installing ClickHouse.
-- Python (>= 3.6.x). We recommend the latest [Anaconda Python distribution](https://www.anaconda.com/distribution/).
+- Python (>= 3.7.x). We recommend the latest [Anaconda Python distribution](https://www.anaconda.com/distribution/).
 
 ## Installation
 
@@ -13,8 +13,13 @@ Vulkn itself is a pure Python application and can be installed using pip.
 !!! note
     VULKИ 19.0.0 has only been used / tested within the latest Ubuntu and Mint LTS environments and is unlikely to function as expected under other distributions.
 
+The following has been validated on Ubuntu Xenial and Bionic. Vulkn should work / install on any other system running Python 3.7.x or greater.
+
 ```bash
-pip install vulkn
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt update
+sudo apt install -y python3.7 python3.7-dev python3-pip
+sudo python3.7 -m pip install vulkn
 ```
 
 ## Using the VULKN CLI
