@@ -1,3 +1,9 @@
+## VULKИ release 19.0.4, 2020-01-14
+
+### Bug Fixes
+
+- Fix credential passing for remote ClickHouse instances.
+
 ## VULKИ release 19.0.3, 2020-01-13
 
 ### Bug Fixes
