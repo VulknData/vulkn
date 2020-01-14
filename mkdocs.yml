@@ -80,6 +80,5 @@ nav:
       - SummingMergeTree: todo.md
       - AggregatingMergeTree: todo.md
       - CollapsingMergeTree: todo.md
-  - System Management: todo.md
-  - Data Management: todo.md
+  - Object Management & Profiling: dbmanagement.md
   - Examples: todo.md

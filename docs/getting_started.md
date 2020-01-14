@@ -22,6 +22,12 @@ sudo apt install -y python3.7 python3.7-dev python3-pip
 sudo python3.7 -m pip install vulkn
 ```
 
+You should also ensure your systems console encoding is set to a valid non-latin/ASCII encoding such as en_US.UTF-8 (or your preferred/local extended character set)
+
+```bash
+sudo localectl set-locale LANG=en_US.UTF-8
+```
+
 ## Using the VULKN CLI
 
 The Vulkn CLI is a simple command line interface that enables interactive exploration and analytics on the Linux console. To follow the example below run ```vulkn --local``` from a terminal.
