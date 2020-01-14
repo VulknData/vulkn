@@ -73,7 +73,7 @@ if args.local:
                         port=args.port,
                         http_port=args.http_port)
 
-v = vulkn.Vulkn(host=args.host, port=args.port)
+v = vulkn.Vulkn(host=args.host, port=args.port, user=args.user, password=args.password)
 
 vulkn.session.log.setLevel(args.log_level)
 vulkn.session.timing = args.timing
