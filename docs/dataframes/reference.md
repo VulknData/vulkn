@@ -172,6 +172,115 @@ See ClickHouse reference - [DISTINCT Clause](https://clickhouse.yandex/docs/en/q
     (1 row)
     ```
 
+### *arrayJoin(\*array_expressions)*
+
+* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+
+---
+
+See ClickHouse reference - [ARRAY JOIN Clause](https://clickhouse.yandex/docs/en/query_language/select/#select-array-join-clause)
+
+!!! note "Examples"
+    **SQL**
+    ```sql
+    SELECT k, n
+    FROM (SELECT groupArray(number) AS n FROM numbers(10))
+    ARRAY JOIN n AS k
+    ```
+    **Raw Query**
+    ```python
+    v.q("""
+        SELECT k, n
+        FROM (SELECT groupArray(number) AS n FROM numbers(10))
+        ARRAY JOIN n AS k
+    """).s
+    ```
+    **DataFrame**
+    ```python
+    (v.numbers(10)
+        .select(funcs.agg.groupArray(c('number')).alias('n'))
+        .select('k', 'n')
+        .arrayJoin(c('n').alias('k')).s)
+
+      row    k  n
+    -----  ---  ---------------------
+        1    0  [0,1,2,3,4,5,6,7,8,9]
+        2    1  [0,1,2,3,4,5,6,7,8,9]
+        3    2  [0,1,2,3,4,5,6,7,8,9]
+        4    3  [0,1,2,3,4,5,6,7,8,9]
+        5    4  [0,1,2,3,4,5,6,7,8,9]
+        6    5  [0,1,2,3,4,5,6,7,8,9]
+        7    6  [0,1,2,3,4,5,6,7,8,9]
+        8    7  [0,1,2,3,4,5,6,7,8,9]
+        9    8  [0,1,2,3,4,5,6,7,8,9]
+       10    9  [0,1,2,3,4,5,6,7,8,9]
+
+    (10 rows)
+    ```
+
+### *leftArrayJoin(\*array_expressions)*
+
+* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+
+---
+
+See ClickHouse reference - [ARRAY JOIN Clause](https://clickhouse.yandex/docs/en/query_language/select/#select-array-join-clause)
+
+!!! note "Examples"
+    **SQL**
+    ```sql
+    SELECT k, n
+    FROM (SELECT groupArray(number) AS n FROM numbers(10))
+    ARRAY JOIN n AS k
+    ```
+    **Raw Query**
+    ```python
+    v.q("""
+        SELECT k, n
+        FROM (SELECT groupArray(number) AS n FROM numbers(10))
+        ARRAY JOIN n AS k
+    """).s
+    ```
+    **DataFrame**
+    ```python
+    # arrayJoin returns only those rows where their array lengths are > 0 (as per an INNER JOIN)
+    (v.q("""
+        SELECT 'Hello' AS s, [1,2] AS arr UNION ALL
+        SELECT 'World', [3,4,5] UNION ALL
+        SELECT 'Goodbye', []""")
+    .select('s', 'arr')
+    .arrayJoin('arr').s)
+
+      row  s        arr
+    -----  -----  -----
+        1  Hello      1
+        2  Hello      2
+        3  World      3
+        4  World      4
+        5  World      5  
+
+    (5 rows)
+
+    # leftArrayJoin returns all rows, including those with zero length arrays (as per LEFT JOIN)
+    (v.q("""
+        SELECT 'Hello' AS s, [1,2] AS arr UNION ALL
+        SELECT 'World', [3,4,5] UNION ALL
+        SELECT 'Goodbye', []""")
+    .select('s', 'arr')
+    .leftArrayJoin('arr').s)
+
+      row  s        arr
+    -----  -----  -----
+        1  Hello      1
+        2  Hello      2
+        3  World      3
+        4  World      4
+        5  World      5  
+        6  Goodbye    0
+
+    (6 rows)
+    ```
+
 ### *where(\*col_filters)*, *filter(\*col_filters)*
 
 * Parameters:

@@ -297,7 +297,8 @@ class SelectQueryDataFrame(VulknDataFrame,
             'having': None,
             'limit': None,
             'params': None,
-            'arrayJoin': '_array_join'
+            'arrayJoin': '_array_join',
+            'leftArrayJoin': '_left_array_join'
         }
 
         if attrname in attrs.keys():
@@ -376,8 +377,11 @@ class SelectQueryDataFrame(VulknDataFrame,
                 q = '{} FROM ({})'.format(q, self._table[0]._get_query())
             else:
                 q = '{} FROM {}'.format(q, ', '.join(map(str, self._table)))
-        if self._array_join:
-            q = '{} ARRAY JOIN {}'.format(q, ', '.join(map(str, self._array_join)))
+        if self._array_join or self._left_array_join:
+            if self._array_join:
+                q = '{} ARRAY JOIN {}'.format(q, ', '.join(map(str, self._array_join)))
+            else:
+                q = '{} LEFT ARRAY JOIN {}'.format(q, ', '.join(map(str, self._left_array_join)))
         if self._where:
             q = '{} WHERE {}'.format(q, ' AND '.join(map(str, self._where)))
         if self._prewhere:
