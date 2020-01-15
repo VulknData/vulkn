@@ -228,10 +228,11 @@ See ClickHouse reference - [PREWHERE Clause](https://clickhouse.yandex/docs/en/q
     df = v.table('example').select('*').preWhere().s
     ```
 
-### *groupBy(\*cols)*
+### *groupBy(\*cols [, with_totals=False])*
 
 * Parameters:
-    * ```cols: list```- List of columns as str, column literal, column expression or datatype/variable or function
+    * ```cols: list``` - List of columns as str, column literal, column expression or datatype/variable or function
+    * ```with_totals: bool``` - Include additional whole of group aggregate row (default False)
 * Returns: ```vulkn.dataframe.SelectQueryDataFrame```
 ---
 
@@ -259,12 +260,24 @@ The following are equivalent:
     ```python
     v.table('system.tables').select('database',funcs.agg.count()).groupBy('database').s
 
-    row  database      count()
+      row    database    count()
     -----  ----------  ---------
         1  system             35
         2  vulkn               1
 
     (2 rows)
+
+    (v.table('system.tables')
+        .select('database',funcs.agg.count())
+        .groupBy('database', with_totals=True).s)
+
+      row    database    count()
+    -----  ----------  ---------
+        1  system             35
+        2  vulkn               1
+        3  nan                36
+
+    (3 rows)
     ```
 
 ### *having(\*col_filters)*

@@ -271,6 +271,7 @@ class SelectQueryDataFrame(VulknDataFrame,
         self._prewhere = None
         self._where = None
         self._groupby = None
+        self._groupby_with_totals = False
         self._orderby = None
         self._having = None
         self._limit = None
@@ -290,7 +291,6 @@ class SelectQueryDataFrame(VulknDataFrame,
             'preWhere': None,
             'where': None,
             'filter': '_where',
-            'groupBy': None,
             'orderBy': None,
             'sort': '_orderby',
             'having': None,
@@ -330,6 +330,11 @@ class SelectQueryDataFrame(VulknDataFrame,
 
     def limitBy(self, limit, by):
         return copy_set(self, '_limitby', limit, by)
+
+    def groupBy(self, *cols, with_totals=False):
+        r = copy_set(self, '_groupby', *cols)
+        r._groupby_with_totals = with_totals
+        return r
 
     def vectorizeBy(self, key, sort, attributes=None):
         return copy_set(self, '_vectorizeby', key, attributes, sort)
@@ -385,6 +390,8 @@ class SelectQueryDataFrame(VulknDataFrame,
                 q = '{} VECTORIZE BY ({}, {})'.format(q, self._vectorizeby[0], self._vectorizeby[2])
         if self._groupby:
             q = '{} GROUP BY {}'.format(q, ', '.join(self._groupby))
+            if self._groupby_with_totals:
+                q = f'{q} WITH TOTALS'
             if self._having:
                 q = '{} HAVING {}'.format(q, ', '.join(self._having))
         if self._orderby:
