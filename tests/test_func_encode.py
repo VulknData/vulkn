@@ -5,12 +5,12 @@
 
 
 from fixtures import v
-from vulkn.dataframe import WriteMode
+from vulkn.datatable import WriteMode
 from vulkn.types import *
 import vulkn.funcs.encode as encode
 
 
-def test_dataframe_select_str_expression(v):
+def test_datatable_select_str_expression(v):
     df = v.select(c(encode.hex(String('123'))).alias('foo'))
     assert df.exec().to_records() == [{'foo':313233}]
 

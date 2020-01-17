@@ -50,13 +50,13 @@ nav:
       - Aggregate functions: todo.md
       - Extensions:
         - Vector functions: todo.md
-  - DataFrames:
-    - Overview: dataframes/overview.md
-    - Reference: dataframes/reference.md
-    - Joins: dataframes/joins.md
-    - Query Execution, Parameters and Caching: dataframes/execution.md
-    - Working with results: dataframes/recordset.md
-    - Creating tables: dataframes/creating.md
+  - DataTables:
+    - Overview: datatables/overview.md
+    - Reference: datatables/reference.md
+    - Joins: datatables/joins.md
+    - Query Execution, Parameters and Caching: datatables/execution.md
+    - Working with results: datatables/recordset.md
+    - Creating tables: datatables/creating.md
   - Importing Data: loading.md
   - The Vulkn CLI & Workspaces: workspaces.md
   - DataOps Extensions:

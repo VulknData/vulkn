@@ -48,7 +48,7 @@ v.select(s.typename().alias('stripped string'), l.typename().alias('length')).s
 ```
 
 You can view the generated SQL at any time either by printing the individual variable using the print 
-statement or using the ```.show_sql()``` method of a DataFrame:
+statement or using the ```.show_sql()``` method of a DataTable:
 
 ```python
 v.select(s.typename().alias('stripped string'), l.typename().alias('length')).show_sql()
@@ -96,9 +96,9 @@ DateTime | Date | ['0000-00-00', '2106-02-07'] | Date | vD | ```x = Date('2019-0
 DateTime | DateTime | ['0000-00-00 00:00:00', '2106-02-07 17:28:15'] | DateTime | vDT, vDT32 | ```x = DateTime('2106-02-07 17:28:15')```
 Array | Array | - | Array | vA | ```x = Array([1,2,3])```
 
-## Variables and DataFrames
+## Variables and DataTables
 
-Most methods within a DataFrame allow for any combination of typed variables, column names (strings), 
+Most methods within a DataTable allow for any combination of typed variables, column names (strings), 
 column expressions (strings) or column literals.
 
 ### Column Names

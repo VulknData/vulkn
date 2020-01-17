@@ -3,7 +3,7 @@ data from a ClickHouse result to a Python friendly format.
 
 ## *show, s*
 
-* Description: Provides a pretty print SQL table view of the DataFrame result.
+* Description: Provides a pretty print SQL table view of the DataTable result.
 * Returns: ```str```
 * Example:
     ```python
@@ -13,7 +13,7 @@ data from a ClickHouse result to a Python friendly format.
 
 ## *show_pandas(num_rows=50)*
 
-* Description: Provides a Pandas DataFrame table view of the DataFrame result.
+* Description: Provides a Pandas DataTable table view of the DataTable result.
 * Returns: ```str```
 * Example:
     ```python
@@ -29,7 +29,7 @@ data from a ClickHouse result to a Python friendly format.
 
 ## *len()*
 
-* Description: Returns the length of the DataFrame result.
+* Description: Returns the length of the DataTable result.
 * Returns: ```int```
 * Example:
     ```python
@@ -40,7 +40,7 @@ data from a ClickHouse result to a Python friendly format.
 
 ## *columns*
 
-* Description: Returns a list of columns in the DataFrame result.
+* Description: Returns a list of columns in the DataTable result.
 * Returns: ```list(str)```
 * Example:
     ```python
@@ -54,7 +54,7 @@ data from a ClickHouse result to a Python friendly format.
 
 ## *chtypes*
 
-* Description: Returns a list of ClickHouse types for the DataFrame result.
+* Description: Returns a list of ClickHouse types for the DataTable result.
 * Returns: ```list(str)```
 * Example:
     ```python
@@ -66,7 +66,7 @@ data from a ClickHouse result to a Python friendly format.
 
 ## *pytypes*
 
-* Description: Returns a list of Python types for the DataFrame result.
+* Description: Returns a list of Python types for the DataTable result.
 * Returns: ```list(str)```
 * Example:
     ```python
@@ -79,7 +79,7 @@ data from a ClickHouse result to a Python friendly format.
 
 ## *pdtypes*
 
-* Description: Returns a list of Pandas types for the DataFrame result.
+* Description: Returns a list of Pandas types for the DataTable result.
 * Returns: ```list(str)```
 * Example:
     ```python
@@ -103,8 +103,8 @@ data from a ClickHouse result to a Python friendly format.
 
 ## *to_pandas, p*
 
-* Description: Returns the result as a Pandas DataFrame.
-* Returns: ```Pandas DataFrame```
+* Description: Returns the result as a Pandas DataTable.
+* Returns: ```Pandas DataTable```
 * Example:
     ```python
     v.table('system.tables').all().head(3).select('database','name').exec().p

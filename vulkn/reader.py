@@ -16,7 +16,7 @@ import vulkn
 from vulkn.clickhouse import sqlformat
 from vulkn.formats.csv import CSV
 from vulkn.storages.posix import PosixStorage
-from vulkn.dataframe import BaseTableDataFrame
+from vulkn.datatable import BaseTableDataTable
 from vulkn.utils import timer
 
 
@@ -95,7 +95,7 @@ class DataManager:
             # TODO: Next release. Write without cat
             self._format.read(PosixStorage(uri), database, table)
 
-        return BaseTableDataFrame(ctx, database, table).select('*')
+        return BaseTableDataTable(ctx, database, table).select('*')
         
 
 def snake_case(name):

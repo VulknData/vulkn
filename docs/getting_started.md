@@ -127,7 +127,7 @@ data = v.table.fromVector(
     replace=True)
 ```
 
-The ```fromVector()``` call returns a ```DataFrame```. This is a standard relational 'table' (or query) similar to DataFrames found within other data projects. Now we can execute aggregations and queries, including joins and subqueries with other DataFrames against this object.
+The ```fromVector()``` call returns a ```DataTable```. This is a standard relational 'table' (or query) similar to DataTables found within other data projects. Now we can execute aggregations and queries, including joins and subqueries with other DataTables against this object.
 
 ```python
 >>> data.count().show()
@@ -170,5 +170,5 @@ You can also issue standard SQL queries against the table.
 
 ## Where to next?
 
-Now that you've created a few vectors, a data frame and executed some queries it's time to explore other topics such as ASOF joins, SQL extensions and loading data.
+Now that you've created a few vectors, a DataTable and executed some queries it's time to explore other topics such as ASOF joins, SQL extensions and loading data.
 

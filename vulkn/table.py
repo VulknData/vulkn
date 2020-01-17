@@ -7,7 +7,7 @@
 
 
 import vulkn.engines
-from vulkn.dataframe import BaseTableDataFrame
+from vulkn.datatable import BaseTableDataTable
 from vulkn.utils import timer
 
 
@@ -22,7 +22,7 @@ class Table:
                 table = database
                 database = None
             database = database or ctx._database
-        return BaseTableDataFrame(ctx, database, table)
+        return BaseTableDataTable(ctx, database, table)
 
     @classmethod
     @timer
@@ -41,7 +41,7 @@ class Table:
         ddl = Table.DDL(database, table, columns, engine, buffer_profile)
         for ddl_query in ddl:
             ctx._conn.execute(ddl_query)
-        return BaseTableDataFrame(ctx, database, table)
+        return BaseTableDataTable(ctx, database, table)
 
     @staticmethod
     def column_list(columns):

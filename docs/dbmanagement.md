@@ -394,7 +394,7 @@ CRUD operations to partition management and data profiling.
 * Parameters
     * ```database``` - the database to create the table in
     * ```view``` - the view name
-    * ```query``` - the source query for the view - can be a DataFrame
+    * ```query``` - the source query for the view - can be a DataTable
     * ```exists_ok``` - don't error if the table already exists
 * Returns
     * ```bool```

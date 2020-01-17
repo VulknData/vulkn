@@ -3,7 +3,7 @@
 * Parameters
     * ```chunkkey: tuple``` - the key or composite key to chunk on (using cityHash64)
     * ```chunksize: int``` - size of processing splits, generally no more than the number of CPU cores.
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 ---
 
 ```CHUNK BY``` is a Vulkn extension that addresses some performance bottlenecks in ClickHouse in

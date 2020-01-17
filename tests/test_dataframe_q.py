@@ -5,7 +5,7 @@
 
 
 from fixtures import v
-from vulkn.dataframe import WriteMode
+from vulkn.datatable import WriteMode
 
 
 def test_str_format(v):
@@ -59,10 +59,10 @@ def test_q_show_sql(v):
     assert v.q(r).show_sql() == r
 
 def test_q_cache_query(v):
-    import vulkn.dataframe
+    import vulkn.datatable
     r = [{'number': n} for n in list(range(10))]
     df = v.q('select number from numbers(10)').cache()
-    assert isinstance(df, vulkn.dataframe.SelectQueryDataFrame)
+    assert isinstance(df, vulkn.datatable.SelectQueryDataFrame)
     assert df.show_sql().startswith('SELECT * FROM vulkn.session_')
     assert df.e().to_records() == r
 

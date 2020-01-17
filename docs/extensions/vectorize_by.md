@@ -4,7 +4,7 @@
     - ```key``` - key to group vector columns by.
     - ```non-key-columns``` - Optional. A list of additional columns that are neither key, sort or vector columns.
     - ```sort``` - column to sort on within each key group.
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 ---
 
 ```VECTORIZE BY``` is a Vulkn extension to ClickHouse SQL. It operates in a manner similar to a 
@@ -91,7 +91,7 @@ v.q("""
 
 Note that there are no guarantees that the result will be ordered by key, only the values within 
 each key vector will be ordered (by timestamp). To return values ordered by key you can wrap the 
-call in an additional DataFrame operation:
+call in an additional DataTable operation:
 
 ```python
 ((df.select('key', 'timestamp', 'metric',

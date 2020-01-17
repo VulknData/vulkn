@@ -32,7 +32,7 @@ Vulkn itself does very little - it aims to expose the true power of ClickHouse t
 
 - Python client interfaces for ClickHouse
 * Python API for DBMS management
-* Python DataFrame interface with Pandas integration
+* Python DataTable interface with Pandas integration
 * Python datatype bindings including Python operators, arrays, dictionaries and functions
 * Reader interface for loading external data with type inference
 * Folios and Workspaces - re-usable dynamic and static ClickHouse environments
