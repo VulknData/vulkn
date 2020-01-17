@@ -7,13 +7,13 @@ ClickHouse reference - https://clickhouse.yandex/docs/en/query_language/system/
 
 ---
 
-## *v.sys.reloadDicts()*
+## *v.sys.reload_dicts()*
 
 Reload all currently LOADED dictionaries.
 
 ---
 
-## *v.sys.reloadDict(dictionary)*
+## *v.sys.reload_dict(dictionary)*
 
 Reload or load a specific dictionary.
 
@@ -22,25 +22,25 @@ Reload or load a specific dictionary.
 
 ---
 
-## *v.sys.dropDNSCache()*
+## *v.sys.drop_dns_cache()*
 
 Reset ClickHouse's internal DNS cache.
 
 ---
 
-## *v.sys.dropMarkCache()*
+## *v.sys.drop_mark_cache()*
 
 Reset the mark cache (useful for performance testing).
 
 ---
 
-## *v.sys.flushLogs()*
+## *v.sys.flush_logs()*
 
 Flush logs to the system tables.
 
 ---
 
-## *v.sys.reloadConfig()*
+## *v.sys.reload_config()*
 
 Reload the ClickHouse configuration.
 
@@ -58,7 +58,7 @@ Force kill the database instance (and your Vulkn session).
 
 ---
 
-## *v.sys.stopDistSends(database, table)*
+## *v.sys.stop_dist_sends(database, table)*
 
 Disable background data distribution for the specified table.
 
@@ -68,7 +68,7 @@ Disable background data distribution for the specified table.
 
 ---
 
-## *v.sys.flushDist(database, table)*
+## *v.sys.flush_dist(database, table)*
 
 Flush all data to the cluster nodes synchronously.
 
@@ -78,7 +78,7 @@ Flush all data to the cluster nodes synchronously.
 
 ---
 
-## *v.sys.startDistSends(database, table)*
+## *v.sys.start_dist_sends(database, table)*
 
 Restart background data distribution for the specified table.
 
@@ -88,7 +88,7 @@ Restart background data distribution for the specified table.
 
 ---
 
-## *v.sys.stopMerges(database, table)*
+## *v.sys.stop_merges(database, table)*
 
 Halt merge operations on the specified table.
 
@@ -98,7 +98,7 @@ Halt merge operations on the specified table.
 
 ---
 
-## *v.sys.startMerges(database, table)*
+## *v.sys.start_merges(database, table)*
 
 Start/restart merge operations on the specified table.
 

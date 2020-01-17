@@ -333,22 +333,22 @@ class VulknSystemManager:
         self._ctx = ctx
         self.exec = self._ctx.exec
 
-    def reloadDicts(self):
+    def reload_dicts(self):
         return self.exec('SYSTEM RELOAD DICTIONARIES')
 
-    def reloadDict(self, dictionary):
+    def reload_dict(self, dictionary):
         return self.exec(f'SYSTEM RELOAD DICTIONARY {dictionary}')
 
-    def dropDNSCache(self):
+    def drop_dns_cache(self):
         return self.exec('SYSTEM DROP DNS CACHE')
 
-    def dropMarkCache(self):
+    def drop_mark_cache(self):
         return self.exec('SYSTEM DROP MARK CACHE')
 
-    def flushLogs(self):
+    def flush_logs(self):
         return self.exec('SYSTEM FLUSH LOGS')
 
-    def reloadConfig(self):
+    def reload_config(self):
         return self.exec('SYSTEM RELOAD CONFIG')
 
     def shutdown(self):
@@ -357,17 +357,17 @@ class VulknSystemManager:
     def kill(self):
         return self.exec('SYSTEM KILL')
 
-    def stopDistSends(self, database, table):
+    def stop_dist_sends(self, database, table):
         return self.exec(f'SYSTEM STOP DISTRIBUTED SENDS {database}.{table}')
 
-    def flushDist(self, database, table):
-        return self.exec(f'SYSTEM FLUSH DISTRIBUTED {database}.{table}')
+    def flush_dist(self, database, table):
+        return self.exec(f'SYSTEM FLUSH {database}.{table}')
 
-    def startDistSends(self, database, table):
+    def start_dist_sends(self, database, table):
         return self.exec(f'SYSTEM START DISTRIBUTED SENDS {database}.{table}')
 
-    def stopMerges(self, database, table):
+    def stop_merges(self, database, table):
         return self.exec(f'SYSTEM STOP MERGES {database}.{table}')
 
-    def startMerges(self, database, table):
+    def start_merges(self, database, table):
         return self.exec(f'SYSTEM START MERGES {database}.{table}')
