@@ -47,6 +47,7 @@ parser.add_argument('--password', metavar='PASSWORD', default='')
 parser.add_argument('--port', metavar='PORT', default='9000')
 parser.add_argument('--log-level', metavar='LOGLEVEL', default='INFO')
 parser.add_argument('--timing', action='store_true')
+parser.add_argument('--client', metavar='CLIENT', default='native')
 
 args = parser.parse_args()
 
