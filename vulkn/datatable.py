@@ -248,7 +248,7 @@ class QueryStringDataTable(VulknDataTable, QueryExecutorMixin, ShowSQLMixin, Cac
 
     def __getattr__(self, attrname):
         attrs = [
-            'limit','where','filter','limitby','head','first','distinct','orderby','sort','prewhere']
+            'limit','where','filter','limit_by','head','first','distinct','order_by','sort','prewhere']
         this = SelectQueryDataTable(self._ctx, '({})'.format(self._get_query()))
         if attrname.lower() in attrs:
             return getattr(this.select('*'), attrname)
@@ -270,35 +270,34 @@ class SelectQueryDataTable(VulknDataTable,
         self._table = (source,) if source is not None else None
         self._prewhere = None
         self._where = None
-        self._groupby = None
-        self._groupby_with_totals = False
-        self._orderby = None
+        self._group_by = None
+        self._group_by_with_totals = False
+        self._order_by = None
         self._having = None
         self._limit = None
-        self._limitby = None
-        self._vectorizeby = None
+        self._limit_by = None
+        self._vectorize_by = None
         self._join = None
         self._with_ = None
         self._params = None
         self._array_join = None
+        self._left_array_join = None
 
     def __getattr__(self, attrname):
         attrs = {
             'with_': None,
-            'distinct': None, 
-            #'table': None,
-            'From': '_table',
+            'distinct': None,
             'from_': '_table',
-            'preWhere': None,
+            'prewhere': None,
             'where': None,
             'filter': '_where',
-            'orderBy': None,
-            'sort': '_orderby',
+            'order_by': None,
+            'sort': '_order_by',
             'having': None,
             'limit': None,
             'params': None,
-            'arrayJoin': '_array_join',
-            'leftArrayJoin': '_left_array_join'
+            'array_join': None,
+            'left_array_join': None
         }
 
         if attrname in attrs.keys():
@@ -331,16 +330,16 @@ class SelectQueryDataTable(VulknDataTable,
     def head(self, rows=1):
         return copy_set(self, '_limit', rows)
 
-    def limitBy(self, limit, by):
-        return copy_set(self, '_limitby', limit, by)
+    def limit_by(self, limit, by):
+        return copy_set(self, '_limit_by', limit, by)
 
-    def groupBy(self, *cols, with_totals=False):
-        r = copy_set(self, '_groupby', *cols)
-        r._groupby_with_totals = with_totals
+    def group_by(self, *cols, with_totals=False):
+        r = copy_set(self, '_group_by', *cols)
+        r._group_by_with_totals = with_totals
         return r
 
-    def vectorizeBy(self, key, sort, attributes=None):
-        return copy_set(self, '_vectorizeby', key, attributes, sort)
+    def vectorize_by(self, key, sort, attributes=None):
+        return copy_set(self, '_vectorize_by', key, attributes, sort)
 
     def join(self, jointype, right, keys=None, strictness=JoinStrictness.All, global_mode=False):
         return JoinDataTable(self._ctx, jointype, self, right, keys, strictness, global_mode)
@@ -391,21 +390,21 @@ class SelectQueryDataTable(VulknDataTable,
             q = '{} WHERE {}'.format(q, ' AND '.join(map(str, self._where)))
         if self._prewhere:
             q = '{} PREWHERE {}'.format(q, ' AND '.join(map(str, self._prewhere)))
-        if self._vectorizeby:
-            if self._vectorizeby[1]:
-                q = '{} VECTORIZE BY ({}, {}, {})'.format(q, *self._vectorizeby)
+        if self._vectorize_by:
+            if self._vectorize_by[1]:
+                q = '{} VECTORIZE BY ({}, {}, {})'.format(q, *self._vectorize_by)
             else:
-                q = '{} VECTORIZE BY ({}, {})'.format(q, self._vectorizeby[0], self._vectorizeby[2])
-        if self._groupby:
-            q = '{} GROUP BY {}'.format(q, ', '.join(self._groupby))
-            if self._groupby_with_totals:
+                q = '{} VECTORIZE BY ({}, {})'.format(q, self._vectorize_by[0], self._vectorize_by[2])
+        if self._group_by:
+            q = '{} GROUP BY {}'.format(q, ', '.join(self._group_by))
+            if self._group_by_with_totals:
                 q = f'{q} WITH TOTALS'
             if self._having:
                 q = '{} HAVING {}'.format(q, ', '.join(self._having))
-        if self._orderby:
-            q = '{} ORDER BY {}'.format(q, ', '.join(self._orderby))
-        if self._limitby:
-            q = '{} LIMIT {} BY {}'.format(q, self._limitby[0], ', '.join(self._limitby[1]))
+        if self._order_by:
+            q = '{} ORDER BY {}'.format(q, ', '.join(self._order_by))
+        if self._limit_by:
+            q = '{} LIMIT {} BY {}'.format(q, self._limit_by[0], ', '.join(self._limit_by[1]))
         if self._limit:
             q = '{} LIMIT {}'.format(q, self._limit[0])
             if len(self._limit) == 2:

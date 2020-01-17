@@ -25,12 +25,12 @@ SelectQueryDataTable clause | Description | Example
 -- | -- | --
 limit | Limits the number of results by the specified number | ```v.q('SELECT * FROM system.tables').limit(1).s``` |
 where, filter | Applies the specified filter to the DataTable | ```v.q('SELECT * FROM system.tables').where("database = 'default'").s``` |
-limitBy | Limits the results by the specified number by the specified key | ```v.q('SELECT * FROM system.tables').limitBy(1, ('database',)).s``` |
+limit_by | Limits the results by the specified number by the specified key | ```v.q('SELECT * FROM system.tables').limit_by(1, ('database',)).s``` |
 first | Returns the first value found within the DataTable | ```v.q('SELECT * FROM system.tables').first().s``` |
 head | Returns the Nth first values within the DataTable | ```v.q('SELECT * FROM system.tables').head(2).s``` |
 distinct | Returns only the unique values/rows | ```v.q('SELECT database FROM system.tables').distinct().s``` |
-orderby, sort | Sorts the specified DataTable by the specified key(s) | ```v.q('SELECT database FROM system.tables').distinct().orderBy('database').s``` |
-prewhere | Applies column filtering prior to the where clause | ```v.q('SELECT * FROM default.mergetree').preWhere('is_valid = 1').s``` |
+order_by, sort | Sorts the specified DataTable by the specified key(s) | ```v.q('SELECT database FROM system.tables').distinct().order_by('database').s``` |
+prewhere | Applies column filtering prior to the where clause | ```v.q('SELECT * FROM default.mergetree').prewhere('is_valid = 1').s``` |
 
 ---
 
@@ -172,7 +172,7 @@ See ClickHouse reference - [DISTINCT Clause](https://clickhouse.yandex/docs/en/q
     (1 row)
     ```
 
-### *arrayJoin(\*array_expressions)*
+### *array_join(\*array_expressions)*
 
 * Returns: ```vulkn.datatable.SelectQueryDataTable```
 
@@ -200,7 +200,7 @@ See ClickHouse reference - [ARRAY JOIN Clause](https://clickhouse.yandex/docs/en
     (v.numbers(10)
         .select(funcs.agg.groupArray(c('number')).alias('n'))
         .select('k', 'n')
-        .arrayJoin(c('n').alias('k')).s)
+        .array_join(c('n').alias('k')).s)
 
       row    k  n
     -----  ---  ---------------------
@@ -218,7 +218,7 @@ See ClickHouse reference - [ARRAY JOIN Clause](https://clickhouse.yandex/docs/en
     (10 rows)
     ```
 
-### *leftArrayJoin(\*array_expressions)*
+### *left_array_join(\*array_expressions)*
 
 * Returns: ```vulkn.datatable.SelectQueryDataTable```
 
@@ -243,13 +243,13 @@ See ClickHouse reference - [ARRAY JOIN Clause](https://clickhouse.yandex/docs/en
     ```
     **DataTable**
     ```python
-    # arrayJoin returns only those rows where their array lengths are > 0 (as per an INNER JOIN)
+    # array_join returns only those rows where their array lengths are > 0 (as per an INNER JOIN)
     (v.q("""
         SELECT 'Hello' AS s, [1,2] AS arr UNION ALL
         SELECT 'World', [3,4,5] UNION ALL
         SELECT 'Goodbye', []""")
     .select('s', 'arr')
-    .arrayJoin('arr').s)
+    .array_join('arr').s)
 
       row  s        arr
     -----  -----  -----
@@ -261,13 +261,13 @@ See ClickHouse reference - [ARRAY JOIN Clause](https://clickhouse.yandex/docs/en
 
     (5 rows)
 
-    # leftArrayJoin returns all rows, including those with zero length arrays (as per LEFT JOIN)
+    # left_array_join returns all rows, including those with zero length arrays (as per LEFT JOIN)
     (v.q("""
         SELECT 'Hello' AS s, [1,2] AS arr UNION ALL
         SELECT 'World', [3,4,5] UNION ALL
         SELECT 'Goodbye', []""")
     .select('s', 'arr')
-    .leftArrayJoin('arr').s)
+    .left_array_join('arr').s)
 
       row  s        arr
     -----  -----  -----
@@ -322,7 +322,7 @@ See ClickHouse reference - [WHERE Clause](https://clickhouse.yandex/docs/en/quer
     (1 row)
     ```
 
-### *preWhere(\*col_filters)*
+### *prewhere(\*col_filters)*
 
 * Parameters:
     * ```col_filters: list```- List of column filters as str, column literal, column expression or datatype/variable or function
@@ -334,10 +334,10 @@ See ClickHouse reference - [PREWHERE Clause](https://clickhouse.yandex/docs/en/q
 !!! note "Example"
     **DataTable**
     ```python
-    df = v.table('example').select('*').preWhere().s
+    df = v.table('example').select('*').prewhere().s
     ```
 
-### *groupBy(\*cols [, with_totals=False])*
+### *group_by(\*cols [, with_totals=False])*
 
 * Parameters:
     * ```cols: list``` - List of columns as str, column literal, column expression or datatype/variable or function
@@ -345,7 +345,7 @@ See ClickHouse reference - [PREWHERE Clause](https://clickhouse.yandex/docs/en/q
 * Returns: ```vulkn.datatable.SelectQueryDataTable```
 ---
 
-groupBy operates exactly as per the SQL ```GROUP BY``` statement. The keys defined in the groupBy
+group_by operates exactly as per the SQL ```GROUP BY``` statement. The keys defined in the group_by
 clause specify a distinct tuple arrangement whilst other columns must be aggregated by some function.
 
 See ClickHouse reference - [GROUP BY Clause](https://clickhouse.yandex/docs/en/query_language/select/#select-group-by-clause)
@@ -367,7 +367,7 @@ The following are equivalent:
     ```
     **DataTable**
     ```python
-    v.table('system.tables').select('database',funcs.agg.count()).groupBy('database').s
+    v.table('system.tables').select('database',funcs.agg.count()).group_by('database').s
 
       row    database    count()
     -----  ----------  ---------
@@ -378,7 +378,7 @@ The following are equivalent:
 
     (v.table('system.tables')
         .select('database',funcs.agg.count())
-        .groupBy('database', with_totals=True).s)
+        .group_by('database', with_totals=True).s)
 
       row    database    count()
     -----  ----------  ---------
@@ -421,7 +421,7 @@ The following are equivalent:
     ```python
     df = (v.table('system.tables')
         .select('database', funcs.agg.count().alias('count'))
-        .groupBy('database')
+        .group_by('database')
         .having('count > 20'))
     df.show()
 
@@ -433,7 +433,7 @@ The following are equivalent:
     (2 rows)
     ```
 
-### *orderBy(\*cols)*, *sort(\*cols)*
+### *order_by(\*cols)*, *sort(\*cols)*
 
 * Parameters:
     * ```cols: list```- List of column filters as str, column literal, column expression or datatype/variable or function
@@ -463,7 +463,7 @@ The following are equivalent:
     **DataTable**
     ```python
     # Vulkn select DataTable
-    v.table('system.databases').select('name','engine','data_path').orderBy('name').limit(2).s
+    v.table('system.databases').select('name','engine','data_path').order_by('name').limit(2).s
 
     row  name     engine    data_path
     -----  -------  --------  ------------------------------------------------------------------------
@@ -510,7 +510,7 @@ The following are equivalent:
     (3 rows)
     ```
 
-### *limitBy(rows: int, cols: tuple)*
+### *limit_by(rows: int, cols: tuple)*
 
 * Parameters:<br/>
     * ```rows: int``` - number of rows to return for each key specified by ```cols```
@@ -537,7 +537,7 @@ The following are equivalent:
     ```
     **DataTable**
     ```python
-    df = v.table('system.tables').select('database','name').limitBy(3, ('database',)).s
+    df = v.table('system.tables').select('database','name').limit_by(3, ('database',)).s
     ```
 
 ### Special methods
@@ -584,7 +584,7 @@ The following are equivalent:
 
 The following are Vulkn core extensions not found within the ClickHouse SQL dialect.
 
-### *vectorizeBy(key, [non-key-columns, ..,] sort)*
+### *vectorize_by(key, [non-key-columns, ..,] sort)*
 
 * Parameters
     - ```key``` - key to group vector columns by.
@@ -609,7 +609,7 @@ timestamp = ArrayVector.rand(DateTime('2019-01-01 00:00:00'),DateTime('2019-01-0
 metric = ArrayVector.rand(1,8192,15).cache().alias('metric')
 
 df = v.table.fromVector('default.vector_example', (key, timestamp, metric))
-df.select('*').orderBy('key','timestamp').show()
+df.select('*').order_by('key','timestamp').show()
 
   row    key  timestamp              metric
 -----  -----  -------------------  --------
@@ -639,7 +639,7 @@ can be used to create sub-vectors of the timestamp and metric columns upon which
 ```python
 (df.select('key', 'timestamp', 'metric',
            funcs.vector.vectorDelta(c('metric')).alias('metric_delta'))
-.vectorizeBy('key','timestamp')).s
+.vectorize_by('key','timestamp')).s
 
   row    key  timestamp              metric    metric_delta
 -----  -----  -------------------  --------  --------------
@@ -682,8 +682,8 @@ call in an additional DataTable operation:
 ```python
 ((df.select('key', 'timestamp', 'metric',
             funcs.vector.vectorDelta(c('metric')).alias('metric_delta'))
-    .vectorizeBy('key','timestamp'))
-.select('*').orderBy('key','timestamp').s)
+    .vectorize_by('key','timestamp'))
+.select('*').order_by('key','timestamp').s)
 
   row    key  timestamp              metric    metric_delta
 -----  -----  -------------------  --------  --------------
@@ -707,7 +707,7 @@ call in an additional DataTable operation:
 
 ```
 
-### *chunkBy(chunkkey: tuple, chunksize: int)*
+### *chunk_by(chunkkey: tuple, chunksize: int)*
 
 * Parameters
     * ```chunkkey: tuple``` - the key or composite key to chunk on (using cityHash64)
@@ -727,7 +727,7 @@ ClickHouse to split the query into multiple chunks/keys and process these indepe
 Either of the following queries:
 
 ```python
-v.table('timeseries_devices').select('key',funcs.agg.histogram(10, bytes)).groupBy('key').chunkBy('key',2).s
+v.table('timeseries_devices').select('key',funcs.agg.histogram(10, bytes)).group_by('key').chunk_by('key',2).s
 v.q('select key, histogram(10)(bytes) from timeseries_devices group by key chunk by (key, 2)').s
 ```
 
