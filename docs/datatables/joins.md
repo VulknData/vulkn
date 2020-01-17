@@ -1,30 +1,30 @@
-Joins are implemented via the JoinDataFrame function. This function materializes the provided QueryString 
-and SelectQuery DataFrames and returns a single SelectQueryDataFrame. You can call the JoinDataFrame 
+Joins are implemented via the JoinDataTable function. This function materializes the provided QueryString 
+and SelectQuery DataTables and returns a single SelectQueryDataTable. You can call the JoinDataTable 
 directly however this approach is not recommended.
 
-## Calling JoinDataFrame directly
+## Calling JoinDataTable directly
 
-### *vulkn.dataframe.JoinDataFrame(ctx, jointype, left, right, keys=None, strictness=JoinStrictness.All, global_mode=False)*
+### *vulkn.datatable.JoinDataTable(ctx, jointype, left, right, keys=None, strictness=JoinStrictness.All, global_mode=False)*
 
 - **Parameters**
     - ```ctx``` - The Vulkn() context where the join query should occur.
     - ```jointype``` - JoinType.(Left | Right | LeftInner | RightInner | Inner | Join | LeftOuter | RightOuter | Full | FullOuter | Cross).
-    - ```left``` - DataFrame - the left DataFrame to join. 
-    - ```right``` - DataFrame - the right DataFrame to join.
+    - ```left``` - DataTable - the left DataTable to join. 
+    - ```right``` - DataTable - the right DataTable to join.
     - ```keys``` - tuple(keys, ...) - the keys to use in the join condition.
     - ```strictness``` - JoinStrictNess.(Any | All | AsOf | Default). Default - JoinStrictNess.All
     - ```global_mode``` - Boolean value indicating whether to use GLOBAL mode. Default - False.
 - **Returns**
-    - ```vulkn.dataframe.SelectQueryDataFrame```
+    - ```vulkn.datatable.SelectQueryDataTable```
 - **Examples**
         ```python
-        from vulkn.dataframe import JoinDataFrame, JoinType, JoinStrictness
+        from vulkn.datatable import JoinDataTable, JoinType, JoinStrictness
 
         v = Vulkn()
         l = v.table('system.databases').select('data_path',c('name').alias('database'))
         r = v.table('system.tables').select('database',c('name').alias('table_name'))
         
-        df = JoinDataFrame(v, JoinType.Left, l, r, ('database',), strictness=JoinStrictness.Any, global_mode=True)
+        df = JoinDataTable(v, JoinType.Left, l, r, ('database',), strictness=JoinStrictness.Any, global_mode=True)
         df.show_sql()
         """SELECT * FROM (
             SELECT data_path, name AS database FROM system.databases
@@ -33,18 +33,18 @@ directly however this approach is not recommended.
         ) USING (database);"""
         ```
 
-## DataFrame Join methods
+## DataTable Join methods
 
 ### *join(jointype, right, keys, strictness=JoinStrictNess.All, global_mode=False)*
 
 - **Parameters**
     - ```jointype``` - JoinType.(Left | Right | LeftInner | RightInner | Inner | Join | LeftOuter | RightOuter | Full | FullOuter | Cross).
-    - ```right``` - DataFrame - the right DataFrame to join on. 
+    - ```right``` - DataTable - the right DataTable to join on. 
     - ```keys``` - tuple(keys, ...) - the keys to use in the join condition.
     - ```strictness``` - JoinStrictNess.(Any | All | AsOf | Default). Default - JoinStrictNess.All
     - ```global_mode``` - Boolean value indicating whether to use GLOBAL mode. Default - False.
 - **Returns**
-    - ```vulkn.dataframe.SelectQueryDataFrame```
+    - ```vulkn.datatable.SelectQueryDataTable```
 - **Examples**
     * SQL
     ```sql
@@ -65,7 +65,7 @@ directly however this approach is not recommended.
         from system.databases as a
         global any left join system.tables as b on a.name = b.database""").s
     ```
-    * DataFrame
+    * DataTable
     ```python
     d = v.table('system.databases').select('data_path',c('name').alias('database'))
     t = v.table('system.tables').select('database',c('name').alias('table_name'))
@@ -75,12 +75,12 @@ directly however this approach is not recommended.
 ### *ej (equi-join) (right, keys, strictness=JoinStrictNess.All, global_mode=False)*
 
 - **Parameters**
-    - ```right``` - DataFrame - the right DataFrame to join on.
+    - ```right``` - DataTable - the right DataTable to join on.
     - ```keys``` - tuple(keys, ...) - the keys to use in the join condition.
     - ```strictness``` - JoinStrictNess.(Any | All | AsOf | Default). Default - JoinStrictNess.All
     - ```global_mode``` - Boolean value indicating whether to use GLOBAL mode. Default - False.
 - **Returns**
-    - ```vulkn.dataframe.SelectQueryDataFrame```
+    - ```vulkn.datatable.SelectQueryDataTable```
 - **Examples**
     * SQL
     ```sql
@@ -101,7 +101,7 @@ directly however this approach is not recommended.
         from system.databases as a
         join system.tables as b on a.name = b.database""").s
     ```
-    * DataFrame
+    * DataTable
     ```python
     d = v.table('system.databases').select('data_path',c('name').alias('database'))
     t = v.table('system.tables').select('database',c('name').alias('table_name'))
@@ -111,12 +111,12 @@ directly however this approach is not recommended.
 ### *rj (right-join) (left, keys, strictness=JoinStrictNess.All, global_mode=False)*
 
 - **Parameters**
-    - ```left``` - DataFrame - the left DataFrame to join on.
+    - ```left``` - DataTable - the left DataTable to join on.
     - ```keys``` - tuple(keys, ...) - the keys to use in the join condition.
     - ```strictness``` - JoinStrictNess.(Any | All | AsOf | Default). Default - JoinStrictNess.All
     - ```global_mode``` - Boolean value indicating whether to use GLOBAL mode. Default - False.
 - **Returns**
-    - ```vulkn.dataframe.SelectQueryDataFrame```
+    - ```vulkn.datatable.SelectQueryDataTable```
 - **Examples**
     * SQL
     ```sql
@@ -127,7 +127,7 @@ directly however this approach is not recommended.
     FROM system.databases AS a
     RIGHT JOIN system.tables AS b ON a.name = b.database
     ```
-    * DataFrame
+    * DataTable
     ```python
     d = v.table('system.databases').select('data_path',c('name').alias('database'))
     t = v.table('system.tables').select('database',c('name').alias('table_name'))
@@ -137,12 +137,12 @@ directly however this approach is not recommended.
 ### *lj (left-join) (right, keys, strictness=JoinStrictNess.All, global_mode=False)*
 
 - **Parameters**
-    - ```right``` - DataFrame - the right DataFrame to join on.
+    - ```right``` - DataTable - the right DataTable to join on.
     - ```keys``` - tuple(keys, ...) - the keys to use in the join condition.
     - ```strictness``` - JoinStrictNess.(Any | All | AsOf | Default). Default - JoinStrictNess.All
     - ```global_mode``` - Boolean value indicating whether to use GLOBAL mode. Default - False.
 - **Returns**
-    - ```vulkn.dataframe.SelectQueryDataFrame```
+    - ```vulkn.datatable.SelectQueryDataTable```
 - **Examples**
     * SQL
     ```sql
@@ -153,7 +153,7 @@ directly however this approach is not recommended.
     FROM system.databases AS a
     RIGHT JOIN system.tables AS b ON a.name = b.database
     ```
-    * DataFrame
+    * DataTable
     ```python
     d = v.table('system.databases').select('data_path',c('name').alias('database'))
     t = v.table('system.tables').select('database',c('name').alias('table_name'))
@@ -163,12 +163,12 @@ directly however this approach is not recommended.
 ### *fj (full-join) (right, keys, strictness=JoinStrictNess.All, global_mode=False)*
 
 - **Parameters**
-    - ```right``` - DataFrame - the right DataFrame to join on.
+    - ```right``` - DataTable - the right DataTable to join on.
     - ```keys``` - tuple(keys, ...) - the keys to use in the join condition.
     - ```strictness``` - JoinStrictNess.(Any | All | AsOf | Default). Default - JoinStrictNess.All
     - ```global_mode``` - Boolean value indicating whether to use GLOBAL mode. Default - False.
 - **Returns**
-    - ```vulkn.dataframe.SelectQueryDataFrame```
+    - ```vulkn.datatable.SelectQueryDataTable```
 - **Examples**
     * SQL
     ```sql
@@ -183,7 +183,7 @@ directly however this approach is not recommended.
     ```python
     v.q('select name from system.tables limit 3 by database').s
     ```
-    * DataFrame
+    * DataTable
     ```python
     d = v.table('system.databases').select('data_path',c('name').alias('database'))
     t = v.table('system.tables').select('database',c('name').alias('table_name'))
@@ -193,11 +193,11 @@ directly however this approach is not recommended.
 ### *aj (ASOF-join) (right, keys, global_mode=False)*
 
 - **Parameters**
-    - ```right``` - DataFrame - the right DataFrame to join on.
+    - ```right``` - DataTable - the right DataTable to join on.
     - ```keys``` - tuple(keys, ...) - the keys to use in the join condition.
     - ```global_mode``` - Boolean value indicating whether to use GLOBAL mode. Default - False.
 - **Returns**
-    - ```vulkn.dataframe.SelectQueryDataFrame```
+    - ```vulkn.datatable.SelectQueryDataTable```
 - **Examples**
     * SQL
     ```sql
@@ -207,7 +207,7 @@ directly however this approach is not recommended.
     ASOF JOIN (SELECT * FROM default.vector_example WHERE key = 2) AS b
     USING (key)
     ```
-    * DataFrame
+    * DataTable
     ```python
     key = ArrayVector.range(1,3).take(15).sort().cache().alias('key')
     timestamp = ArrayVector.rand(DateTime('2019-01-01 00:00:00'),DateTime('2019-01-01 23:59:59'),15).cast(DateTime).cache().alias('timestamp')
@@ -232,10 +232,10 @@ directly however this approach is not recommended.
 ### *cj (cross-join) (right, global_mode=False)*
 
 - **Parameters**
-    - ```right``` - DataFrame - the right DataFrame to join on.
+    - ```right``` - DataTable - the right DataTable to join on.
     - ```global_mode``` - Boolean value indicating whether to use GLOBAL mode. Default - False.
 - **Returns**
-    - ```vulkn.dataframe.SelectQueryDataFrame```
+    - ```vulkn.datatable.SelectQueryDataTable```
 - **Examples**
     * SQL
     ```sql
@@ -246,7 +246,7 @@ directly however this approach is not recommended.
     FROM system.databases AS a
     CROSS JOIN system.tables AS b
     ```
-    * DataFrame
+    * DataTable
     ```python
     d = v.table('system.databases').select('data_path',c('name').alias('database'))
     t = v.table('system.tables').select('database',c('name').alias('table_name'))
@@ -255,20 +255,20 @@ directly however this approach is not recommended.
 
 ## Join Functions
 
-The following functions can be used to join multiple DataFrames.
+The following functions can be used to join multiple DataTables.
 
-### *vulkn.dataframe.aj(dataframes, keys, global_mode)*
+### *vulkn.datatable.aj(datatables, keys, global_mode)*
 
 - **Parameters**
-    - ```dataframes``` - list - a list of dataframes to perform the ASOF join on.
+    - ```datatables``` - list - a list of datatables to perform the ASOF join on.
     - ```keys``` - tuple(keys, ...) - the keys to use in the join condition. The last value in the 
     tuple is assumed to be the time or integer dimension used for the ASOF join. Other values are assumed
     to be key columns.
     - ```global_mode``` - Boolean value indicating whether to use GLOBAL mode. Default - False.
 - **Returns**
-    - ```vulkn.dataframe.SelectQueryDataFrame```
+    - ```vulkn.datatable.SelectQueryDataTable```
 - **Examples**
-    * DataFrame
+    * DataTable
     ```python
     devices = []
     for i in range(0,5):
@@ -278,7 +278,7 @@ The following functions can be used to join multiple DataFrames.
             .where("key='device-{device:UInt64}'")
             .params({'device': i}).cache())
 
-    from vulkn.dataframe import aj
+    from vulkn.datatable import aj
 
     df = aj(devices, ('id', 'ts'))
     df.limit(30).s

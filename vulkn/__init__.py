@@ -12,7 +12,7 @@ import logging
 import vulkn.sql
 import vulkn.table
 import vulkn.reader
-import vulkn.dataframe
+import vulkn.datatable
 from vulkn.utils import singleton
 from vulkn.catalog import VulknCatalogViewer
 from vulkn.data import VulknDataStore
@@ -25,12 +25,12 @@ from vulkn.clickhouse.client.cli import ClickHouseCLIClient
 log = logging.getLogger()
 
 
-class VulknDataFramesMixIn:
+class VulknDataTablesMixIn:
     def q(self, query):
-        return vulkn.dataframe.QueryStringDataFrame(self, query)
+        return vulkn.datatable.QueryStringDataTable(self, query)
 
     def select(self, *cols):
-        return vulkn.dataframe.SelectQueryDataFrame(self).select(*cols)
+        return vulkn.datatable.SelectQueryDataTable(self).select(*cols)
 
     def s(self, *cols):
         r = self.select(*cols).exec().to_records()
@@ -40,32 +40,32 @@ class VulknDataFramesMixIn:
             return r
 
     def numbers(self, count, system=False, mt=False):
-        return vulkn.dataframe.NumbersDataFrame(self, count, system, mt)
+        return vulkn.datatable.NumbersDataTable(self, count, system, mt)
 
     def range(self, start, end, system=False, mt=False):
-        return vulkn.dataframe.RangeDataFrame(self, start, end, system, mt)
+        return vulkn.datatable.RangeDataTable(self, start, end, system, mt)
 
     def one(self):
-        return vulkn.dataframe.OneDataFrame(self)
+        return vulkn.datatable.OneDataTable(self)
 
     def random(self, count, start=0, end=18446744073709551615, system=False, mt=False):
-        return vulkn.dataframe.RandomDataFrame(self, count, start, end, system, mt)
+        return vulkn.datatable.RandomDataTable(self, count, start, end, system, mt)
 
     def randfloat(self, count, start=0, end=18446744073709551615, system=False, mt=False):
-        return vulkn.dataframe.RandomFloatDataFrame(self, count, start, end, system, mt)
+        return vulkn.datatable.RandomFloatDataTable(self, count, start, end, system, mt)
     
     def with_(self, *cols):
-        return vulkn.dataframe.SelectQueryDataFrame(self).with_(*cols)
+        return vulkn.datatable.SelectQueryDataTable(self).with_(*cols)
 
     def update(self, table):
-        return vulkn.dataframe.UpdateQueryDataFrame(self, table)
+        return vulkn.datatable.UpdateQueryDataTable(self, table)
 
     def delete(self, table):
-        return vulkn.dataframe.DeleteQueryDataFrame(self, table)
+        return vulkn.datatable.DeleteQueryDataTable(self, table)
 
 
 @singleton
-class Vulkn(VulknDataFramesMixIn, VulknClickHouseDatabaseMixIn):
+class Vulkn(VulknDataTablesMixIn, VulknClickHouseDatabaseMixIn):
     def __init__(self,
                  user='default',
                  password='',

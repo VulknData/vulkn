@@ -56,7 +56,7 @@ Available options are:
                 engine=engines.MergeTree())
         .load('file:///home/ironman/elements.csv', database='default', table='elements'))
     ```
-    The load operation returns a DataFrame object that can immediately be used for queries.
+    The load operation returns a DataTable object that can immediately be used for queries.
     ```python
     >>> df.count().s
 

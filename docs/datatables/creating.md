@@ -2,7 +2,7 @@
 
 Vulkn allows you to create and append to tables as you would any other data system. 
 
-Each DataFrame object supports creating new tables and appending to existing tables.
+Each DataTable object supports creating new tables and appending to existing tables.
 
 ---
 
@@ -12,15 +12,15 @@ Each DataFrame object supports creating new tables and appending to existing tab
     * ```database: str``` - the database to write the table to
     * ```table: str``` - the tablename to write to
     * ```engine: vulkn.engines.*``` - the engine configuration to use for the table (default None)
-    * ```mode: vulkn.dataframe.WriteMode``` - the strategy to use when writing the data - whether to 
+    * ```mode: vulkn.datatable.WriteMode``` - the strategy to use when writing the data - whether to 
     Create, Append or Replace the table (if it exists).
 ---
 
-Writes/creates or appends the DataFrame to a table with the specified engine.
+Writes/creates or appends the DataTable to a table with the specified engine.
 
 ### Available WriteModes
 
-Valid WriteModes (```vulkn.dataframe.WriteMode```) are:
+Valid WriteModes (```vulkn.datatable.WriteMode```) are:
 
 * ```WriteMode.Create``` - Create the table if it doesn't exist
 * ```WriteMode.Append``` - Append to the table if it does exist (will result in create otherwise)
@@ -48,7 +48,7 @@ SELECT count() FROM data.agg_events;
 
 ```python
 import vulkn.engines as engines
-from vulkn.dataframe import WriteMode
+from vulkn.datatable import WriteMode
 
 df = (v.table('data.events')
     .select('geo_id',
@@ -73,7 +73,7 @@ If we had more than a handful of geo_ids the SQL-only version becomes unfeasible
 
 ```python
 import vulkn.engines as engines
-from vulkn.dataframe import WriteMode
+from vulkn.datatable import WriteMode
 
 table_profile = engines.MergeTree(partition_by=('toDate(event_date)',),
                                   order_by=('geo_id','event_date',))

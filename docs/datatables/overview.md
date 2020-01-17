@@ -1,11 +1,11 @@
-# DataFrames
+# DataTables
 
-DataFrames are specialised container objects that can refer to either tables or queries including 
-queries comprised of other DataFrames or tables in the form of subselects and joins. Vulkn provides 
-a number of DataFrame entrypoints. All DataFrame variants are compatible and can be used in joins, 
+DataTables are specialised container objects that can refer to either tables or queries including 
+queries comprised of other DataTables or tables in the form of subselects and joins. Vulkn provides 
+a number of DataTable entrypoints. All DataTable variants are compatible and can be used in joins, 
 for creating cache tables or creating new tables, relations and vectors.
 
-By default DataFrames are executed 'lazily'. This means that they are only executed when a result is
+By default DataTables are executed 'lazily'. This means that they are only executed when a result is
 requested. Parameters and caching are also supported to enable re-use and acceleration.
 
 The following provides an overview of the available entrypoints. Please see the Reference section
@@ -59,7 +59,7 @@ Table function interface to system.one.
 
 ```python
 >>> v.one()
-<vulkn.dataframe.SelectQueryDataFrame object at 0x7f5ee84b2da0>
+<vulkn.datatable.SelectQueryDataTable object at 0x7f5ee84b2da0>
 >>> v.one().s
 
   row    dummy
@@ -81,7 +81,7 @@ functions numbers(), numbers_mt().
 
 ### range
 
-Variant on the numbers DataFrame that allows negative start/end positions.
+Variant on the numbers DataTable that allows negative start/end positions.
 
 ```python
 >>> v.range(-3,3).s
@@ -147,7 +147,7 @@ updates and deletes for non-key columns.
 ### data
 
 Data is a special dunder dictionary that automatically maps databases and tables under a dictionary-like 
-interface. Each database.table is mapped to a key/value pair with the values/object represented by a BaseTableDataFrame object.
+interface. Each database.table is mapped to a key/value pair with the values/object represented by a BaseTableDataTable object.
 
 #### Examples
 
@@ -161,14 +161,14 @@ interface. Each database.table is mapped to a key/value pair with the values/obj
  'system.collations']
 ```
 
-* Values as BaseTableDataFrames
+* Values as BaseTableDataTables
 ```python
 >>> pprint.pprint(list(v.data.values())[:5])
-[<vulkn.dataframe.BaseTableDataFrame object at 0x7f5ee84b2630>,
- <vulkn.dataframe.BaseTableDataFrame object at 0x7f5ee8456198>,
- <vulkn.dataframe.BaseTableDataFrame object at 0x7f5eb8b4f5f8>,
- <vulkn.dataframe.BaseTableDataFrame object at 0x7f5ee845d978>,
- <vulkn.dataframe.BaseTableDataFrame object at 0x7f5ee84b85f8>]
+[<vulkn.datatable.BaseTableDataTable object at 0x7f5ee84b2630>,
+ <vulkn.datatable.BaseTableDataTable object at 0x7f5ee8456198>,
+ <vulkn.datatable.BaseTableDataTable object at 0x7f5eb8b4f5f8>,
+ <vulkn.datatable.BaseTableDataTable object at 0x7f5ee845d978>,
+ <vulkn.datatable.BaseTableDataTable object at 0x7f5ee84b85f8>]
 ```
 
 * Using the data object in queries.
@@ -178,7 +178,7 @@ interface. Each database.table is mapped to a key/value pair with the values/obj
 [(44,)]
 ```
 
-* DataFrames can also be created from nested properties of the data dictionary.
+* DataTables can also be created from nested properties of the data dictionary.
 
 ```python
 >>> v.data.system.tables.count().s

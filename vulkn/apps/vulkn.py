@@ -21,7 +21,7 @@ from vulkn.workspaces import UserWorkSpaceManager, LocalWorkSpace
 from vulkn.funcs import and_, or_, not_, xor_, if_, multiIf, switch
 from vulkn.types import *
 from vulkn.utils import get_next_free_socket
-from vulkn.dataframe import WriteMode, JoinStrictness
+from vulkn.datatable import WriteMode, JoinStrictness
 from vulkn.config import VERSION
 
 

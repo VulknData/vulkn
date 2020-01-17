@@ -127,7 +127,7 @@ temperature = (ArrayVector.norm(80,10,12500000).join(ArrayVector.norm(95,5,12500
     .cache().alias('temperature'))
 bytes = ArrayVector.rand(1, 8192, 25000000).cache().alias('bytes')
 
-# Combine the ArrayVectors to create a table, returning a DataFrame
+# Combine the ArrayVectors to create a table, returning a DataTable
 
 data = v.table.fromVector('default.mydata', 
     (series_key, timestamp, temperature, bytes), engines.Memory(), replace=True)
@@ -157,11 +157,11 @@ v.q("""
     WHERE series_key = 'device-1'
     VECTORIZE BY (series_key, timestamp)""").limit(20).show()
 
-# You can also use the DataFrame interface to build up complex queries
+# You can also use the DataTable interface to build up complex queries
 
 v.table('default.mydata').select(funcs.agg.max(col('bytes')).alias('max_bytes')).s
 
-# Results can be returned as a 'pretty print' table (.s, .show()), list of dictionaries (a record) (.r, .to_records()) or a Pandas DataFrame (.p, .to_pandas())
+# Results can be returned as a 'pretty print' table (.s, .show()), list of dictionaries (a record) (.r, .to_records()) or a Pandas DataTable (.p, .to_pandas())
 
 v.table('default.mydata').all().limit(4).r
 
@@ -178,9 +178,9 @@ v.table('default.mydata').all().limit(4).r
 mydata = v.data['default.mydata']
 mydata
 
-# <vulkn.dataframe.BaseTableDataFrame object at 0x7f587af97908>
+# <vulkn.datatable.BaseTableDataTable object at 0x7f587af97908>
 
-# Inspect the DataFrame properties
+# Inspect the DataTable properties
 
 mydata.desc().s
 
@@ -193,7 +193,7 @@ row  name         type        default_type    default_expression    comment    c
 
 (4 rows)
 
-# Create Pandas DataFrames from a Vulkn query
+# Create Pandas DataTables from a Vulkn query
 
 mydata.all().limit(10).p
 
@@ -251,7 +251,7 @@ def extract_key(column, alias):
 def apply_cutoff(arg1, arg2, arg3):
     return funcs.if_(col(arg1) > arg2, arg3, arg2)
 
-# Python dataframes
+# Python datatables
 
 df = (v
     .table('default.mydata')
@@ -305,7 +305,7 @@ The following limitations apply to the 19.0.0 Proof Of Concept release and will 
 
 * Python Bindings
 
-    Python bindings for most functions and objects are available as well as a simple DataFrame interface.
+    Python bindings for most functions and objects are available as well as a simple DataTable interface.
 
     * Data Types
 
@@ -357,11 +357,11 @@ The following limitations apply to the 19.0.0 Proof Of Concept release and will 
 
         Note that the function interface will be redesigned in future releases however functionality / APIs will remain mostly unchanged.
 
-    * DataFrame interface
+    * DataTable interface
 
-        DataFrames mimic similar concepts found within Pandas, Apache Spark, Apache Flink and other such systems. They provide an object/functional interface to authoring re-usable transformations and code.
+        DataTables mimic similar concepts found within Pandas, Apache Spark, Apache Flink and other such systems. They provide an object/functional interface to authoring re-usable transformations and code.
 
-        Mixing DataFrames with sub-selects, JOINS and raw SQL (```v.q()```) are all supported.
+        Mixing DataTables with sub-selects, JOINS and raw SQL (```v.q()```) are all supported.
 
         Example:
 
@@ -377,9 +377,9 @@ The following limitations apply to the 19.0.0 Proof Of Concept release and will 
         df2 = df.select('count()')
         ```
 
-        Results can be returned as Pandas DataFrames, dictionaries, JSON or CSV. Basic type mappings with Python/Pandas is supported however nested and array types are returned as objects.
+        Results can be returned as Pandas DataTables, dictionaries, JSON or CSV. Basic type mappings with Python/Pandas is supported however nested and array types are returned as objects.
         
-        Support for nested and array types for Python and Pandas outputs will be available in a future release as will transparent external data joins / loading with Python objects and Pandas DataFrames.
+        Support for nested and array types for Python and Pandas outputs will be available in a future release as will transparent external data joins / loading with Python objects and Pandas DataTables.
 
 * Specialized Vector types
 

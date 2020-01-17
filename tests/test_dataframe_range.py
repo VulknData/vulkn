@@ -5,7 +5,7 @@
 
 
 from fixtures import v
-from vulkn.dataframe import WriteMode
+from vulkn.datatable import WriteMode
 
 
 def test_range_table_function(v):

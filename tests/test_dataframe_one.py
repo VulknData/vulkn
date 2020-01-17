@@ -5,9 +5,9 @@
 
 
 from fixtures import v
-from vulkn.dataframe import WriteMode
+from vulkn.datatable import WriteMode
 
 
-def test_dataframe_select_str_expression(v):
+def test_datatable_select_str_expression(v):
     df = v.one().select('*')
     assert df.exec().to_records() == [{'dummy':0}]

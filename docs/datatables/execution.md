@@ -1,6 +1,6 @@
 ## Working with parameters
 
-All DataFrames support parameters through standard ClickHouse parameterized queries embedded in the 
+All DataTables support parameters through standard ClickHouse parameterized queries embedded in the 
 query string, column expression or variable or data type. Python types are implicitly converted/formatted
 as required.
 
@@ -9,7 +9,7 @@ as required.
 >>> df2 = v.table('system.tables').select(col('{database:String}').alias('datname'), 'name').where('database = {database:String}')
 ```
 
-The underlying SQL created by the DataFrame can be viewed using show_sql method.
+The underlying SQL created by the DataTable can be viewed using show_sql method.
 
 ```python
 >>> df.show_sql()
@@ -29,7 +29,7 @@ You can pass the parameters as key/value pairs to the show_sql method:
 
 ## Query Execution
 
-Each DataFrame type supports an ```exec``` method that immediately executes the DataFrame. The ```exec```
+Each DataTable type supports an ```exec``` method that immediately executes the DataTable. The ```exec```
 method returns a RecordSet object containing the raw query result. ```exec``` can also accept any 
 parameters. This will be rendered into the final SQL before execution.
 
@@ -80,7 +80,7 @@ parameters. This will be rendered into the final SQL before execution.
 
     (1 row)
     ```
-    If no parameters are specified s can be called on the DataFrame object itself.
+    If no parameters are specified s can be called on the DataTable object itself.
     ```python
     df.s
     ```
@@ -88,7 +88,7 @@ parameters. This will be rendered into the final SQL before execution.
 
 ### *to_records()*, *r*
 
-* Description: Executes and returns the DataFrame/raw query result as a list of dictionary records. 
+* Description: Executes and returns the DataTable/raw query result as a list of dictionary records. 
 Note this proxies the to_records call through to the underlying RecordSet object.
 * Aliases: ```r```
 * Returns: list of dictionaries/records
@@ -108,10 +108,10 @@ Note this proxies the to_records call through to the underlying RecordSet object
 
 ### *to_pandas()*, *p*
 
-* Description: Executes and returns the DataFrame/raw query result as a Pandas DataFrame. 
+* Description: Executes and returns the DataTable/raw query result as a Pandas DataTable. 
 Note this proxies the to_records call through to the underlying RecordSet object.
 * Aliases: ```p```
-* Returns: Pandas DataFrame
+* Returns: Pandas DataTable
 * Example:
     ```python
     >>> df = (v.table('system.tables').select('database', 'name').where("database = 'system'").limit(3))
@@ -130,30 +130,30 @@ Note this proxies the to_records call through to the underlying RecordSet object
 
 ## Caching
 
-DataFrames can be cached using a call to ```cache```. Cache will create a temporary/Vulkn managed 
+DataTables can be cached using a call to ```cache```. Cache will create a temporary/Vulkn managed 
 object stored using the specified engine. To use parameters with cache you must use call ```params```
-before the ```cache``` call. Note that only SelectQueryDataFrames support parameterized caching.
+before the ```cache``` call. Note that only SelectQueryDataTables support parameterized caching.
 ---
 
 ### *params(\*\*params)*
 
 * Parameters
     * ```**params``` - a dictionary/**kwargs style key/value list of parameters
-* Description: Sets the parameters of the DataFrame for use by a call to ```cache()```
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+* Description: Sets the parameters of the DataTable for use by a call to ```cache()```
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 ---
 
 ### *cache(engine=None)*
 
-Executes the DataFrame/query and caches the result on the ClickHouse server. By limiting execution and 
+Executes the DataTable/query and caches the result on the ClickHouse server. By limiting execution and 
 storage/caching to ClickHouse users can very quickly analyze data and build comprehensive models. All
 cached data is automatically destroyed at the end of the Vulkn session.
 
 * Parameters:
     * ```engine=None``` - a valid ClickHouse engine object (see vulkn.engines). ```engines.Memory()``` 
     if not specified.
-* Description: Sets the parameters of the DataFrame for use by a call to ```cache()```
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+* Description: Sets the parameters of the DataTable for use by a call to ```cache()```
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 * Examples:
     ```python
     >>> vulkn.session.log.setLevel('SQL')

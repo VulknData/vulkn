@@ -125,9 +125,9 @@ class TypeBase(ColumnBaseMixIn):
  
     def _in(self, operator, right):
         from vulkn.types.integer import UInt8
-        from vulkn.dataframe import VulknDataFrame
+        from vulkn.datatable import VulknDataTable
         in_arg = None
-        if isinstance(right, VulknDataFrame):
+        if isinstance(right, VulknDataTable):
             in_arg = right.show_sql()[0:-1]
         if isinstance(right, list):
             if isinstance(right[0], str):

@@ -1,10 +1,10 @@
-# DataFrame Reference
+# DataTable Reference
 
 ## *q(query: str)*
 
 * Parameters:
     * ```query: str``` - a valid ClickHouse or Vulkn SQL string.
-* Returns: ```vulkn.dataframe.QueryStringDataFrame```
+* Returns: ```vulkn.datatable.QueryStringDataTable```
 * Examples
     ```python
     v.q('SELECT * FROM system.tables LIMIT 1').show()
@@ -15,28 +15,28 @@ The ```q``` method accepts an SQL query string and can be used to execute standa
 
 See ClickHouse reference - [SELECT Clause](https://clickhouse.yandex/docs/en/query_language/select/)
 
-### SelectQueryDataFrame Methods
+### SelectQueryDataTable Methods
 
-The q DataFrame also supports the following SelectQueryDataFrame methods returning a new SelectQueryDataFrame
-object. See the SelectQueryDataFrame methods in the select DataFrame section for further detail on
+The q DataTable also supports the following SelectQueryDataTable methods returning a new SelectQueryDataTable
+object. See the SelectQueryDataTable methods in the select DataTable section for further detail on
 parameters and usage.
 
-SelectQueryDataFrame clause | Description | Example
+SelectQueryDataTable clause | Description | Example
 -- | -- | --
 limit | Limits the number of results by the specified number | ```v.q('SELECT * FROM system.tables').limit(1).s``` |
-where, filter | Applies the specified filter to the DataFrame | ```v.q('SELECT * FROM system.tables').where("database = 'default'").s``` |
+where, filter | Applies the specified filter to the DataTable | ```v.q('SELECT * FROM system.tables').where("database = 'default'").s``` |
 limitBy | Limits the results by the specified number by the specified key | ```v.q('SELECT * FROM system.tables').limitBy(1, ('database',)).s``` |
-first | Returns the first value found within the DataFrame | ```v.q('SELECT * FROM system.tables').first().s``` |
-head | Returns the Nth first values within the DataFrame | ```v.q('SELECT * FROM system.tables').head(2).s``` |
+first | Returns the first value found within the DataTable | ```v.q('SELECT * FROM system.tables').first().s``` |
+head | Returns the Nth first values within the DataTable | ```v.q('SELECT * FROM system.tables').head(2).s``` |
 distinct | Returns only the unique values/rows | ```v.q('SELECT database FROM system.tables').distinct().s``` |
-orderby, sort | Sorts the specified DataFrame by the specified key(s) | ```v.q('SELECT database FROM system.tables').distinct().orderBy('database').s``` |
+orderby, sort | Sorts the specified DataTable by the specified key(s) | ```v.q('SELECT database FROM system.tables').distinct().orderBy('database').s``` |
 prewhere | Applies column filtering prior to the where clause | ```v.q('SELECT * FROM default.mergetree').preWhere('is_valid = 1').s``` |
 
 ---
 
 ## *one*
 
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 * Example:
     ```python
     v.one().s
@@ -51,7 +51,7 @@ Returns a single row/column 'dummy'. Equivalent to the SQL ```SELECT * FROM syst
     * ```count: int``` - the number of numbers starting from 0 to return
     * ```system: bool=False``` - use the system.numbers variant as opposed to the numbers() table function
     * ```mt: bool=False``` - use the multi-threaded versions of the system and numbers() calls
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 ---
 
 ## *range(start: int, end: int, system: bool=False, mt: bool=False)*
@@ -61,7 +61,7 @@ Returns a single row/column 'dummy'. Equivalent to the SQL ```SELECT * FROM syst
     * ```end: int``` - the last number in the range to return. May be negative.
     * ```system: bool=False``` - use the system.numbers variant as opposed to the numbers() table function
     * ```mt: bool=False``` - use the multi-threaded versions of the system and numbers() calls
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 ---
 
 ## *random(count: int, start=0, end=18446744073709551615, system=False, mt=False)*
@@ -72,7 +72,7 @@ Returns a single row/column 'dummy'. Equivalent to the SQL ```SELECT * FROM syst
     * ```end: int=0``` - the upper bound for the random numbers (default = UInt64.max)
     * ```system: bool=False``` - use the system.numbers variant as opposed to the numbers() table function
     * ```mt: bool=False``` - use the multi-threaded versions of the system and numbers() calls
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 ---
 
 ## *randfloat(count: int, start=0, end=18446744073709551615, system=False, mt=False)*
@@ -83,7 +83,7 @@ Returns a single row/column 'dummy'. Equivalent to the SQL ```SELECT * FROM syst
     * ```end: int=0``` - the upper bound for the random numbers (default = UInt64.max)
     * ```system: bool=False``` - use the system.numbers variant as opposed to the numbers() table function
     * ```mt: bool=False``` - use the multi-threaded versions of the system and numbers() call
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 ---
 
 ## *select(\*cols)*, *table('database.table')*, *data.database.table*, *data['database.table']*
@@ -91,7 +91,7 @@ Returns a single row/column 'dummy'. Equivalent to the SQL ```SELECT * FROM syst
 * Parameters:
     * ```cols: str, column literal, column expression or datatype/variable``` - a column list
     * ```tablename: str``` - the table to query from
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 * Examples
     ```python
     v.select('*').from_('system.tables').limit(1).s
@@ -109,7 +109,7 @@ projection clause. The column variables can be anything from Python types (exclu
 string column names, string column expressions, column literals or column expressions (using the types.col 
 object) or any valid Vulkn datatype (String, UInt8 etc..).
 
-The ```table``` and ```data``` entrypoints accept a schema qualified tablename. These return a BaseTableDataFrame.
+The ```table``` and ```data``` entrypoints accept a schema qualified tablename. These return a BaseTableDataTable.
 
 These entrypoints provide an Object Relational Mapper (ORM) style interface for executing queries.
 
@@ -119,7 +119,7 @@ See ClickHouse reference - [SELECT Clause](https://clickhouse.yandex/docs/en/que
 
 * Parameters:
     * ```cols: list``` - list of str, column literal, column expression or datatype/variables
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 ---
 
 See ClickHouse reference - [WITH Clause](https://clickhouse.yandex/docs/en/query_language/select/#with-clause)
@@ -137,7 +137,7 @@ See ClickHouse reference - [WITH Clause](https://clickhouse.yandex/docs/en/query
     ```python
     v.q('with sum(data_compressed_bytes) as sum_bytes select formatReadableSize(sum_bytes) as total_size from system.parts').s
     ```
-    **DataFrame**
+    **DataTable**
     ```python
     (v.table('system.parts')
         .with_(funcs.agg.sum(c('data_compressed_bytes')).alias('sum_bytes'))
@@ -146,7 +146,7 @@ See ClickHouse reference - [WITH Clause](https://clickhouse.yandex/docs/en/query
 
 ### *distinct()*
 
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 
 ---
 
@@ -161,7 +161,7 @@ See ClickHouse reference - [DISTINCT Clause](https://clickhouse.yandex/docs/en/q
     ```python
     v.q("select distinct database from system.tables").s
     ```
-    **DataFrame**
+    **DataTable**
     ```python
     v.table('system.tables').select('database').distinct().s
 
@@ -174,7 +174,7 @@ See ClickHouse reference - [DISTINCT Clause](https://clickhouse.yandex/docs/en/q
 
 ### *arrayJoin(\*array_expressions)*
 
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 
 ---
 
@@ -195,7 +195,7 @@ See ClickHouse reference - [ARRAY JOIN Clause](https://clickhouse.yandex/docs/en
         ARRAY JOIN n AS k
     """).s
     ```
-    **DataFrame**
+    **DataTable**
     ```python
     (v.numbers(10)
         .select(funcs.agg.groupArray(c('number')).alias('n'))
@@ -220,7 +220,7 @@ See ClickHouse reference - [ARRAY JOIN Clause](https://clickhouse.yandex/docs/en
 
 ### *leftArrayJoin(\*array_expressions)*
 
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 
 ---
 
@@ -241,7 +241,7 @@ See ClickHouse reference - [ARRAY JOIN Clause](https://clickhouse.yandex/docs/en
         ARRAY JOIN n AS k
     """).s
     ```
-    **DataFrame**
+    **DataTable**
     ```python
     # arrayJoin returns only those rows where their array lengths are > 0 (as per an INNER JOIN)
     (v.q("""
@@ -285,7 +285,7 @@ See ClickHouse reference - [ARRAY JOIN Clause](https://clickhouse.yandex/docs/en
 
 * Parameters:
     * ```col_filters: list```- List of column filters as str, column literal, column expression or datatype/variable or function
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 ---
 
 See ClickHouse reference - [WHERE Clause](https://clickhouse.yandex/docs/en/query_language/select/#where-clause)
@@ -302,7 +302,7 @@ See ClickHouse reference - [WHERE Clause](https://clickhouse.yandex/docs/en/quer
     ```python
     v.q("select name from system.tables where name = 'clusters'").s
     ```
-    **DataFrame**
+    **DataTable**
     ```python
     v.table('system.tables').select('name').where(c('name') == 'clusters').s
 
@@ -326,13 +326,13 @@ See ClickHouse reference - [WHERE Clause](https://clickhouse.yandex/docs/en/quer
 
 * Parameters:
     * ```col_filters: list```- List of column filters as str, column literal, column expression or datatype/variable or function
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 ---
 
 See ClickHouse reference - [PREWHERE Clause](https://clickhouse.yandex/docs/en/query_language/select/#prewhere-clause)
 
 !!! note "Example"
-    **DataFrame**
+    **DataTable**
     ```python
     df = v.table('example').select('*').preWhere().s
     ```
@@ -342,7 +342,7 @@ See ClickHouse reference - [PREWHERE Clause](https://clickhouse.yandex/docs/en/q
 * Parameters:
     * ```cols: list``` - List of columns as str, column literal, column expression or datatype/variable or function
     * ```with_totals: bool``` - Include additional whole of group aggregate row (default False)
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 ---
 
 groupBy operates exactly as per the SQL ```GROUP BY``` statement. The keys defined in the groupBy
@@ -365,7 +365,7 @@ The following are equivalent:
     ```python
     v.q('select database, count() from system.tables group by database').s
     ```
-    **DataFrame**
+    **DataTable**
     ```python
     v.table('system.tables').select('database',funcs.agg.count()).groupBy('database').s
 
@@ -393,7 +393,7 @@ The following are equivalent:
 
 * Parameters:
     * ```col_filters: list```- List of column filters as str, column literal, column expression or datatype/variable or function
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 ---
 
 See ClickHouse reference - [HAVING Clause](https://clickhouse.yandex/docs/en/query_language/select/#having-clause)
@@ -417,7 +417,7 @@ The following are equivalent:
     ```python
     v.q('select database, count() as count from system.tables group by database having count > 20').s
     ```
-    **DataFrame**
+    **DataTable**
     ```python
     df = (v.table('system.tables')
         .select('database', funcs.agg.count().alias('count'))
@@ -437,7 +437,7 @@ The following are equivalent:
 
 * Parameters:
     * ```cols: list```- List of column filters as str, column literal, column expression or datatype/variable or function
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 ---
 
 See ClickHouse reference - [ORDER BY Clause](https://clickhouse.yandex/docs/en/query_language/select/#select-order-by)
@@ -457,12 +457,12 @@ The following are equivalent:
     ```
     **Raw Query**
     ```python
-    # Vulkn q DataFrame
+    # Vulkn q DataTable
     v.q('select name, engine, data_path from system.databases order by name limit 2').s
     ```
-    **DataFrame**
+    **DataTable**
     ```python
-    # Vulkn select DataFrame
+    # Vulkn select DataTable
     v.table('system.databases').select('name','engine','data_path').orderBy('name').limit(2).s
 
     row  name     engine    data_path
@@ -478,7 +478,7 @@ The following are equivalent:
 * Parameters:<br/>
     * ```rows: int``` - number of rows to return
     * (optional) ```offset: int``` - allows skipping the first offset rows
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 ---
 
 See ClickHouse reference - [LIMIT Clause](https://clickhouse.yandex/docs/en/query_language/select/#limit-clause)
@@ -497,7 +497,7 @@ The following are equivalent:
     ```python
     v.q('select name from system.tables limit 3').s
     ```
-    **DataFrame**
+    **DataTable**
     ```python
     v.table('system.tables').select('name').limit(3).s
 
@@ -515,7 +515,7 @@ The following are equivalent:
 * Parameters:<br/>
     * ```rows: int``` - number of rows to return for each key specified by ```cols```
     * ```cols: tuple``` - the grouping key to apply the sub-limit ```rows```
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 ---
 
 See ClickHouse reference - [LIMIT BY Clause](https://clickhouse.yandex/docs/en/query_language/select/#limit-by-clause)
@@ -535,7 +535,7 @@ The following are equivalent:
     ```python
     v.q('select name from system.tables limit 3 by database').s
     ```
-    **DataFrame**
+    **DataTable**
     ```python
     df = v.table('system.tables').select('database','name').limitBy(3, ('database',)).s
     ```
@@ -544,7 +544,7 @@ The following are equivalent:
 
 #### *all()*
 
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 * Description: Valid only for base tables. Inspects the base table and determines returns all columns irrespective of column type (materialized, alias)
 * Example:
     ```python
@@ -553,8 +553,8 @@ The following are equivalent:
 
 #### *count()*
 
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
-* Description: Short-hand command for the total number of records in the dataframe. It is equvalent to the SQL ```SELECT count() FROM table```.
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
+* Description: Short-hand command for the total number of records in the datatable. It is equvalent to the SQL ```SELECT count() FROM table```.
 * Example:
     ```python
     v.table('system.tables').count().s
@@ -562,8 +562,8 @@ The following are equivalent:
 
 #### *first()*
 
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
-* Description: Short-hand command for returning the first record in the dataframe. Note that a column specification list is required.
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
+* Description: Short-hand command for returning the first record in the datatable. Note that a column specification list is required.
 * Example:
     ```python
     v.table('system.tables').all().first().s
@@ -572,8 +572,8 @@ The following are equivalent:
 #### *head(rows: int=1)*
 
 * Parameters:
-    * ```rows: int=1``` - the number of rows to return from the DataFrame. Default 1.
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+    * ```rows: int=1``` - the number of rows to return from the DataTable. Default 1.
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 * Description: Identical to limit(). Note that a column specification list is required.
 * Example:
     ```python
@@ -590,7 +590,7 @@ The following are Vulkn core extensions not found within the ClickHouse SQL dial
     - ```key``` - key to group vector columns by.
     - ```non-key-columns``` - Optional. A list of additional columns that are neither key, sort or vector columns.
     - ```sort``` - column to sort on within each key group.
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 ---
 
 ```VECTORIZE BY``` is a Vulkn extension to ClickHouse SQL. It operates in a manner similar to a 
@@ -677,7 +677,7 @@ v.q("""
 
 Note that there are no guarantees that the result will be ordered by key, only the values within 
 each key vector will be ordered (by timestamp). To return values ordered by key you can wrap the 
-call in an additional DataFrame operation:
+call in an additional DataTable operation:
 
 ```python
 ((df.select('key', 'timestamp', 'metric',
@@ -712,7 +712,7 @@ call in an additional DataFrame operation:
 * Parameters
     * ```chunkkey: tuple``` - the key or composite key to chunk on (using cityHash64)
     * ```chunksize: int``` - size of processing splits, generally no more than the number of CPU cores.
-* Returns: ```vulkn.dataframe.SelectQueryDataFrame```
+* Returns: ```vulkn.datatable.SelectQueryDataTable```
 ---
 
 ```CHUNK BY``` is a Vulkn extension that addresses some performance bottlenecks in ClickHouse in

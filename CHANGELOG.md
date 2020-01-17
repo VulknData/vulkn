@@ -59,9 +59,9 @@ Note: VULKИ 19.0.0 is a Proof Of Concept release. Expect APIs to change in the 
     - Mostly complete DBMS bindings. Allowing for DBMS management including tables, partitions, views and materialized views.
 * Python DataFrame interface    
     - DataFrame interface support query strings and ORM/functional/Spark-like interfaces.
-    - Functional dataframes include Numbers*, Range*, One*, QueryString, SelectQuery, UpdateQuery, DeleteQuery. 
+    - Functional datatables include Numbers*, Range*, One*, QueryString, SelectQuery, UpdateQuery, DeleteQuery. 
     - JoinDataFrame allows for all join types including ASOF joins.
-    - Support for Pandas dataframes.
+    - Support for Pandas datatables.
 * Python datatype bindings
     - Datatype bindings for most ClickHouse types, domains and functions including Vector types that resolve to either columns or arrays.
     - Functions/types can be extended within Python and used within the DataFrame interface.

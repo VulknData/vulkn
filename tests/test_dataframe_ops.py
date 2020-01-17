@@ -6,18 +6,18 @@
 
 from fixtures import v
 from vulkn.types import *
-from vulkn.dataframe import WriteMode
+from vulkn.datatable import WriteMode
 
 
-def test_dataframe_ops_select_single_column(v):
+def test_datatable_ops_select_single_column(v):
     df = v.select(c(1).alias('c'))
     assert df.exec().to_records() == [{'c':1}]
 
-def test_dataframe_ops_select_multiple_columns(v):
+def test_datatable_ops_select_multiple_columns(v):
     df = v.select(c(1).alias('col1'), c(2).alias('col2'))
     assert df.exec().to_records() == [{'col1':1,'col2':2}]
 
-def test_dataframe_ops_with_select(v):
+def test_datatable_ops_with_select(v):
     df = v.with_('1 AS x').select((UInt64(n='x') + 2).alias('v'))
     assert df.exec().to_records() == [{'v':3}]
 

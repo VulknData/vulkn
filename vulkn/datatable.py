@@ -19,7 +19,7 @@ from vulkn.utils import VulknSQLFormatter, timer, LogLevels
 log = logging.getLogger()
 
 
-# TODO: Next release. Add table function dataframes:
+# TODO: Next release. Add table function datatables:
 # https://clickhouse.yandex/docs/en/query_language/table_functions/
 
 
@@ -60,7 +60,7 @@ class JoinType:
     Cross='CROSS'
 
 
-class VulknDataFrame:   
+class VulknDataTable:   
     def __deepcopy__(self, memo):
         cls = self.__class__
         result = cls.__new__(cls)
@@ -73,7 +73,7 @@ class VulknDataFrame:
         return result
 
 
-def JoinDataFrame(
+def JoinDataTable(
         ctx, jointype, left, right, keys=None, strictness=JoinStrictness.All, global_mode=False):
     j = '({left}) {global_mode} {strictness} {join_type} JOIN ({right})'
     q = j.format(left=left._get_query(), 
@@ -83,58 +83,58 @@ def JoinDataFrame(
                  right=right._get_query())
     if keys:
         q = '{} USING ({})'.format(q, ','.join(keys))
-    return SelectQueryDataFrame(ctx, q).select('*')
+    return SelectQueryDataTable(ctx, q).select('*')
 
 
-def NumbersDataFrame(ctx, count, system=False, mt=False):
+def NumbersDataTable(ctx, count, system=False, mt=False):
     if system:
         t = 'system.numbers' + ('_mt' if mt else '')
-        return SelectQueryDataFrame(ctx, t).limit(count).select('*')
+        return SelectQueryDataTable(ctx, t).limit(count).select('*')
     else:
         t = 'numbers' + ('_mt' if mt else '')
-        return SelectQueryDataFrame(ctx, '{}({})'.format(t, count)).select('*')
+        return SelectQueryDataTable(ctx, '{}({})'.format(t, count)).select('*')
 
 
-def RandomDataFrame(ctx, count, start=0, end=18446744073709551615, system=False, mt=False):
+def RandomDataTable(ctx, count, start=0, end=18446744073709551615, system=False, mt=False):
     q = f'{start} + rand()%(if(mod == 0, mod - 1, ({end}-({start})+1) AS mod)) AS number'
     if system:
         t = 'system.numbers' + ('_mt' if mt else '')
-        return SelectQueryDataFrame(ctx, t).limit(count).select(q)
+        return SelectQueryDataTable(ctx, t).limit(count).select(q)
     else:
         t = 'numbers' + ('_mt' if mt else '')
-        return SelectQueryDataFrame(ctx, '{}({})'.format(t, count)).select(q)
+        return SelectQueryDataTable(ctx, '{}({})'.format(t, count)).select(q)
 
 
-def RandomFloatDataFrame(ctx, count, start=0, end=18446744073709551615, system=False, mt=False):
+def RandomFloatDataTable(ctx, count, start=0, end=18446744073709551615, system=False, mt=False):
     q = f"{start} + rand64()%({end}-({start})) + rand64()/18446744073709551615 AS number"
     if system:
         t = 'system.numbers' + ('_mt' if mt else '')
-        return SelectQueryDataFrame(ctx, t).limit(count).select(q)
+        return SelectQueryDataTable(ctx, t).limit(count).select(q)
     else:
         t = 'numbers' + ('_mt' if mt else '')
-        return SelectQueryDataFrame(ctx, '{}({})'.format(t, count)).select(q)
+        return SelectQueryDataTable(ctx, '{}({})'.format(t, count)).select(q)
 
 
-def OneDataFrame(ctx):
-    return SelectQueryDataFrame(ctx, 'system.one').select('*')
+def OneDataTable(ctx):
+    return SelectQueryDataTable(ctx, 'system.one').select('*')
 
 
-def RangeDataFrame(ctx, start, end, system=False, mt=False):
+def RangeDataTable(ctx, start, end, system=False, mt=False):
     if end <= start:
         raise Exception('end must be greater than start')
     if system or mt:
         t = 'system.numbers' + ('_mt' if mt else '')
-        return (SelectQueryDataFrame(ctx, t)
+        return (SelectQueryDataTable(ctx, t)
                 .limit(end + 1 -(start))
                 .select('number + {} AS range'.format(str(start))))
     else:
-        return (SelectQueryDataFrame(ctx, 'numbers({})'.format(end + 1 -(start)))
+        return (SelectQueryDataTable(ctx, 'numbers({})'.format(end + 1 -(start)))
                 .select('number + {} AS range'.format(str(start))))
 
 
-def aj(dataframes, keys, global_mode=False):
-    df = dataframes[0]
-    for d in dataframes:
+def aj(datatables, keys, global_mode=False):
+    df = datatables[0]
+    for d in datatables:
         df = df.aj(d, keys, global_mode)
     return df
 
@@ -164,7 +164,7 @@ class CachedQueryMixin:
         if len(statements) > 1:
             raise Exception('More than one statement is not supported')
         t = self._ctx.session.cache(statements[0].optimize(), engine=engine)
-        return SelectQueryDataFrame(self._ctx, t).select('*')
+        return SelectQueryDataTable(self._ctx, t).select('*')
 
 
 class TableWriterMixin:
@@ -188,7 +188,7 @@ class TableWriterMixin:
             sql = f'INSERT INTO {database}.{table} {sql}'
         if not self._ctx.exec(sql):
             raise Exception('Unable to write table')
-        return SelectQueryDataFrame(self._ctx, f'{database}.{table}').select('*')
+        return SelectQueryDataTable(self._ctx, f'{database}.{table}').select('*')
 
 
 class QueryExecutorMixin:
@@ -197,7 +197,7 @@ class QueryExecutorMixin:
         statements = vulkn.sql.SQLMessage(VulknSQLFormatter().format(q, **params)).statements()
         if len(statements) > 1:
             raise Exception('More than one statement is not supported')
-        return QueryStringDataFrame(self._ctx, statements[0].optimize()).select('*')
+        return QueryStringDataTable(self._ctx, statements[0].optimize()).select('*')
 
     @timer
     def exec(self, **params):
@@ -222,7 +222,7 @@ class QueryExecutorMixin:
     e = exec
 
 
-class BaseTableDataFrame:
+class BaseTableDataTable:
     def __init__(self, ctx, database, table):
         self._ctx = ctx
         self._database = database
@@ -232,13 +232,13 @@ class BaseTableDataFrame:
         return '"{database}"."{table}"'.format(database=self._database, table=self._table)
 
     def __getattr__(self, attrname):
-        return getattr(SelectQueryDataFrame(self._ctx, str(self)), attrname)
+        return getattr(SelectQueryDataTable(self._ctx, str(self)), attrname)
 
     def desc(self):
         return self._ctx.q(f'DESC {self._database}.{self._table}').exec()
 
 
-class QueryStringDataFrame(VulknDataFrame, QueryExecutorMixin, ShowSQLMixin, CachedQueryMixin, TableWriterMixin):
+class QueryStringDataTable(VulknDataTable, QueryExecutorMixin, ShowSQLMixin, CachedQueryMixin, TableWriterMixin):
     def __init__(self, ctx, query):
         self._ctx = ctx
         self._query = query
@@ -249,14 +249,14 @@ class QueryStringDataFrame(VulknDataFrame, QueryExecutorMixin, ShowSQLMixin, Cac
     def __getattr__(self, attrname):
         attrs = [
             'limit','where','filter','limitby','head','first','distinct','orderby','sort','prewhere']
-        this = SelectQueryDataFrame(self._ctx, '({})'.format(self._get_query()))
+        this = SelectQueryDataTable(self._ctx, '({})'.format(self._get_query()))
         if attrname.lower() in attrs:
             return getattr(this.select('*'), attrname)
         else:
             return getattr(this, attrname)
 
 
-class SelectQueryDataFrame(VulknDataFrame,
+class SelectQueryDataTable(VulknDataTable,
                            QueryExecutorMixin,
                            ShowSQLMixin,
                            CachedQueryMixin,
@@ -318,7 +318,7 @@ class SelectQueryDataFrame(VulknDataFrame,
         if not cols:
             cols = ('*',)
         if self._columns:
-            return SelectQueryDataFrame(self._ctx, self).select(*cols)
+            return SelectQueryDataTable(self._ctx, self).select(*cols)
         else:
             return copy_set(self, '_columns', *cols)
    
@@ -343,7 +343,7 @@ class SelectQueryDataFrame(VulknDataFrame,
         return copy_set(self, '_vectorizeby', key, attributes, sort)
 
     def join(self, jointype, right, keys=None, strictness=JoinStrictness.All, global_mode=False):
-        return JoinDataFrame(self._ctx, jointype, self, right, keys, strictness, global_mode)
+        return JoinDataTable(self._ctx, jointype, self, right, keys, strictness, global_mode)
 
     def ej(self, right, keys, strictness=JoinStrictness.All, global_mode=False):
         return self.join(JoinType.Inner, right, keys, strictness, global_mode)
@@ -416,7 +416,7 @@ class SelectQueryDataFrame(VulknDataFrame,
     #    return str(self.limit(self.max_rows).exec().show_pandas(self.max_preview_rows))
 
 
-class UpdateQueryDataFrame(VulknDataFrame, ShowSQLMixin):
+class UpdateQueryDataTable(VulknDataTable, ShowSQLMixin):
     def __init__(self, ctx, table):
         self._ctx = ctx
         self._table = table
@@ -451,7 +451,7 @@ class UpdateQueryDataFrame(VulknDataFrame, ShowSQLMixin):
         
 
 
-class DeleteQueryDataFrame(VulknDataFrame, ShowSQLMixin):
+class DeleteQueryDataTable(VulknDataTable, ShowSQLMixin):
     def __init__(self, ctx, table):
         self._ctx = ctx
         self._table = table

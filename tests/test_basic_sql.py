@@ -5,7 +5,7 @@
 
 
 from fixtures import v
-from vulkn.dataframe import WriteMode
+from vulkn.datatable import WriteMode
 
 
 def test_show_sql_single_column_no_table(v):
@@ -23,5 +23,5 @@ def test_basic_exec(v):
 def test_str_format(v):
     assert v.q('select {num:UInt8}').exec(num=3).to_records() == [{'3':3}]
 
-def test_dataframe_simple(v):
+def test_datatable_simple(v):
     assert v.select(1).exec().to_records() == [{'1':1}]
