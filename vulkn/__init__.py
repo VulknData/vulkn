@@ -17,7 +17,7 @@ from vulkn.utils import singleton
 from vulkn.catalog import VulknCatalogViewer
 from vulkn.data import VulknDataStore
 from vulkn.session import VulknSession
-from vulkn.database import VulknClickHouseDatabaseMixIn, MutationManager
+from vulkn.database import VulknClickHouseDatabaseMixIn, MutationManager, VulknSystemManager
 from vulkn.scheduler import VulknScheduler
 from vulkn.clickhouse.client.cli import ClickHouseCLIClient
 
@@ -92,7 +92,7 @@ class Vulkn(VulknDataFramesMixIn, VulknClickHouseDatabaseMixIn):
                                          catalog='system',
                                          hidden=['numbers','numbers_mt','one','zero','zero_mt'])
         self.data = VulknDataStore(self)
-        self.sys = self.system
+        self.sys = VulknSystemManager(self)
 
     def _reload(self):
         if self.session:

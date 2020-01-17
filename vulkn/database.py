@@ -326,3 +326,48 @@ class VulknClickHouseDatabaseMixIn:
         return self.scheduler.dispatch(query)
 
     e = exec
+
+
+class VulknSystemManager:
+    def __init__(self, ctx):
+        self._ctx = ctx
+        self.exec = self._ctx.exec
+
+    def reload_dicts(self):
+        return self.exec('SYSTEM RELOAD DICTIONARIES')
+
+    def reload_dict(self, dictionary):
+        return self.exec(f'SYSTEM RELOAD DICTIONARY {dictionary}')
+
+    def drop_dns_cache(self):
+        return self.exec('SYSTEM DROP DNS CACHE')
+
+    def drop_mark_cache(self):
+        return self.exec('SYSTEM DROP MARK CACHE')
+
+    def flush_logs(self):
+        return self.exec('SYSTEM FLUSH LOGS')
+
+    def reload_config(self):
+        return self.exec('SYSTEM RELOAD CONFIG')
+
+    def shutdown(self):
+        return self.exec('SYSTEM SHUTDOWN')
+
+    def kill(self):
+        return self.exec('SYSTEM KILL')
+
+    def stop_dist_sends(self, database, table):
+        return self.exec(f'SYSTEM STOP DISTRIBUTED SENDS {database}.{table}')
+
+    def flush_dist(self, database, table):
+        return self.exec(f'SYSTEM FLUSH {database}.{table}')
+
+    def start_dist_sends(self, database, table):
+        return self.exec(f'SYSTEM START DISTRIBUTED SENDS {database}.{table}')
+
+    def stop_merges(self, database, table):
+        return self.exec(f'SYSTEM STOP MERGES {database}.{table}')
+
+    def start_merges(self, database, table):
+        return self.exec(f'SYSTEM START MERGES {database}.{table}')
