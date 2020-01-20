@@ -30,6 +30,12 @@ Ensure you have installed ClickHouse (both server and client):
 sudo apt install clickhouse-server clickhouse-client clickhouse-common
 ```
 
+You should also ensure your systems console encoding is set to a valid non-latin/ASCII encoding such as en_US.UTF-8 (or your preferred/local extended character set)
+
+```bash
+sudo localectl set-locale LANG=en_US.UTF-8
+```
+
 #### Installation with pip
 
 1. Install Vulkn via pip.
