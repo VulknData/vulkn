@@ -51,7 +51,10 @@ class Literal(ColumnBaseMixIn):
         self._value = value
 
     def __str__(self) -> str:
-        return str(self._value)
+        if self._value is None:
+            return 'NULL'
+        else:
+            return str(self._value)
 
 
 Expression = Literal
@@ -165,12 +168,14 @@ class TypeBase(ColumnBaseMixIn):
         return UInt8(func('isNull', self._value))
 
     is_null = isNull
+    isn = isNull
 
     def isNotNull(self):
         from vulkn.types.integer import UInt8
         return UInt8(func('isNotNull', self._value))
 
     is_not_null = isNotNull
+    isnn = isNotNull
 
     def ifNull(self, other):
         return Literal(func('ifNull', self._value, other))
@@ -186,21 +191,26 @@ class TypeBase(ColumnBaseMixIn):
         return type(self)(func('assumeNotNull', self._value))
 
     assume_not_null = assumeNotNull
+    nn = assumeNotNull
 
     def toNullable(self):
         return type(self)(func('toNullable', self._value))
 
     to_nullable = toNullable
+    tn = toNullable
 
     def between(self, start, end):
         from vulkn.types.integer import UInt8
         return UInt8(Literal('{} BETWEEN {} AND {}'.format(self._value, start, end)))
+
+    bt = between
 
     def notBetween(self, start, end):
         from vulkn.types.integer import UInt8
         return UInt8(Literal('{} NOT BETWEEN {} AND {}'.format(self._value, start, end)))
 
     not_between = notBetween
+    nbt = notBetween
 
     def typename(self):
         from vulkn.types.string import String

@@ -45,6 +45,8 @@ vDT = DateTime
 vDT32 = DateTime
 col = lambda x: TypeBase(Literal(x))
 c = col
+null = c('NULL')
+NULL = null
 
 
 """
