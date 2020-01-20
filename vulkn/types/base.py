@@ -134,8 +134,10 @@ class TypeBase(ColumnBaseMixIn):
             in_arg = right.show_sql()[0:-1]
         elif isinstance(right, list):
             if isinstance(right[0], str):
+                print(right)
                 in_arg = "'{}'".format("','".join(map(str, right)))
-            in_arg = ','.join(map(str, right))
+            else:
+                in_arg = ','.join(map(str, right))
         else:
             in_arg = str(right)
         return UInt8(Literal('{} {} ({})'.format(self._value, operator, in_arg)))
