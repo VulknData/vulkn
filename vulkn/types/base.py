@@ -51,7 +51,10 @@ class Literal(ColumnBaseMixIn):
         self._value = value
 
     def __str__(self) -> str:
-        return str(self._value)
+        if self._value is None:
+            return 'NULL'
+        else:
+            return str(self._value)
 
 
 Expression = Literal
@@ -127,9 +130,9 @@ class TypeBase(ColumnBaseMixIn):
         from vulkn.types.integer import UInt8
         from vulkn.datatable import VulknDataTable
         in_arg = None
-        if isinstance(right, VulknDataTable):
+        if hasattr(right, 'show_sql'):
             in_arg = right.show_sql()[0:-1]
-        if isinstance(right, list):
+        elif isinstance(right, list):
             if isinstance(right[0], str):
                 in_arg = "'{}'".format("','".join(map(str, right)))
             in_arg = ','.join(map(str, right))
@@ -140,42 +143,74 @@ class TypeBase(ColumnBaseMixIn):
     def In(self, right):
         return self._in('IN', right)
 
+    in_ = In
+
     def notIn(self, right):
         return self._in('NOT IN', right)
+
+    not_in = notIn
+    not_in_ = notIn
 
     def globalIn(self, right):
         return self._in('GLOBAL IN', right)
 
+    global_in = globalIn
+    global_in_ = globalIn
+
     def globalNotIn(self, right):
         return self._in('GLOBAL NOT IN', right)
+
+    global_not_in = globalNotIn
+    global_not_in_ = globalNotIn
 
     def isNull(self):
         from vulkn.types.integer import UInt8
         return UInt8(func('isNull', self._value))
 
+    is_null = isNull
+    isn = isNull
+
     def isNotNull(self):
         from vulkn.types.integer import UInt8
         return UInt8(func('isNotNull', self._value))
 
+    is_not_null = isNotNull
+    isnn = isNotNull
+
     def ifNull(self, other):
         return Literal(func('ifNull', self._value, other))
+
+    if_null = ifNull
 
     def nullIf(self, test):
         return Literal(func('nullIf', self._value, test))
 
+    null_if = nullIf
+
     def assumeNotNull(self):
         return type(self)(func('assumeNotNull', self._value))
 
+    assume_not_null = assumeNotNull
+    nn = assumeNotNull
+
     def toNullable(self):
         return type(self)(func('toNullable', self._value))
+
+    to_nullable = toNullable
+    tn = toNullable
 
     def between(self, start, end):
         from vulkn.types.integer import UInt8
         return UInt8(Literal('{} BETWEEN {} AND {}'.format(self._value, start, end)))
 
+    bt = between
+
     def notBetween(self, start, end):
         from vulkn.types.integer import UInt8
         return UInt8(Literal('{} NOT BETWEEN {} AND {}'.format(self._value, start, end)))
+
+    not_between = notBetween
+    nbt = notBetween
 
     def typename(self):
         from vulkn.types.string import String
@@ -194,6 +229,7 @@ class TypeBase(ColumnBaseMixIn):
 
     ne = __ne__
     notEquals = __ne__
+    not_equals = __ne__
 
     def __gt__(self, right) -> any:
         from vulkn.types.integer import UInt8
@@ -215,6 +251,7 @@ class TypeBase(ColumnBaseMixIn):
         
     ge = __ge__
     greaterOrEquals = __ge__
+    greater_or_equals = __ge__
 
     def __le__(self, right) -> any:
         from vulkn.types.integer import UInt8
@@ -222,6 +259,7 @@ class TypeBase(ColumnBaseMixIn):
 
     le = __le__
     lessOrEquals = __le__
+    less_or_equals = __le__
 
     def and_(self, right) -> any:
         from vulkn.types.integer import UInt8
@@ -232,6 +270,7 @@ class TypeBase(ColumnBaseMixIn):
         return UInt8(func('bitAnd', self._value, right))
 
     bitAnd = __and__
+    bit_and = __and__
 
     def or_(self, right) -> any:
         from vulkn.types.integer import UInt8
@@ -242,6 +281,7 @@ class TypeBase(ColumnBaseMixIn):
         return UInt8(func('bitOr', self._value, right))
 
     bitOr = __or__
+    bit_or = __or__
         
     def not_(self) -> any:
         from vulkn.types.integer import UInt8
@@ -252,6 +292,7 @@ class TypeBase(ColumnBaseMixIn):
         return UInt8(func('bitNot', self._value))
 
     bitNot = __invert__
+    bit_not = __invert__
 
     def __xor__(self, right) -> any:
         from vulkn.types.integer import UInt8
@@ -260,3 +301,4 @@ class TypeBase(ColumnBaseMixIn):
     xor = __xor__
     xor_ = __xor__
     bitXor = __xor__
+    bit_xor = __xor__
