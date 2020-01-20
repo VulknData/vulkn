@@ -281,6 +281,7 @@ class SelectQueryDataTable(VulknDataTable,
         self._with_ = None
         self._params = None
         self._array_join = None
+        self._left_array_join = None
 
     def __getattr__(self, attrname):
         attrs = {
