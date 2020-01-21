@@ -167,7 +167,7 @@ v.q("""
 
 v.table('default.mydata').select(funcs.agg.max(col('bytes')).alias('max_bytes')).s
 
-# Results can be returned as a 'pretty print' table (.s, .show()), list of dictionaries (a record) (.r, .to_records()) or a Pandas DataTable (.p, .to_pandas())
+# Results can be returned as a 'pretty print' table (.s, .show()), list of dictionaries (a record) (.r, .to_records()) or a Pandas DataFrame (.p, .to_pandas())
 
 v.table('default.mydata').all().limit(4).r
 
@@ -199,7 +199,7 @@ row  name         type        default_type    default_expression    comment    c
 
 (4 rows)
 
-# Create Pandas DataTables from a Vulkn query
+# Create Pandas DataFrames from a Vulkn query
 
 mydata.all().limit(10).p
 
@@ -383,9 +383,9 @@ The following limitations apply to the 19.0.0 Proof Of Concept release and will 
         df2 = df.select('count()')
         ```
 
-        Results can be returned as Pandas DataTables, dictionaries, JSON or CSV. Basic type mappings with Python/Pandas is supported however nested and array types are returned as objects.
+        Results can be returned as Pandas DataFrames, dictionaries, JSON or CSV. Basic type mappings with Python/Pandas is supported however nested and array types are returned as objects.
         
-        Support for nested and array types for Python and Pandas outputs will be available in a future release as will transparent external data joins / loading with Python objects and Pandas DataTables.
+        Support for nested and array types for Python and Pandas outputs will be available in a future release as will transparent external data joins / loading with Python objects and Pandas DataFrames.
 
 * Specialized Vector types
 

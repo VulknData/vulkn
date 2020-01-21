@@ -108,10 +108,10 @@ Note this proxies the to_records call through to the underlying RecordSet object
 
 ### *to_pandas()*, *p*
 
-* Description: Executes and returns the DataTable/raw query result as a Pandas DataTable. 
+* Description: Executes and returns the DataTable/raw query result as a Pandas DataFrame. 
 Note this proxies the to_records call through to the underlying RecordSet object.
 * Aliases: ```p```
-* Returns: Pandas DataTable
+* Returns: Pandas DataFrame
 * Example:
     ```python
     >>> df = (v.table('system.tables').select('database', 'name').where("database = 'system'").limit(3))

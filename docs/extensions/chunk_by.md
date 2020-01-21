@@ -1,4 +1,4 @@
-## *chunkBy(chunkkey: tuple, chunksize: int)*
+## *chunk_by(chunkkey: tuple, chunksize: int)*
 
 * Parameters
     * ```chunkkey: tuple``` - the key or composite key to chunk on (using cityHash64)
@@ -18,7 +18,7 @@ ClickHouse to split the query into multiple chunks/keys and process these indepe
 Either of the following queries:
 
 ```python
-v.table('timeseries_devices').select('key',funcs.agg.histogram(10, bytes)).groupBy('key').chunkBy('key',2).s
+v.table('timeseries_devices').select('key',funcs.agg.histogram(10, bytes)).group_by('key').chunk_by('key',2).s
 v.q('select key, histogram(10)(bytes) from timeseries_devices group by key chunk by (key, 2)').s
 ```
 

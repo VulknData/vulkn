@@ -13,7 +13,7 @@ data from a ClickHouse result to a Python friendly format.
 
 ## *show_pandas(num_rows=50)*
 
-* Description: Provides a Pandas DataTable table view of the DataTable result.
+* Description: Provides a Pandas DataFrame view of the DataTable result.
 * Returns: ```str```
 * Example:
     ```python
@@ -103,8 +103,8 @@ data from a ClickHouse result to a Python friendly format.
 
 ## *to_pandas, p*
 
-* Description: Returns the result as a Pandas DataTable.
-* Returns: ```Pandas DataTable```
+* Description: Returns the result as a Pandas DataFrame.
+* Returns: ```Pandas DataFrame```
 * Example:
     ```python
     v.table('system.tables').all().head(3).select('database','name').exec().p

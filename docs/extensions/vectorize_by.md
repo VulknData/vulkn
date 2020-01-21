@@ -1,4 +1,4 @@
-## *vectorizeBy(key, [non-key-columns, ..,] sort)*
+## *vectorize_by(key, [non-key-columns, ..,] sort)*
 
 * Parameters
     - ```key``` - key to group vector columns by.
@@ -23,7 +23,7 @@ timestamp = ArrayVector.rand(DateTime('2019-01-01 00:00:00'),DateTime('2019-01-0
 metric = ArrayVector.rand(1,8192,15).cache().alias('metric')
 
 df = v.table.fromVector('default.vector_example', (key, timestamp, metric))
-df.select('*').orderBy('key','timestamp').show()
+df.select('*').order_by('key','timestamp').show()
 
   row    key  timestamp              metric
 -----  -----  -------------------  --------
@@ -53,7 +53,7 @@ can be used to create sub-vectors of the timestamp and metric columns upon which
 ```python
 (df.select('key', 'timestamp', 'metric',
            funcs.vector.vectorDelta(c('metric')).alias('metric_delta'))
-.vectorizeBy('key','timestamp')).s
+.vectorize_by('key','timestamp')).s
 
   row    key  timestamp              metric    metric_delta
 -----  -----  -------------------  --------  --------------
@@ -96,8 +96,8 @@ call in an additional DataTable operation:
 ```python
 ((df.select('key', 'timestamp', 'metric',
             funcs.vector.vectorDelta(c('metric')).alias('metric_delta'))
-    .vectorizeBy('key','timestamp'))
-.select('*').orderBy('key','timestamp').s)
+    .vectorize_by('key','timestamp'))
+.select('*').order_by('key','timestamp').s)
 
   row    key  timestamp              metric    metric_delta
 -----  -----  -------------------  --------  --------------

@@ -54,7 +54,7 @@ df = (v.table('data.events')
     .select('geo_id',
             funcs.agg.uniqExact('event_msg').alias('total_uniq_messages'),
             funcs.agg.sum('event_metric').alias('sum_event_metrics'))
-    .groupBy('geo_id')
+    .group_by('geo_id')
     .write('data', 'agg_events',
            engine=engines.MergeTree(order_by=('geo_id',)), WriteMode.Replace))
 
