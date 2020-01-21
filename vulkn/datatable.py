@@ -247,8 +247,8 @@ class QueryStringDataTable(VulknDataTable, QueryExecutorMixin, ShowSQLMixin, Cac
         return self._query
 
     def __getattr__(self, attrname):
-        attrs = [
-            'limit','where','filter','limit_by','head','first','distinct','order_by','sort','prewhere']
+        attrs = ['limit','where','filter','limit_by','limitBy','head','first','distinct',
+            'order_by','orderBy','sort','prewhere','preWhere']
         this = SelectQueryDataTable(self._ctx, '({})'.format(self._get_query()))
         if attrname.lower() in attrs:
             return getattr(this.select('*'), attrname)
@@ -289,15 +289,19 @@ class SelectQueryDataTable(VulknDataTable,
             'distinct': None,
             'from_': '_table',
             'prewhere': None,
+            'preWhere': '_prewhere',
             'where': None,
             'filter': '_where',
             'order_by': None,
+            'orderBy': '_order_by',
             'sort': '_order_by',
             'having': None,
             'limit': None,
             'params': None,
             'array_join': None,
-            'left_array_join': None
+            'arrayJoin': '_array_join',
+            'left_array_join': None,
+            'leftArrayJoin': '_left_array_join'
         }
 
         if attrname in attrs.keys():
@@ -333,13 +337,19 @@ class SelectQueryDataTable(VulknDataTable,
     def limit_by(self, limit, by):
         return copy_set(self, '_limit_by', limit, by)
 
+    limitBy = limit_by
+
     def group_by(self, *cols, with_totals=False):
         r = copy_set(self, '_group_by', *cols)
         r._group_by_with_totals = with_totals
         return r
 
+    groupBy = group_by
+
     def vectorize_by(self, key, sort, attributes=None):
         return copy_set(self, '_vectorize_by', key, attributes, sort)
+
+    vectorizeBy = vectorize_by
 
     def join(self, jointype, right, keys=None, strictness=JoinStrictness.All, global_mode=False):
         return JoinDataTable(self._ctx, jointype, self, right, keys, strictness, global_mode)
@@ -394,21 +404,25 @@ class SelectQueryDataTable(VulknDataTable,
             if self._vectorize_by[1]:
                 q = '{} VECTORIZE BY ({}, {}, {})'.format(q, *self._vectorize_by)
             else:
-                q = '{} VECTORIZE BY ({}, {})'.format(q, self._vectorize_by[0], self._vectorize_by[2])
+                q = '{} VECTORIZE BY ({}, {})'.format(q,
+                                                      self._vectorize_by[0],
+                                                      self._vectorize_by[2])
         if self._group_by:
-            q = '{} GROUP BY {}'.format(q, ', '.join(self._group_by))
+            q = '{} GROUP BY {}'.format(q, ', '.join(map(str, self._group_by)))
             if self._group_by_with_totals:
                 q = f'{q} WITH TOTALS'
             if self._having:
-                q = '{} HAVING {}'.format(q, ', '.join(self._having))
+                q = '{} HAVING {}'.format(q, ', '.join(map(str, self._having)))
         if self._order_by:
-            q = '{} ORDER BY {}'.format(q, ', '.join(self._order_by))
+            q = '{} ORDER BY {}'.format(q, ', '.join(map(str, self._order_by)))
         if self._limit_by:
-            q = '{} LIMIT {} BY {}'.format(q, self._limit_by[0], ', '.join(self._limit_by[1]))
+            q = '{} LIMIT {} BY {}'.format(q, 
+                                           str(self._limit_by[0]),
+                                           ', '.join(map(str, self._limit_by[1])))
         if self._limit:
-            q = '{} LIMIT {}'.format(q, self._limit[0])
+            q = '{} LIMIT {}'.format(q, str(self._limit[0]))
             if len(self._limit) == 2:
-                q = '{} OFFSET {}'.format(q, self._limit[1])
+                q = '{} OFFSET {}'.format(q, str(self._limit[1]))
         return q
 
     #def __repr__(self):

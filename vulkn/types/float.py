@@ -6,14 +6,13 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 
-from vulkn.types.base import TypeBase
+from vulkn.types.numeric import Numeric
 
-
-class Float(TypeBase):
+class Float(Numeric):
     pass
 
 
-class Float32(TypeBase):
+class Float32(Float):
     TYPE = 'Float32'
     CAST = 'Float32'
 
