@@ -135,84 +135,6 @@ CRUD operations to partition management and data profiling.
     ```
 ---
 
-### *v.desc(table: str)*, *v.d(table: str)*
-
-* Description: Describe the schema/configuration of the specified table.
-* Aliases: ```v.d(table: str)```
-* Parameters
-    * ```table: str``` - the new default database/search path
-* Returns
-    * ```vulkn.recordset.RecordSet```
-* Example
-    ```python
-    >>> v.desc('system.databases').s
-
-    row  name           type      default_type    default_expression    comment    codec_expression    ttl_expression
-    -----  -------------  ------  --------------  --------------------  ---------  ------------------  ----------------
-        1  name           String             nan                   nan        nan                 nan               nan
-        2  engine         String             nan                   nan        nan                 nan               nan
-        3  data_path      String             nan                   nan        nan                 nan               nan
-        4  metadata_path  String             nan                   nan        nan                 nan               nan
-
-    (4 rows)
-    ```
----
-
-### *v.getCreate(table: str)*
-
-* Description: Get the CREATE statement for the table or object
-* Parameters
-    * ```table: str``` - the new default database/search path
-* Returns
-    * ```str```
-* Example
-    ```python
-    >>> v.getCreate('default.timeseries')
-    "CREATE TABLE default.timeseries\n(\n    `key` String, \n    `ts` DateTime('Australia/Melbourne'), \n    `value` UInt32\n)\nENGINE = MergeTree\nPARTITION BY toStartOfDay(ts)\nORDER BY (key, ts)\nSETTINGS index_granularity = 8192;
-    ```
----
-
-### *v.showCreate(table: str)*, *v.c(table: str)*
-
-* Description: Show/pretty print the CREATE statement for the table or object
-* Aliases: ```v.c(table: str)```
-* Parameters
-    * ```table: str``` - the new default database/search path
-* Returns
-    * ```str```
-* Example
-    ```python
-    >>> v.showCreate('default.timeseries')
-    CREATE TABLE default.timeseries
-    (
-        `key` String, 
-        `ts` DateTime('Australia/Melbourne'), 
-        `value` UInt32
-    )
-    ENGINE = MergeTree
-    PARTITION BY toStartOfDay(ts)
-    ORDER BY (key, ts)
-    SETTINGS index_granularity = 8192;
-    ```
----
-
-### *v.getSchema(database: str=None, table: str=None)*
-
-* Description: Returns a list of the table schema suitable for the reader interface.
-* Parameters
-    * ```database: str``` - the database where the table can be found
-    * ```table: str``` - the table to inspect
-* Returns
-    * ```list[ColumnType]```
-* Example
-    ```python
-    >>> pprint.pprint(v.getSchema('default', 'timeseries'))
-    [ColumnType('key', 'String', default_kind='nan', default_expression='nan' compression_codec='nan'),
-     ColumnType('ts', 'DateTime(\'Australia/Melbourne\')', default_kind='nan', default_expression='nan' compression_codec='nan'),
-     ColumnType('value', 'UInt32', default_kind='nan', default_expression='nan' compression_codec='nan')]
-    ```
----
-
 ### *v.db()*
 
 * Description: Returns a list of the databases available in the current instance
@@ -254,6 +176,99 @@ CRUD operations to partition management and data profiling.
         2  cached      test1   MergeTree              nan  number
 
     (2 rows)
+    ```
+---
+
+### *v.table_exists(database, table)*
+
+* Description: Tests if the specified table exists
+* Parameters
+    * ```database``` - the database containing the object to test
+    * ```table``` - the table/object to test
+* Returns
+    * ```bool```
+* Example
+    ```python
+    v.table_exists('default', 'test')
+    False
+    ```
+---
+
+### *v.desc(table: str)*, *v.d(table: str)*
+
+* Description: Describe the schema/configuration of the specified table.
+* Aliases: ```v.d(table: str)```
+* Parameters
+    * ```table: str``` - the new default database/search path
+* Returns
+    * ```vulkn.recordset.RecordSet```
+* Example
+    ```python
+    >>> v.desc('system.databases').s
+
+    row  name           type      default_type    default_expression    comment    codec_expression    ttl_expression
+    -----  -------------  ------  --------------  --------------------  ---------  ------------------  ----------------
+        1  name           String             nan                   nan        nan                 nan               nan
+        2  engine         String             nan                   nan        nan                 nan               nan
+        3  data_path      String             nan                   nan        nan                 nan               nan
+        4  metadata_path  String             nan                   nan        nan                 nan               nan
+
+    (4 rows)
+    ```
+---
+
+### *v.get_create(table: str)*
+
+* Description: Get the CREATE statement for the table or object
+* Parameters
+    * ```table: str``` - the new default database/search path
+* Returns
+    * ```str```
+* Example
+    ```python
+    >>> v.get_create('default.timeseries')
+    "CREATE TABLE default.timeseries\n(\n    `key` String, \n    `ts` DateTime('Australia/Melbourne'), \n    `value` UInt32\n)\nENGINE = MergeTree\nPARTITION BY toStartOfDay(ts)\nORDER BY (key, ts)\nSETTINGS index_granularity = 8192;
+    ```
+---
+
+### *v.show_create(table: str)*, *v.c(table: str)*
+
+* Description: Show/pretty print the CREATE statement for the table or object
+* Aliases: ```v.c(table: str)```
+* Parameters
+    * ```table: str``` - the new default database/search path
+* Returns
+    * ```str```
+* Example
+    ```python
+    >>> v.show_create('default.timeseries')
+    CREATE TABLE default.timeseries
+    (
+        `key` String, 
+        `ts` DateTime('Australia/Melbourne'), 
+        `value` UInt32
+    )
+    ENGINE = MergeTree
+    PARTITION BY toStartOfDay(ts)
+    ORDER BY (key, ts)
+    SETTINGS index_granularity = 8192;
+    ```
+---
+
+### *v.get_schema(database: str=None, table: str=None)*
+
+* Description: Returns a list of the table schema suitable for the reader interface.
+* Parameters
+    * ```database: str``` - the database where the table can be found
+    * ```table: str``` - the table to inspect
+* Returns
+    * ```list[ColumnType]```
+* Example
+    ```python
+    >>> pprint.pprint(v.get_schema('default', 'timeseries'))
+    [ColumnType('key', 'String', default_kind='nan', default_expression='nan' compression_codec='nan'),
+     ColumnType('ts', 'DateTime(\'Australia/Melbourne\')', default_kind='nan', default_expression='nan' compression_codec='nan'),
+     ColumnType('value', 'UInt32', default_kind='nan', default_expression='nan' compression_codec='nan')]
     ```
 ---
 
@@ -303,23 +318,7 @@ CRUD operations to partition management and data profiling.
     ```
 ---
 
-### *v.dropPart(database=None, table=None, partitions=None)*
-
-* Description: Drops the specified partitions from the table
-* Parameters
-    * ```database``` - the database containing the required table
-    * ```table``` - the table to call the drop operation on
-    * ```partitions: list``` - a list of partitions to drop
-* Returns
-    * ```bool```
-* Example
-    ```python
-    v.dropPart('default','trades_2015',partitions=['2015-02-01','2015-03-01'])
-    True
-    ```
----
-
-### *v.cloneTable(from_database, from_table, database, table)*
+### *v.clone_table(from_database, from_table, database, table)*
 
 * Description: Copies a table definition only from database.table to another.
 * Parameters
@@ -331,12 +330,12 @@ CRUD operations to partition management and data profiling.
     * ```bool```
 * Example
     ```python
-    >>> v.cloneTable('default', 'iot_nw_netflow', 'other', 'iot_nw_netflow2')
+    >>> v.clone_table('default', 'iot_nw_netflow', 'other', 'iot_nw_netflow2')
     True
     ```
 ---
 
-### *v.copyTable(from_database, from_table, database, table)*
+### *v.copy_table(from_database, from_table, database, table)*
 
 * Description: Copies a table, including it's data, from the source table to the targe table
 * Parameters
@@ -348,12 +347,12 @@ CRUD operations to partition management and data profiling.
     * ```bool```
 * Example
     ```python
-    >>> v.copyTable('default', 'iot_nw_netflow', 'other', 'iot_nw_netflow2')
+    >>> v.copy_table('default', 'iot_nw_netflow', 'other', 'iot_nw_netflow2')
     True
     ```
 ---
 
-### *v.createTable(database=None, table=None, schema=None, engine=None, exists_ok=False)*
+### *v.create_table(database=None, table=None, schema=None, engine=None, exists_ok=False)*
 
 * Description: Creates a new table
 * Parameters
@@ -366,29 +365,12 @@ CRUD operations to partition management and data profiling.
     * ```bool```
 * Example
     ```python
-    >>> v.createTable('default', 'iot_nw_netflow3', v.getSchema('default', 'iot_nw_netflow'), engines.Memory())
+    >>> v.create_table('default', 'iot_nw_netflow3', v.getSchema('default', 'iot_nw_netflow'), engines.Memory())
     True
     ```
 ---
 
-### *v.createSink(database, sink, schema, exists_ok=False)*
-
-* Description: Creates a new input sink (table with the Null engine) suitable for streaming input with transformations.
-* Parameters
-    * ```database``` - the database to create the table in
-    * ```table``` - the table name
-    * ```schema``` - the schema ColumnType definition
-    * ```exists_ok``` - don't error if the table already exists
-* Returns
-    * ```bool```
-* Example
-    ```python
-    >>> v.createSink('default', 'netflow_sink', v.getSchema('default', 'iot_nw_netflow'))
-    True
-    ```
----
-
-### *v.createView(database, view, query, exists_ok=False)*
+### *v.create_view(database, view, query, exists_ok=False)*
 
 * Description: Creates a new view based on the specified query
 * Parameters
@@ -401,12 +383,12 @@ CRUD operations to partition management and data profiling.
 * Example
     ```python
     >>> vdef = 'SELECT count() FROM myrecords'
-    >>> v.createView('default', 'myview', vdef)
+    >>> v.create_view('default', 'myview', vdef)
     True
     ```
 ---
 
-### *v.createMatView(database, view, query, to_database, to_table, engine, exists_ok)*
+### *v.create_mat_view(database, view, query, to_database, to_table, engine, exists_ok)*
 
 * Description: Creates a new materialized view in the target database with name view using the specified query
 * Parameters
@@ -422,12 +404,29 @@ CRUD operations to partition management and data profiling.
 * Example
     ```python
     >>> mv_def = 'SELECT device_id, substring(def_col), count() FROM myrecords'
-    >>> v.createMatView('default', 'mymatview', mv_def, 'default', 'targettable', engines.MergeTree())
+    >>> v.create_mat_view('default', 'mymatview', mv_def, 'default', 'targettable', engines.MergeTree())
     True
     ```
 ---
 
-### *v.dropTable(database, table)*, *dropSink*, *dropView*, *dropMatView*
+### *v.create_sink(database, sink, schema, exists_ok=False)*
+
+* Description: Creates a new input sink (table with the Null engine) suitable for streaming input with transformations.
+* Parameters
+    * ```database``` - the database to create the table in
+    * ```table``` - the table name
+    * ```schema``` - the schema ColumnType definition
+    * ```exists_ok``` - don't error if the table already exists
+* Returns
+    * ```bool```
+* Example
+    ```python
+    >>> v.create_sink('default', 'netflow_sink', v.getSchema('default', 'iot_nw_netflow'))
+    True
+    ```
+---
+
+### *v.drop_table(database, table)*, *drop_sink*, *drop_view*, *drop_mat_view*
 
 * Description: Drops the specified table/object.
 * Parameters
@@ -437,12 +436,44 @@ CRUD operations to partition management and data profiling.
     * ```bool```
 * Example
     ```python
-    v.dropTable('default','old_table')
+    v.drop_table('default','old_table')
     True
     ```
 ---
 
-### *v.truncateTable(database, table)*
+### *v.drop_part(database=None, table=None, partitions=None)*
+
+* Description: Drops the specified partitions from the table
+* Parameters
+    * ```database``` - the database containing the required table
+    * ```table``` - the table to call the drop operation on
+    * ```partitions: list``` - a list of partitions to drop
+* Returns
+    * ```bool```
+* Example
+    ```python
+    v.drop_part('default','trades_2015',partitions=['2015-02-01','2015-03-01'])
+    True
+    ```
+---
+
+### *v.drop_columns(database, table, \*columns)*
+
+* Description: Drops the specified columns from the table
+* Parameters
+    * ```database``` - the database containing the required table
+    * ```table``` - the table to call the drop operation on
+    * ```columns: list``` - a list of columns to drop
+* Returns
+    * ```bool```
+* Example
+    ```python
+    v.drop_columns('default','trades_2015',['city','state'])
+    True
+    ```
+---
+
+### *v.truncate_table(database, table)*
 
 * Description: Truncates the specified table.
 * Parameters
@@ -452,22 +483,7 @@ CRUD operations to partition management and data profiling.
     * ```bool```
 * Example
     ```python
-    v.truncateTable('default', 'truncateme')
+    v.truncate_table('default', 'truncateme')
     True
-    ```
----
-
-### *v.tableExists(database, table)*
-
-* Description: Tests if the specified table exists
-* Parameters
-    * ```database``` - the database containing the object to test
-    * ```table``` - the table/object to test
-* Returns
-    * ```bool```
-* Example
-    ```python
-    v.tableExists('default', 'test')
-    False
     ```
 ---
