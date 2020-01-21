@@ -34,6 +34,8 @@ class ColumnBaseMixIn:
         r = type(self)(FunctionExpression('alias', str(self), alias))
         return r
 
+    as_ = alias
+
     def cast(self, type_arg: str) -> any:
         from vulkn.types.string import String
         from vulkn.types.array import Array
