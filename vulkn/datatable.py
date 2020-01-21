@@ -237,6 +237,9 @@ class BaseTableDataTable:
     def desc(self):
         return self._ctx.q(f'DESC {self._database}.{self._table}').exec()
 
+    def drop_columns(self, *columns):
+        return self._ctx.drop_columns(self._database, self._table, columns)
+
 
 class QueryStringDataTable(VulknDataTable, QueryExecutorMixin, ShowSQLMixin, CachedQueryMixin, TableWriterMixin):
     def __init__(self, ctx, query):

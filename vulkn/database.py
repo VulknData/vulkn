@@ -7,10 +7,14 @@
 
 
 import ast
+import logging
 
 
 from vulkn.clickhouse import sqlformat
 from vulkn.utils import timer
+
+
+log = logging.getLogger()
 
 
 class MutationManager:
@@ -61,13 +65,17 @@ class VulknClickHouseDatabaseMixIn:
 
     d = desc
 
-    def getCreate(self, table):
+    def get_create(self, table):
         return sqlformat(
             self.q('SHOW CREATE {}'.format(self._set_db(table))).e().to_records()[0]['statement'],
             oneline=False)
 
-    def showCreate(self, table):
+    getCreate = get_create
+
+    def show_create(self, table):
         print(self.getCreate(table))
+
+    showCreate = show_create
 
     c = showCreate
 
@@ -166,7 +174,7 @@ class VulknClickHouseDatabaseMixIn:
                     topK,
                     {','.join(profiles)}
                 FROM {table}"""
-            print(profile_query)
+            
             profile_data.update(self.q(profile_query).exec().to_records()[0])
             if 'histogram' in profile_data:
                 profile_data['histogram'] = ast.literal_eval(profile_data['histogram'])
@@ -180,7 +188,7 @@ class VulknClickHouseDatabaseMixIn:
             profiles[column._name] = profile_column(table, column)
         return profiles
 
-    def getSchema(self, database=None, table=None):
+    def get_schema(self, database=None, table=None):
         from vulkn.types import ColumnType
         schema = []
         if table is None and database is not None:
@@ -208,6 +216,9 @@ class VulknClickHouseDatabaseMixIn:
                           default_expression=r['default_expression'],
                           compression_codec=r['compression_codec']))
         return schema
+
+    getSchema = get_schema
+    schema = get_schema
 
     def db(self):
         return self.q('SHOW DATABASES').exec()
@@ -249,7 +260,7 @@ class VulknClickHouseDatabaseMixIn:
                     OR database || '.' || table = {table:String})
             ORDER BY partition""").exec(database=database, table=table)
 
-    def dropPart(self, database=None, table=None, partitions=None):
+    def drop_part(self, database=None, table=None, partitions=None):
         if partitions is None and database is not None and table is not None:
             partitions = table
             table = database
@@ -263,30 +274,42 @@ class VulknClickHouseDatabaseMixIn:
                 raise Exception(f'Unable to drop partition {p}')
         return True
 
-    def cloneTable(self, from_database, from_table, database, table):
+    dropPart = drop_part
+
+    def clone_table(self, from_database, from_table, database, table):
         ddl = f'CREATE TABLE {database}.{table} AS {from_database}.{from_table}'
         return self.exec(ddl)
 
-    def copyTable(self, from_database, from_table, database, table):
+    cloneTable = clone_table
+
+    def copy_table(self, from_database, from_table, database, table):
         if not self.cloneTable(from_database, from_table, database, table):
             raise Exception('Unable to clone table')
         return self.exec(f'INSERT INTO {database}.{table} SELECT * FROM {from_database}.{from_table}')
 
-    def createTable(self, database=None, table=None, schema=None, engine=None, exists_ok=False):
+    copyTable = copy_table
+
+    def create_table(self, database=None, table=None, schema=None, engine=None, exists_ok=False):
         schema_ddl = ', '.join(['{} {}'.format(k, v) for k, v in schema.items()])
         ddl = f'CREATE TABLE {database}.{table} ({schema_ddl}) ENGINE = {engine}'
         return self.exec(ddl)
 
-    def createSink(self, database, sink, schema, exists_ok=False):
+    createTable = create_table
+
+    def create_sink(self, database, sink, schema, exists_ok=False):
         schema_ddl = ', '.join(['{} {}'.format(k, v) for k, v in schema.items()])
         ddl = f'CREATE TABLE {database}.{sink} ({schema_ddl}) ENGINE = Null'
         return self.exec(ddl)
 
-    def createView(self, database, view, query, exists_ok=False):
+    createSink = create_sink
+
+    def create_view(self, database, view, query, exists_ok=False):
         ddl = f'CREATE VIEW {database}.{sink} AS {query}'
         return self.exec(ddl)
 
-    def createMatView(self,
+    createView = create_view
+
+    def create_mat_view(self,
                       database,
                       view,
                       query,
@@ -302,24 +325,47 @@ class VulknClickHouseDatabaseMixIn:
             ddl = f'ENGINE = {engine} AS {query}'
         return self.exec(ddl)
 
-    def dropTable(self, database, table):
+    createMatView = create_mat_view
+
+    def drop_table(self, database, table):
         ddl = f'DROP TABLE IF EXISTS {database}.{table}'
         return self.exec(ddl)
 
-    def truncateTable(self, database, table):
+    dropTable = drop_table
+
+    def drop_columns(self, database, table, columns):
+        r = True
+        for c in columns:
+            try:
+                if not self.exec(f'ALTER TABLE {database}.{table} DROP COLUMN {c}'):
+                    r = False
+                    log.info(f'Unable to drop column {c} on {database}.{table}')
+            except:
+                r = False
+                log.info(f'Unable to drop column {c} on {database}.{table}')
+        return r
+
+    def truncate_table(self, database, table):
         ddl = f'TRUNCATE TABLE {database}.{table}'
         return self.exec(ddl)
 
-    def tableExists(self, database, table):
+    truncateTable = truncate_table
+
+    def table_exists(self, database, table):
         exists = f"""
             SELECT count()>0 AS exists 
             FROM system.tables
             WHERE (name = '{table}') OR concat(database, '.', name) = '{database}.{table}'"""
         return self.q(exists).exec().to_records()[0]['exists'] == 1
 
-    dropSink = dropTable
-    dropView = dropTable
-    dropMatView = dropTable
+    tableExists = table_exists
+
+    dropSink = drop_table
+    drop_sink = drop_table
+    dropView = drop_table
+    drop_view = drop_table
+    dropMatView = drop_table
+    drop_mat_view = drop_table
 
     @timer
     def exec(self, query):

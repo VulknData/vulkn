@@ -34,6 +34,51 @@ prewhere | Applies column filtering prior to the where clause | ```v.q('SELECT *
 
 ---
 
+## *BaseTableDataFrame*
+
+BaseTableDataFrames are entry points for the SelectQueryDataTable type that is detailed later in this
+section.
+
+BaseTableDataFrames are created using either the v.table() method or the v.data dunder dictionary.
+
+These support two additional methods.
+
+### *desc()*
+
+* Description: Provides a description of the data definition for the table.
+* Returns: ```vulkn.recordset.RecordSet```
+* Example:
+    ```python
+    v.table('default.baz').desc().s
+
+      row  name    type      default_type    default_expression    comment    codec_expression    ttl_expression
+    -----  ------  ------  --------------  --------------------  ---------  ------------------  ----------------
+        1  id      String             nan                   nan        nan                 nan               nan
+        2  a       String             nan                   nan        nan                 nan               nan
+        3  b       String             nan                   nan        nan                 nan               nan
+
+    (3 rows)
+    ```
+---
+
+### *drop_columns(\*columns)*
+
+* Description: Drops the specified columns from the table.
+* Returns: ```bool```
+* Example:
+    ```python
+    >>> v.table('default.baz').drop_columns('a','b')
+    True
+    >>> v.table('default.baz').desc().s
+
+      row  name    type      default_type    default_expression    comment    codec_expression    ttl_expression
+    -----  ------  ------  --------------  --------------------  ---------  ------------------  ----------------
+        1  id      String             nan                   nan        nan                 nan               nan
+
+    (1 row)
+    ```
+---
+
 ## *one*
 
 * Returns: ```vulkn.datatable.SelectQueryDataTable```
