@@ -75,12 +75,20 @@ class VulknDataTable:
 
 def JoinDataTable(
         ctx, jointype, left, right, keys=None, strictness=JoinStrictness.All, global_mode=False):
-    j = '({left}) {global_mode} {strictness} {join_type} JOIN ({right})'
+    j = '({left}) {left_alias}{global_mode} {strictness} {join_type} JOIN ({right}) {right_alias}'
+    left_alias = ''
+    right_alias = ''
+    if hasattr(left, '_alias') and left._alias is not None:
+        left_alias = f'AS "{left._alias[0]}"'
+    if hasattr(right, '_alias') and right._alias is not None:
+        right_alias = f'AS "{right._alias[0]}"'
     q = j.format(left=left._get_query(), 
+                 left_alias=left_alias,
                  global_mode='GLOBAL' if global_mode else '',
                  strictness=strictness,
                  join_type=jointype,
-                 right=right._get_query())
+                 right=right._get_query(),
+                 right_alias=right_alias)
     if keys:
         q = '{} USING ({})'.format(q, ','.join(keys))
     return SelectQueryDataTable(ctx, q).select('*')
@@ -285,9 +293,12 @@ class SelectQueryDataTable(VulknDataTable,
         self._params = None
         self._array_join = None
         self._left_array_join = None
+        self._alias = None
 
     def __getattr__(self, attrname):
         attrs = {
+            'alias': None,
+            'as_': '_alias',
             'with_': None,
             'distinct': None,
             'from_': '_table',
@@ -376,7 +387,7 @@ class SelectQueryDataTable(VulknDataTable,
         return self.join(JoinType.Cross,
                          right,
                          keys=None,
-                         strictness=JoinStrictness.Empty,
+                         strictness=JoinStrictness.Default,
                          global_mode=global_mode)
 
     def _get_query(self):
@@ -392,6 +403,8 @@ class SelectQueryDataTable(VulknDataTable,
         elif self._table:
             if isinstance(self._table[0], type(self)):
                 q = '{} FROM ({})'.format(q, self._table[0]._get_query())
+                if hasattr(self._table[0], '_alias') and self._table[0]._alias is not None:
+                    q = '{} AS "{}"'.format(q, self._table[0]._alias[0])
             else:
                 q = '{} FROM {}'.format(q, ', '.join(map(str, self._table)))
         if self._array_join or self._left_array_join:

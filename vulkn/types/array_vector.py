@@ -103,6 +103,8 @@ class ArrayVector(TypeBase):
         self.vector_name = alias
         return self
 
+    as_ = alias
+
     def _cache(self):
         ctx = Vulkn()
         return ctx.session.cache(self.sql, mode=session.CacheMode.Array)

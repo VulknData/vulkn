@@ -101,6 +101,8 @@ class ColumnVector(TypeBase):
         self.vector_name = alias
         return self
 
+    as_ = alias
+
     @timer
     def cache(self, engine=None):
         cache_table = self._cache(engine=engine)
