@@ -1,3 +1,39 @@
+## VULKИ release 19.0.5, 2020-01-22
+
+### Improvements
+
+- System API for managing internal system processors, dictionaries, caches and distributed operations. 
+See http://docs.vulkndata.io/system_management/
+- NULL type implemented as Literal(Expression('NULL')). Functions such as NULL.is_null() now work as
+expected.
+- v.drop_columns added for dropping one or more columns. Available as an object management command
+and method to a BaseTableDataTable. See http://docs.vulkndata.io/dbmanagement/#vdrop_columnsdatabase-table-42columns.
+- DataTables:
+    - Add support for ARRAY JOIN / LEFT ARRAY JOIN.
+    - Add support for WITH TOTALS to group_by.
+    - DataTables now support table/query level aliases in joins and sub-queries.
+
+### Bug Fixes
+
+- Fixed "in_" and similar operators for testing set membership. Now datatable.in_(other_datatable) 
+works as expected.
+- Python sets/arrays were not correctly parsed handled in the "in_" operator and similar set methods. 
+Now datatable.in_([1,2,3]) works as expected.
+- group_by / order_by / having / limit / limit_by did not correctly parse Python types into strings
+meaning v.select(String(n='col1')).group_by(String(n='col1')) would fail. Behavior is now as expected.
+- Float32/Float64 base (Float) inherited from TypeBase instead of Numeric meaning common math operations
+failed. Now fixed.
+
+### Backward Incompatible Changes
+
+- PEP8 naming conventions applied to most public functions. Older names still work via aliases but
+may be deprecated in the future.
+- DataFrames term retired in place of DataTables. No external API issues.
+
+### Build/Testing/Packaging Improvements
+
+- Note added regarding console locale.
+
 ## VULKИ release 19.0.4, 2020-01-14
 
 ### Bug Fixes
