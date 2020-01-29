@@ -304,7 +304,7 @@ class VulknClickHouseDatabaseMixIn:
     createSink = create_sink
 
     def create_view(self, database, view, query, exists_ok=False):
-        ddl = f'CREATE VIEW {database}.{sink} AS {query}'
+        ddl = f'CREATE VIEW {database}.{view} AS {query}'
         return self.exec(ddl)
 
     createView = create_view
