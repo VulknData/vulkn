@@ -49,7 +49,7 @@ class DataManager:
                 raise Exception('Unable to create table')
 
         schema = self._format._options['schema']
-        tmp_db = 'tmp'
+        tmp_db = database
         ctx = vulkn.Vulkn()
 
         if schema:
