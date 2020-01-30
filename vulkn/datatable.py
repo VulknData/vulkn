@@ -8,6 +8,8 @@
 
 import copy
 import logging
+import random
+import sys
 from functools import partial
 
 
@@ -30,6 +32,10 @@ def copy_set(obj, key, *value):
         setattr(this, key, True)
     else:
         setattr(this, key, value)
+    if key in this._op_chain:
+        raise Exception(f'Operation {key} already set')
+    else:
+        this._op_chain.append(key)
     return this
 
 
@@ -89,9 +95,13 @@ def JoinDataTable(
                  join_type=jointype,
                  right=right._get_query(),
                  right_alias=right_alias)
+    left_cols = [f'{l._name} AS "{left._alias[0]}.{l._name}"' 
+        if left_alias else l for l in left.get_schema()]
+    right_cols = [f'{r._name} AS "{right._alias[0]}.{r._name}"'
+        if right_alias else r for r in right.get_schema()]
     if keys:
         q = '{} USING ({})'.format(q, ','.join(keys))
-    return SelectQueryDataTable(ctx, q).select('*')
+    return SelectQueryDataTable(ctx, q).select(*[*left_cols, *right_cols])
 
 
 def NumbersDataTable(ctx, count, system=False, mt=False):
@@ -103,7 +113,7 @@ def NumbersDataTable(ctx, count, system=False, mt=False):
         return SelectQueryDataTable(ctx, '{}({})'.format(t, count)).select('*')
 
 
-def RandomDataTable(ctx, count, start=0, end=18446744073709551615, system=False, mt=False):
+def RandomDataTable(ctx, count, start=0, end=((sys.maxsize*2)+1), system=False, mt=False):
     q = f'{start} + rand()%(if(mod == 0, mod - 1, ({end}-({start})+1) AS mod)) AS number'
     if system:
         t = 'system.numbers' + ('_mt' if mt else '')
@@ -113,8 +123,9 @@ def RandomDataTable(ctx, count, start=0, end=18446744073709551615, system=False,
         return SelectQueryDataTable(ctx, '{}({})'.format(t, count)).select(q)
 
 
-def RandomFloatDataTable(ctx, count, start=0, end=18446744073709551615, system=False, mt=False):
-    q = f"{start} + rand64()%({end}-({start})) + rand64()/18446744073709551615 AS number"
+def RandomFloatDataTable(ctx, count, start=0, end=((sys.maxsize*2)+1), system=False, mt=False):
+    maxsize = ((sys.maxsize*2)+1)
+    q = f"{start} + rand64()%({end}-({start})) + rand64()/{maxsize} AS number"
     if system:
         t = 'system.numbers' + ('_mt' if mt else '')
         return SelectQueryDataTable(ctx, t).limit(count).select(q)
@@ -215,6 +226,17 @@ class QueryExecutorMixin:
             raise Exception('More than one statement is not supported')
         return self._ctx._conn.select(statements[0].optimize())
 
+    def get_schema(self):
+        name = f'v{random.randint(1,sys.maxsize)}'
+        c = None
+        try:
+            self._ctx.drop_view('vulkn', name)
+            self._ctx.create_view('vulkn', name, self.show_sql()[0:-1])
+            c = self._ctx.get_schema('vulkn', name)
+        finally:
+            self._ctx.drop_view('vulkn', name)
+        return c
+
     def to_records(self):
         return self.exec().to_records()
 
@@ -224,9 +246,21 @@ class QueryExecutorMixin:
     def show(self):
         return self.exec().show()
 
+    def to_list(self):
+        return self.exec().to_list()
+
+    def to_dict(self):
+        return self.exec().to_dict()
+
+    def to_recarray(self):
+        return self.exec().to_recarray()
+
     r = property(to_records)
     s = property(show)
     p = property(to_pandas)
+    l = property(to_list)
+    d = property(to_dict)
+    n = property(to_recarray)
     e = exec
 
 
@@ -294,6 +328,7 @@ class SelectQueryDataTable(VulknDataTable,
         self._array_join = None
         self._left_array_join = None
         self._alias = None
+        self._op_chain = []
 
     def __getattr__(self, attrname):
         attrs = {
@@ -320,27 +355,34 @@ class SelectQueryDataTable(VulknDataTable,
 
         if attrname in attrs.keys():
             attr = attrs[attrname] or '_{}'.format(attrname.lower())
-            return partial(copy_set, self, attr)
+            dt = self._subquery() if getattr(self, attr) is not None else self
+            return partial(copy_set, dt, attr)
         else:
             raise AttributeError
+
+    def _subquery(self):
+        return SelectQueryDataTable(self._ctx, self)
 
     def all(self):
         cols = ('*',)
         if not isinstance(self._table[0], type(self)):
-            table = self._table[0].rsplit('.')[1].strip('"')
-            cols = [t._name for t in self._ctx.getSchema(table)]
+            try:
+                table = self._table[0].rsplit('.')[1].strip('"')
+                cols = [t._name for t in self._ctx.getSchema(table)]
+            except:
+                cols = ('*',)
         return self.select(*cols)
 
     def select(self, *cols):
         if not cols:
             cols = ('*',)
         if self._columns:
-            return SelectQueryDataTable(self._ctx, self).select(*cols)
+            return self._subquery().select(*cols)
         else:
             return copy_set(self, '_columns', *cols)
    
     def count(self):
-        return self.select('count()')
+        return self._subquery().select('count()')
  
     def first(self):
         return self.head(1)
@@ -349,19 +391,27 @@ class SelectQueryDataTable(VulknDataTable,
         return copy_set(self, '_limit', rows)
 
     def limit_by(self, limit, by):
-        return copy_set(self, '_limit_by', limit, by)
+        dt = self._subquery() if self._limit_by else self
+        return copy_set(dt, '_limit_by', limit, by)
 
     limitBy = limit_by
 
     def group_by(self, *cols, with_totals=False):
-        r = copy_set(self, '_group_by', *cols)
+        r = None
+        if self._group_by:
+            r = self._subquery().group_by(*cols)
+        else:
+            r = copy_set(self, '_group_by', *cols)
         r._group_by_with_totals = with_totals
         return r
 
     groupBy = group_by
 
     def vectorize_by(self, key, sort, attributes=None):
-        return copy_set(self, '_vectorize_by', key, attributes, sort)
+        if self._vectorize_by or self._group_by or self._order_by:
+            return self._subquery().all().vectorize_by(key, sort, attributes)
+        else:
+            return copy_set(self, '_vectorize_by', key, attributes, sort)
 
     vectorizeBy = vectorize_by
 
@@ -398,6 +448,8 @@ class SelectQueryDataTable(VulknDataTable,
             q = f'{q} DISTINCT'
         if self._columns:
             q = '{} {}'.format(q, ', '.join(map(str, self._columns)))
+        else:
+            q = f'{q} *'
         if self._join:
             q = '{} FROM {}'.format(q, str(self._join))
         elif self._table:
