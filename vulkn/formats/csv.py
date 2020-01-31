@@ -73,12 +73,15 @@ class CSV:
 
     def read(self, uri, database, table):
         # TODO: Next release. Hacky. Remove subprocess/cat pipeline.
+        v = vulkn.Vulkn()
         header = 'CSVWithNames' if self._options['header'] else 'CSV'
         env = {'LC_ALL': 'C'}
         src = subprocess.Popen(['cat', uri.path], stdout=subprocess.PIPE, env=env, encoding='ascii')
         tgt = ['clickhouse-client', '-A', '-m', '-n']
-        log.log(LogLevels.SQL, f'INSERT INTO {database}.{table} FORMAT {header}')
+        tgt += ['--host', v._host, '--port', str(v._port), '--user', v._user, '--password', v._password]
         tgt += ['--query', f'INSERT INTO {database}.{table} FORMAT {header}']
+        log.debug(str(tgt))
+        log.log(LogLevels.SQL, f'INSERT INTO {database}.{table} FORMAT {header}')
         p = subprocess.Popen(tgt, stdin=src.stdout, stdout=subprocess.PIPE, env=env, encoding='ascii')
         src.stdout.close()
         p.communicate()
