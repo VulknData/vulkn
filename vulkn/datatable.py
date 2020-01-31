@@ -282,6 +282,19 @@ class BaseTableDataTable:
     def drop_columns(self, *columns):
         return self._ctx.drop_columns(self._database, self._table, columns)
 
+    def load(self, parts=None):
+        from vulkn.types import c
+        dt = SelectQueryDataTable(self._ctx, str(self)).all()
+        if parts:
+            dt = dt.where(c('_part').in_(parts))
+        q = dt._get_query()
+        sql = VulknSQLFormatter().format(q, **self._params[0]) if self._params else q
+        statements = vulkn.sql.SQLMessage(sql).statements()
+        if len(statements) > 1:
+            raise Exception('More than one statement is not supported')
+        t = self._ctx.session.cache(statements[0].optimize(), engine=vulkn.engines.Memory())
+        return BaseTableDataTable(self._ctx, *(t.split('.')))
+
 
 class QueryStringDataTable(VulknDataTable, QueryExecutorMixin, ShowSQLMixin, CachedQueryMixin, TableWriterMixin):
     def __init__(self, ctx, query):

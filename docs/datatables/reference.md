@@ -79,6 +79,17 @@ These support two additional methods.
     ```
 ---
 
+### *load(parts=[])*
+
+* Description: Loads a whole table or part of a table into memory.
+* Parameters: ```parts``` - optional - a list of parts to load from the table.
+* Returns: ```BaseTableDataFrame```
+* Example:
+    ```python
+    >>> t = v.table('default.baz').load(parts=['20190101','20190102'])
+    ```
+---
+
 ## *one*
 
 * Returns: ```vulkn.datatable.SelectQueryDataTable```
