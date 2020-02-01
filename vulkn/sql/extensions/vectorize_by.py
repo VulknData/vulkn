@@ -52,6 +52,12 @@ def _AnalyzeVectorizeByAST(ast):
 
 
 def _RewriteVectorFunctionAST(ast):
+    if isinstance(ast, sqlparse.sql.Function):
+        if ast.tokens[0].value in vlib.vectors.keys():
+            parameters = _RewriteVectorFunctionAST(ast.get_parameters())
+            yield vlib.vectors[ast.tokens[0].value](*list(parameters))                
+        else:
+            yield token
     tree = ast.tokens if isinstance(ast, sqlparse.sql.TokenList) else ast
     for idx, token in enumerate(tree):
         if isinstance(token, sqlparse.sql.Parenthesis):
@@ -154,7 +160,7 @@ class _VectorizeByASTRewriter():
             ['`--#v`.1 AS `{0}`'.format(sort)],
             [f'`--#v`.{v} AS `{k}`' for k, v in metric_map.items()],
             aj_metric_vectors)
-        vector_aggs = [str(i[0][0]) + ''.join(map(str, i[1:])) for i in vector_funcs]
+        vector_aggs = [str(vector_funcs[i][0][0]) + ' AS `' + vectors[i]['id'] + '`' for i in range(len(vector_funcs))]
         query_template = textwrap.dedent("""\
             SELECT
                 {final_projection},

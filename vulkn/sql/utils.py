@@ -81,6 +81,8 @@ def validate_statement_excludes(excludes, statement) -> tuple:
    
 
 def get_functions(tokens):
+    if isinstance(tokens, sqlparse.sql.Function):
+        yield tokens[0].value
     for idx, token in enumerate(tokens):
         if isinstance(token, sqlparse.sql.Function):
             yield token[0].value
@@ -108,9 +110,9 @@ def resolve_identifiers(identifiers):
             if len(l.tokens) == 1:
                 ids.append({'node': l, 'src': [l.value], 'funcs': [], 'id': l.get_real_name()})
             else:
-                node = {'node': l, 'id': l.get_alias() or f'col{next(seq)}'}
+                node = {'node': l, 'id': l.get_alias() or str(l)}
                 node['src'] = list(set(filter(lambda x: x != node['id'], get_identifiers(l))))
-                node['funcs'] = list(get_functions(l))
+                node['funcs'] = list(set(list(get_functions(l))))
                 ids.append(node)
     log.debug(ids)
     return ids
