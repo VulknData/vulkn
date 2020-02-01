@@ -52,7 +52,6 @@ def item_index(index):
         start = index.start
     else:
         start = index
-    start = 1 if start == 0 else start
     return (start, stop)
 
 

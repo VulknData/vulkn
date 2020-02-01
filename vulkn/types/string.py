@@ -58,10 +58,9 @@ class String(TypeBase):
     def __getitem__(self, index):
         start, stop = item_index(index)
         if stop is None:
-            return String(func('substring', self._value, start))
-        else:
-            return String(func('substring', self._value, start, stop))
-
+            stop = 1
+        return String(func('substring', self._value, start, stop))
+        
     def substring(self, offset, length=None):
         if length:
             return String(func('substring', self._value, offset, length))
