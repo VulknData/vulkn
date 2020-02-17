@@ -28,9 +28,7 @@ class SQLStatement:
         ast = sqlparse.parse(self._original_statement)[0]
         if ast.get_type() == 'SELECT':
             for ext in library.extensions.keys():
-                print(ext)
                 ast = library.extensions[ext](ast)
-                print(ast)
         return ast
 
     def optimize(self):

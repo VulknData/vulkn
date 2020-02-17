@@ -23,7 +23,8 @@ sqlparse.sql.Where = Where
 
 SQL_REGEX = {
     'clickhouse-ext': [
-        (r'VECTORIZE\s+BY\b', sqlparse.tokens.Keyword)
+        (r'VECTORIZE\s+BY\b', sqlparse.tokens.Keyword),
+        (r'CHUNK\s+BY\b', sqlparse.tokens.Keyword)
     ]
 }
 
