@@ -6,6 +6,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 
+import ast
 import logging
 
 
@@ -33,11 +34,13 @@ class VulknDataTablesMixIn:
         return vulkn.datatable.SelectQueryDataTable(self).select(*cols)
 
     def s(self, *cols):
-        r = self.select(*cols).exec().to_records()
-        if len(r) == 1:
-            return list(r[0].values())[0]
-        else:
-            return r
+        r = self.select(*cols).exec().to_list()
+        if len(r) > 0:
+            try:
+                return ast.literal_eval(r[0] if len(r[0]) > 1 else r[0][0])
+            except:
+                return r[0] if len(r[0]) > 1 else r[0][0]
+        return None
 
     def numbers(self, count, system=False, mt=False):
         return vulkn.datatable.NumbersDataTable(self, count, system, mt)
