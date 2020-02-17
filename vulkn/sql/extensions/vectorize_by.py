@@ -102,34 +102,36 @@ class _VectorizeByASTRewriter():
             p['cols'],
             p['chunk_size'],
             p['metrics'],
-            p['vectors']
+            p['vectors'],
+            p['expr']
         )
         return sqlparse.parse(q)[0]
 
     def validate(self):
         excludes = ['GROUP BY', 'ORDER BY', 'LIMIT BY', 'LIMIT']
         if not utils.validate_statement_excludes(excludes, self._ast):
-            raise Exception('GROUP BY, ORDER BY and LIMIT BY are invalid in VECTORIZE BY statements')
+            raise Exception('GROUP BY, ORDER BY, LIMIT BY and LIMIT are invalid in VECTORIZE BY statements')
 
     def _parse(self):
         def _parse_identifiers(ids, key, sort, cols):
             metrics = []
             vectors = []
+            expr = []
             for id in utils.resolve_identifiers(ids):
                 if len(set(vlib.vectors.keys()).intersection(set(id['funcs']))) > 0:
                     vectors.append(id)
-                else:
-                    for src in id['src']:
-                        if not (src == key or src == sort or src in cols):
-                            metrics.append(id)
-                            break
-            return (metrics, vectors)
+                elif id['id'] != key and id['id'] != sort:
+                    expr.append(id)
+                for src in id['src']:
+                    if not (src == key or src == sort or src in cols):
+                        metrics.append(id)
+            return (metrics, vectors, expr)
     
         args = utils.get_keyword_function_args(self._ast, self._curr_idx)
         # TODO: Chunking. Default to 1.
         # (key, sort, cols) = (args[0], args[-2], args[1:-2] if len(args) > 3 else [])
         (key, sort, cols) = (args[0], args[-1], args[1:-1] if len(args) > 3 else [])
-        (metrics, vectors) = _parse_identifiers(utils.ast_column_projections(self._ast), key, sort, cols)
+        (metrics, vectors, expr) = _parse_identifiers(utils.ast_column_projections(self._ast), key, sort, cols)
 
         r = {    
             'from_clause': utils.ast_from_clause(self._ast),
@@ -141,14 +143,16 @@ class _VectorizeByASTRewriter():
             #'chunk_size': int(args[-1]) if args[-1].isnumeric() else 2,
             'chunk_size': 1,
             'metrics': metrics,
-            'vectors': vectors
+            'vectors': vectors,
+            'expr': expr
         }
 
         return r
 
-    def _compile(self, from_clause, where_clause, key, sort, cols, chunk_size, metrics, vectors):
+    def _compile(self, from_clause, where_clause, key, sort, cols, chunk_size, metrics, vectors, expr):
         vector_funcs = [list(_RewriteVectorFunctionAST(f['node'])) for f in vectors]
-        metric_ids = list(itertools.chain.from_iterable([m['src'] for m in metrics]))
+        expr_cols = list([str(f['node']) for f in expr])
+        metric_ids = list(set(list(itertools.chain.from_iterable([m['src'] for m in metrics]))))
         metric_map = dict((metric, idx+2) for idx, metric in enumerate(metric_ids))
         w = where_clause if where_clause is not None else ''
         # TODO: String replacement is hacky.
@@ -165,7 +169,7 @@ class _VectorizeByASTRewriter():
             SELECT
                 {final_projection},
                 {sort},
-                {metrics},
+                {expr}
                 {vector_aggs}
             FROM
             (
@@ -189,6 +193,6 @@ class _VectorizeByASTRewriter():
             metric_vector_aliases=(',\n' + ' '*4).join(metric_vector_aliases),
             vector_aggs=(',\n'+' '*4).join(vector_aggs),
             final_projection=', '.join(itertools.chain([key], cols)),
-            metrics=', '.join(itertools.chain([f'`{k}`' for k, v in metric_map.items()])))
+            expr=(', '.join(expr_cols) + ',' if len(expr_cols) > 0 else ''))
         return q
 
