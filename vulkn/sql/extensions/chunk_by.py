@@ -56,4 +56,6 @@ class _ASTRewriteChunkByClause():
         l = [
             ''.join(map(str, self._ast)).format(chunk_clause=chunk_clause.format(chunk_step=k))
             for k in range(0, int(chunk_size))]
-        return '\nUNION ALL\n'.join(s.strip() for s in l)
+        q = '\nUNION ALL\n'.join(s.strip() for s in l)
+        print(q)
+        return q
