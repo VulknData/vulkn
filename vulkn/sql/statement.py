@@ -11,6 +11,7 @@ import logging
 
 import vulkn.sql.utils as utils
 import vulkn.sql.library as library
+import vulkn.session as session
 from vulkn.contrib.sqlparse import sqlparse
 
 
@@ -32,4 +33,6 @@ class SQLStatement:
         return ast
 
     def optimize(self):
-        return str(self.ASTAnalyzeRewrite())
+        if session.enable_parser:
+            return str(self.ASTAnalyzeRewrite())
+        return self._original_statement

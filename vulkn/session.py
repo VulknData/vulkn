@@ -17,6 +17,8 @@ from vulkn.utils import timer, LogLevels
 
 
 timing = False
+enable_parser = True
+
 
 log = logging.getLogger()
 logging.addLevelName(LogLevels.SQL, 'SQL')
