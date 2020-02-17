@@ -4,6 +4,18 @@ VULKИ (Vulkn) is a specialized, environmentally friendly, eco-system for manipu
 
 Vulkn is underpinned by the high-performance Open Source OLAP database, Yandex ClickHouse. Rather than re-invent the wheel (or mask the amazing technology that is ClickHouse), Vulkn focuses on the areas of DataOps, simplification and automation. Users can easily extend Vulkn, and the SQL layer, with their own SQL clauses and functions via Python as well as use Python bindings to work with ClickHouse in much the same way they would other modern data systems, specifically those based on functional programming.
 
+### Short-term Roadmap
+
+February/March 2020
+
+- Simple SQL and Vulkn ORM UDF support
+- Function cleanup/introspection
+- Support all types/functions for current stable/testing
+- Support for user/group/quota/workload management (in ClickHouse core)
+- HTTP interface (rather than fork/exec client)
+- Proof Of Concept phase ends
+- Initial implementation of Vulkn server
+
 ### Documentation
 
 Documentation is available at http://docs.vulkndata.io. Note this is currently incomplete and content will be updated/provided over the coming weeks.
