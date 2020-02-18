@@ -477,10 +477,10 @@ class SelectQueryDataTable(VulknDataTable,
                 q = '{} ARRAY JOIN {}'.format(q, ', '.join(map(str, self._array_join)))
             else:
                 q = '{} LEFT ARRAY JOIN {}'.format(q, ', '.join(map(str, self._left_array_join)))
-        if self._where:
-            q = '{} WHERE {}'.format(q, ' AND '.join(map(str, self._where)))
         if self._prewhere:
             q = '{} PREWHERE {}'.format(q, ' AND '.join(map(str, self._prewhere)))
+        if self._where:
+            q = '{} WHERE {}'.format(q, ' AND '.join(map(str, self._where)))
         if self._vectorize_by:
             if self._vectorize_by[1]:
                 q = '{} VECTORIZE BY ({}, {}, {})'.format(q, *self._vectorize_by)
