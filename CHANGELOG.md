@@ -2,7 +2,7 @@
 
 ### New Features
 
-- Allow loading an entire table or parts of a table into memory using v.load.
+- Allow loading an entire table or parts of a table into memory using v.table('').load(). See http://docs.vulkndata.io/datatables/reference/#loadparts.
 - Allow turning off query parsing / rewriting with the vulkn.session.enable_parser session variable. Can speed up parsing with large queries that don't require rewriting.
 
 ### Improvements
@@ -12,6 +12,7 @@
 - VECTORIZE BY no longer requires vector columns to be specified as separate columns.
 - Allow expression columns in VECTORIZE BY statements.
 - v.s() now attempts a literal eval on the returned row.
+- Enable aliases for subqueries and joins. Aliases are now automatically prepended to column names from their respective tables.
 
 ### Bug Fixes
 
