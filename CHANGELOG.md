@@ -1,3 +1,25 @@
+## VULKИ release 19.0.6, 2020-02-18
+
+### New Features
+
+- Allow loading an entire table or parts of a table into memory using v.load.
+- Allow turning off query parsing / rewriting with the vulkn.session.enable_parser session variable. Can speed up parsing with large queries that don't require rewriting.
+
+### Improvements
+
+- Improved subquery generation for chained clauses of the same type. Also track clause usage in DataTables and automatically generate subqueries.
+- VECTORIZE BY vectorX functions no longer require aliases.
+- VECTORIZE BY no longer requires vector columns to be specified as separate columns.
+- Allow expression columns in VECTORIZE BY statements.
+- v.s() now attempts a literal eval on the returned row.
+
+### Bug Fixes
+
+- Fix query generation in create_view.
+- Fix CSV reader with host, port and user credentials. Was previously hard-coded to localhost.
+- Fix some corner cases with string and array slicing.
+- CHUNK BY was not enabled in sqlparse monkey patch contrib module.
+
 ## VULKИ release 19.0.5, 2020-01-22
 
 ### Improvements
