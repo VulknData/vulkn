@@ -1,3 +1,10 @@
+## VULKИ release 19.0.7, 2020-02-19
+
+### Bug Fixes
+
+- Fix accidental WHERE interpreted as a function in CHUNK BY extensions
+- Fix double quoting of vector function aliases in VECTORIZE BY
+
 ## VULKИ release 19.0.6, 2020-02-18
 
 ### New Features
