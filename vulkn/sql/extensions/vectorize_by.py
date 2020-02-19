@@ -164,7 +164,7 @@ class _VectorizeByASTRewriter():
             ['`--#v`.1 AS `{0}`'.format(sort)],
             [f'`--#v`.{v} AS `{k}`' for k, v in metric_map.items()],
             aj_metric_vectors)
-        vector_aggs = [str(vector_funcs[i][0][0]) + ' AS `' + vectors[i]['id'] + '`' for i in range(len(vector_funcs))]
+        vector_aggs = [str(vector_funcs[i][0][0]) + ' AS ' + vectors[i]['id'] for i in range(len(vector_funcs))]
         query_template = textwrap.dedent("""\
             SELECT
                 {final_projection},
