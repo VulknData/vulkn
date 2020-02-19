@@ -20,7 +20,7 @@ from vulkn.data import VulknDataStore
 from vulkn.session import VulknSession
 from vulkn.database import VulknClickHouseDatabaseMixIn, MutationManager, VulknSystemManager
 from vulkn.scheduler import VulknScheduler
-from vulkn.clickhouse.client.cli import ClickHouseCLIClient
+from vulkn.clickhouse.client.http import ClickHouseHTTPClient
 
 
 log = logging.getLogger()
@@ -105,7 +105,7 @@ class Vulkn(VulknDataTablesMixIn, VulknClickHouseDatabaseMixIn):
         self.session = VulknSession(self)
 
     def _reload_conn(self):
-        return ClickHouseCLIClient().setAuth(host=self._host,
+        return ClickHouseHTTPClient().setAuth(host=self._host,
                                              port=self._port,
                                              user=self._user,
                                              password=self._password,
