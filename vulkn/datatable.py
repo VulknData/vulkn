@@ -567,7 +567,7 @@ class SelectQueryDataTable(VulknDataTable,
         else:
             q = f'{q} *'
         if self._table:
-            if isinstance(self._table, type(self)):
+            if isinstance(self._table[0], type(self)):
                 q = '{} FROM ({})'.format(q, self._table[0]._get_query())
                 if hasattr(self._table, '_alias') and self._table[0]._alias is not None:
                     q = '{} AS "{}"'.format(q, self._table[0]._alias[0])
