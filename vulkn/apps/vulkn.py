@@ -45,9 +45,10 @@ parser.add_argument('--host', metavar='HOST', default='localhost')
 parser.add_argument('--user', metavar='USERNAME', default='default')
 parser.add_argument('--password', metavar='PASSWORD', default='')
 parser.add_argument('--port', metavar='PORT', default='9000')
+parser.add_argument('--http_port', metavar='HTTP_PORT', default='8123')
 parser.add_argument('--log-level', metavar='LOGLEVEL', default='INFO')
 parser.add_argument('--timing', action='store_true')
-parser.add_argument('--client', metavar='CLIENT', default='native')
+parser.add_argument('--client', metavar='CLIENT', default='cli')
 
 args = parser.parse_args()
 
@@ -74,7 +75,7 @@ if args.local:
                         port=args.port,
                         http_port=args.http_port)
 
-v = vulkn.Vulkn(host=args.host, port=args.port, user=args.user, password=args.password)
+v = vulkn.Vulkn(host=args.host, port=args.port, http_port=args.http_port, user=args.user, password=args.password, client=args.client)
 
 vulkn.session.log.setLevel(args.log_level)
 vulkn.session.timing = args.timing

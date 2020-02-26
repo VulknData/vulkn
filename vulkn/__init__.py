@@ -8,6 +8,7 @@
 
 import ast
 import logging
+import sys
 
 
 import vulkn.sql
@@ -21,7 +22,7 @@ from vulkn.session import VulknSession
 from vulkn.database import VulknClickHouseDatabaseMixIn, MutationManager, VulknSystemManager
 from vulkn.scheduler import VulknScheduler
 from vulkn.clickhouse.client.http import ClickHouseHTTPClient
-
+from vulkn.clickhouse.client.cli import ClickHouseCLIClient
 
 log = logging.getLogger()
 
@@ -51,10 +52,10 @@ class VulknDataTablesMixIn:
     def one(self):
         return vulkn.datatable.OneDataTable(self)
 
-    def random(self, count, start=0, end=18446744073709551615, system=False, mt=False):
+    def random(self, count, start=0, end=((sys.maxsize*2)+1), system=False, mt=False):
         return vulkn.datatable.RandomDataTable(self, count, start, end, system, mt)
 
-    def randfloat(self, count, start=0, end=18446744073709551615, system=False, mt=False):
+    def randfloat(self, count, start=0, end=((sys.maxsize*2)+1), system=False, mt=False):
         return vulkn.datatable.RandomFloatDataTable(self, count, start, end, system, mt)
     
     def with_(self, *cols):
@@ -74,8 +75,10 @@ class Vulkn(VulknDataTablesMixIn, VulknClickHouseDatabaseMixIn):
                  password='',
                  host='localhost',
                  port=9000,
+                 http_port=8123,
                  database='default',
-                 workspace=None):
+                 workspace=None,
+                 client='cli'):
         if workspace is not None:
             port = workspace._port
             http_port = workspace._http_port
@@ -83,7 +86,9 @@ class Vulkn(VulknDataTablesMixIn, VulknClickHouseDatabaseMixIn):
         self._password = password
         self._host = host
         self._port = port
+        self._http_port = http_port
         self._database = database
+        self._client = client
         self._conn = self._reload_conn()
         self.session = None
         self.scheduler = VulknScheduler(self)
@@ -105,9 +110,11 @@ class Vulkn(VulknDataTablesMixIn, VulknClickHouseDatabaseMixIn):
         self.session = VulknSession(self)
 
     def _reload_conn(self):
-        return ClickHouseHTTPClient().setAuth(host=self._host,
-                                             port=self._port,
-                                             user=self._user,
-                                             password=self._password,
-                                             database=self._database)
-
+        ClientFactory = { 'cli': ClickHouseCLIClient, 'http': ClickHouseHTTPClient }
+        return (ClientFactory[self._client]()
+            .setAuth(host=self._host,
+                     port=self._port,
+                     http_port=self._http_port,     
+                     user=self._user,
+                     password=self._password,
+                     database=self._database))
