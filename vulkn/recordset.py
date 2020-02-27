@@ -150,12 +150,17 @@ class RecordSet():
         return self._marshall_info_
 
     def to_pandas(self):
-        if not self._result:
+        if self._result is None:
             self._result = pd.read_csv(
-                io.StringIO(self._data),
-                skiprows=([1]), sep='\t',
+                io.StringIO(self._data
+                    .replace('\t\\N\t', '\t#NULL\t')
+                    .replace('\\N\t', '#NULL\t')
+                    .replace('\t\\N\n', '\t#NULL\n')
+                    .replace('\\N\n', '#NULL\n')),
+                skiprows=([1]),
+                sep='\t',
                 header=0,
-                na_values='\\N',
+                na_values='#NULL',
                 parse_dates=True,
                 engine='c',
                 infer_datetime_format=True)

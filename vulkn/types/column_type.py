@@ -43,8 +43,9 @@ class ColumnType:
                         compression_codec=_none_or_quoted(self._compression_codec))
 
     def __str__(self):
+        _none_or_quoted = lambda value: '' if value is None else "{}".format(value)
         opts = ' '.join(filter(lambda x: x is not None,
-                        [self._default_kind, self._default_expression, self._compression_codec]))
+                        [_none_or_quoted(self._default_kind), _none_or_quoted(self._default_expression), _none_or_quoted(self._compression_codec)]))
         return '{name} {col_type}{opts}'.format(name=self._name,
                                                 col_type=self._col_type,
                                                 opts=opts if len(opts) > 0 else '')

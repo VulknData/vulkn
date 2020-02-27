@@ -56,6 +56,7 @@ class VulknClickHouseDatabaseMixIn:
         self._database = database
         self._conn = self._conn.setAuth(host=self._host,
                                         port=self._port,
+                                        http_port=self._http_port,
                                         user=self._user,
                                         password=self._password,
                                         database=self._database)
@@ -368,8 +369,12 @@ class VulknClickHouseDatabaseMixIn:
     drop_mat_view = drop_table
 
     @timer
-    def exec(self, query):
-        return self.scheduler.dispatch(query)
+    def exec(self, query, settings=None):
+        try:
+            r = self._conn.execute(query)
+            return True
+        except:
+            return False
 
     e = exec
 

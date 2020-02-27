@@ -34,12 +34,7 @@ def timer(f):
             start = default_timer()
         r = f(*args, **kwargs)
         if vulkn.session.timing:
-            # TODO: Overhead on avg PC is ~ 40ms for forking and running CLI vs direct call. 
-            # Need to remove this overhead with HTTP, hybrid or persistent client.
-            # Timing function roughly takes this into consideration.
-            # 40ms overhead is a reflection on Vulkn implementation, not ClickHouse.
-            overhead = 0.040
-            print('Time elapsed: {:0.3f} ms'.format(abs(default_timer() - start - overhead)*1000))
+            print('Time elapsed: {:0.3f} ms'.format(abs(default_timer() - start)*1000))
         return r
     return wrap
 
