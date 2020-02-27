@@ -23,20 +23,24 @@ log = logging.getLogger()
 class ClickHouseHTTPClient(ClickHouseClient):
     def __init__(self, config_file: str=None, **kwargs: dict) -> None:
         super(ClickHouseHTTPClient, self).__init__(config_file, **kwargs)      
-        self._http = urllib3.PoolManager()
+        self._http = urllib3.PoolManager(cert_reqs='CERT_NONE')
 
     def _q(self, query: str, settings: dict=None) -> dict:
         host = self._auth.get('host')
         port = self._auth.get('http_port')
         log.log(LogLevels.SQL, sqlformat(query))
+        headers = {
+            'X-ClickHouse-User': self._auth.get('user'),
+            'X-ClickHouse-Key': self._auth.get('password')}
         body = f'{query}'
         if (query.strip().lower().startswith('select') or 
-                query.strip().lower().startswith('with')):
+                query.strip().lower().startswith('with') or
+                query.strip().lower().startswith('show')):
             body = f'{body} FORMAT TSVWithNamesAndTypes'
         s = '' if not settings else '&'.join([f'{k}={i}'.format(k, i) for k, i in settings.items()])
         if s != '':
             log.log(LogLevels.SQL, s)
-        r = self._http.request('POST', f'http://{host}:{port}/?{s}', body=body)
+        r = self._http.request('POST', f'{host}:{port}/?{s}', headers=headers, body=body)
         return r
 
     def execute(self, query, settings=None):

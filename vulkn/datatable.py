@@ -89,8 +89,8 @@ class JoinGroupDataTable(VulknDataTable):
         self._ctx = ctx
         self._tables = [dt]
 
-    def append(self, jointype, other, keys=None, strictness=JoinStrictness.All, global_mode=False, use_aliases=True):
-        self._tables.append((jointype, other, keys, strictness, global_mode, use_aliases,))
+    def append(self, jointype, other, keys=None, strictness=JoinStrictness.All, global_mode=False, using=False):
+        self._tables.append((jointype, other, keys, strictness, global_mode, using,))
 
     def __str__(self):
         r = ''
@@ -114,39 +114,18 @@ class JoinGroupDataTable(VulknDataTable):
                 table = str(t[1])
             r = r + f' {t[3]} {t[0]} JOIN {table}'
             if t[2]:
-                r = r + ' ON (' + ') AND ('.join(map(str, t[2])) + ')'
+                if t[5]:
+                    r = r + ' USING (' + ', '.join(map(str, t[2])) + ')'
+                else:
+                    r = r + ' ON (' + ') AND ('.join(map(str, t[2])) + ')'
         return r
 
 
-def JoinDataTable(
-        ctx, jointype, left, right, keys=None, strictness=JoinStrictness.All, global_mode=False, use_aliases=True):
-    j = '({left}) {left_alias} {global_mode} {strictness} {join_type} JOIN ({right}) {right_alias}'
-    left_alias = None
-    right_alias = None
-    left_cols = []
-    right_cols = []
-    if use_aliases:
-        if hasattr(left, '_alias') and left._alias is not None:
-
-            left_alias = f'{left._alias[0]}'
-        if hasattr(right, '_alias') and right._alias is not None:
-            right_alias = f'{right._alias[0]}'
-    q = j.format(left=left._get_query(), 
-                 left_alias=f'AS "{left_alias}"' if left_alias else '',
-                 global_mode='GLOBAL' if global_mode else '',
-                 strictness=strictness,
-                 join_type=jointype,
-                 right=right._get_query(),
-                 right_alias=f'AS "{right_alias}"' if right_alias else '')
-    if use_aliases:
-        left_cols = [f'{left_alias}.{l._name} AS "{left_alias}.{l._name}"' 
-            if left_alias else l._name for l in left.get_schema()]
-        right_cols = [f'{right_alias}.{r._name} AS "{right_alias}.{r._name}"'
-            if right_alias else r._name for r in right.get_schema()]
-    if keys:
-        q = '{} USING ({})'.format(q, ','.join(keys))
-    cols = [*left_cols, *right_cols] if left_alias and right_alias else ('*',)
-    return SelectQueryDataTable(ctx, q).select(*cols)
+def aj(datatables, keys, global_mode=False):
+    dt = datatables[0].aj(datatables[1], keys, global_mode=global_mode, using=True)
+    for i, d in enumerate(datatables[2:]):
+        dt = dt.alias(f'_{i}').aj(d, keys, global_mode=global_mode, using=True)
+    return dt
 
 
 def NumbersDataTable(ctx, count, system=False, mt=False):
@@ -196,13 +175,6 @@ def RangeDataTable(ctx, start, end, system=False, mt=False):
                 .select('number + {} AS range'.format(str(start))))
 
 
-def aj(datatables, keys, global_mode=False):
-    df = datatables[0]
-    for d in datatables[1:]:
-        df = df.aj(d, keys, global_mode, use_aliases=False)
-    return df
-
-
 class ShowSQLMixin:
     def _show_sql(self, **params):
         q = self._get_query()
@@ -228,7 +200,7 @@ class CachedQueryMixin:
         if len(statements) > 1:
             raise Exception('More than one statement is not supported')
         t = self._ctx.session.cache(statements[0].optimize(), engine=engine)
-        return SelectQueryDataTable(self._ctx, t).select('*')
+        return BaseTableDataTable(self._ctx, *(t.split('.')))
 
 
 class TableWriterMixin:
@@ -507,7 +479,7 @@ class SelectQueryDataTable(VulknDataTable,
 
     vectorizeBy = vectorize_by
 
-    def join(self, jointype, other, keys=None, strictness=JoinStrictness.All, global_mode=False, use_aliases=True):
+    def join(self, jointype, other, keys=None, strictness=JoinStrictness.All, global_mode=False, using=False):
         this = copy_set(self, None, None)
         if this._table:
             if not isinstance(this._table[0], JoinGroupDataTable):
@@ -517,44 +489,42 @@ class SelectQueryDataTable(VulknDataTable,
                     this._table = (JoinGroupDataTable(this._ctx, table),)
                 else:
                     this._table = (JoinGroupDataTable(this._ctx, self._table[0]),)
-            other_table = None
-            if isinstance(other, BaseTableDataTable):
-                this._table[0].append(jointype, other, keys, strictness, global_mode, use_aliases)
-            elif isinstance(other, SelectQueryDataTable):
+            if isinstance(other, SelectQueryDataTable):
+                other_table = None
                 if isinstance(other._table[0], str):
                     other_table = QueryStringDataTable(other._ctx, other._table[0])
                     other_table._alias = other._alias
                 else:
                     other_table = other
-                this._table[0].append(jointype, other_table, keys, strictness, global_mode, use_aliases)
+                this._table[0].append(jointype, other_table, keys, strictness, global_mode, using)
             else:
-                this._table[0].append(jointype, other, keys, strictness, global_mode, use_aliases)
+                this._table[0].append(jointype, other, keys, strictness, global_mode, using)
         else:
             raise Exception('No left table set')
         return this
 
-    def ej(self, right, keys, strictness=JoinStrictness.All, global_mode=False, use_aliases=True):
-        return self.join(JoinType.Inner, right, keys, strictness, global_mode, use_aliases)
+    def ej(self, right, keys, strictness=JoinStrictness.All, global_mode=False, using=False):
+        return self.join(JoinType.Inner, right, keys, strictness, global_mode, using)
 
-    def rj(self, left, keys, strictness=JoinStrictness.All, global_mode=False, use_aliases=True):
-        return self.join(JoinType.Right, left, keys, strictness, global_mode, use_aliases)
+    def rj(self, left, keys, strictness=JoinStrictness.All, global_mode=False, using=False):
+        return self.join(JoinType.Right, left, keys, strictness, global_mode, using)
 
-    def lj(self, right, keys, strictness=JoinStrictness.All, global_mode=False, use_aliases=True):
-        return self.join(JoinType.Left, right, keys, strictness, global_mode, use_aliases)
+    def lj(self, right, keys, strictness=JoinStrictness.All, global_mode=False, using=False):
+        return self.join(JoinType.Left, right, keys, strictness, global_mode, using)
 
-    def fj(self, right, keys, strictness=JoinStrictness.All, global_mode=False, use_aliases=True):
-        return self.join(JoinType.Full, right, keys, strictness, global_mode, use_aliases)
+    def fj(self, right, keys, strictness=JoinStrictness.All, global_mode=False, using=False):
+        return self.join(JoinType.Full, right, keys, strictness, global_mode, using)
 
-    def aj(self, right, keys, global_mode=False, use_aliases=True):
-        return self.join(JoinType.Join, right, keys, JoinStrictness.AsOf, global_mode, use_aliases)
+    def aj(self, right, keys, global_mode=False, using=False):
+        return self.join(JoinType.Join, right, keys, JoinStrictness.AsOf, global_mode, using)
 
-    def cj(self, right, global_mode=False, use_aliases=True):
+    def cj(self, right, global_mode=False, using=False):
         return self.join(JoinType.Cross,
                          right,
                          keys=None,
                          strictness=JoinStrictness.Default,
                          global_mode=global_mode,
-                         use_aliases=use_aliases)
+                         using=using)
 
     def _get_query(self):
         q = 'SELECT'
