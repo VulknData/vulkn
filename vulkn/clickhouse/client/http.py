@@ -27,6 +27,8 @@ class ClickHouseHTTPClient(ClickHouseClient):
 
     def _q(self, query: str, settings: dict=None) -> dict:
         host = self._auth.get('host')
+        if not host.startswith('http'):
+            host = f'http://{host}'
         port = self._auth.get('http_port')
         log.log(LogLevels.SQL, sqlformat(query))
         headers = {
