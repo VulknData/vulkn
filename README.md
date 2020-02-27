@@ -12,7 +12,7 @@ February/March 2020
 - Function cleanup/introspection
 - Support all types/functions for current stable/testing
 - Support for user/group/quota/workload management (in ClickHouse core)
-- HTTP interface (rather than fork/exec client)
+- ~~HTTP interface (rather than fork/exec client)~~ (done)
 - Proof Of Concept phase ends
 - Initial implementation of Vulkn server
 

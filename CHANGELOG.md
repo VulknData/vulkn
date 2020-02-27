@@ -1,3 +1,31 @@
+## VULKИ release 19.0.8, 2020-02-27
+
+### Backward Incompatible Changes
+
+- Joins must now use ON syntax with multi-table support in the JOIN clause. This means 
+`dt1.ej(dt2, ('id',))` must be rewritten as `dt1.ej(dt2, ('id',), using=True)` to support the 
+original USING clause. ON join notation either requires aliases or unique column names. 
+`dt1.ej(dt2, (c('id') == c('other_id'),))` or `dt1.alias('t1').ej(dt2.alias('t2'), (c('t1.id') == c('t2.id'),))`.
+Note ASOF joins must specify the order clause for the timeseries key - 
+`dt1.alias('t1').aj(dt2.alias('t2'), (c('t1.id') == c('t2.id'), c('t1.ts') <= c('t2.ts')))`.
+
+### New Features
+
+- Added http client transport option. Requires a host of the format 'http://hostname' and a 
+http_port parameter.
+- Add support for SEMI join strictness.
+
+### Improvements
+
+- Refactor joins to enable both USING and ON syntaxes to take advantage of both pairwise and 
+ClickHouse updated support for multi-table and comma joins.
+- DeleteQueryDataTable mutations can now specify mutation_sync for synchronous deletes.
+- Correctly parse NULLs in results.
+
+### Bug Fixes
+
+- Fix broken JOIN behavior since 19.0.6 with table aliases.
+
 ## VULKИ release 19.0.7, 2020-02-19
 
 ### Bug Fixes
