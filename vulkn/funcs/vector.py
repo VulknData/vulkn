@@ -14,7 +14,7 @@ def vectorWindow(v, backward=None, forward=None):
     return col(func('vectorWindow', v, backward, forward))
 
 def vectorWindowAgg(agg, v, backward=None, forward=None):
-    return col(func('vectorWindowAgg', v, backward, forward))
+    return col(func('vectorWindowAgg', agg, v, backward, forward))
 
 def vectorDeltaLag(v, offset=1):
     return col(func('vectorDeltaLag', v, offset))

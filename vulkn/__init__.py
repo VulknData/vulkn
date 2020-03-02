@@ -74,8 +74,8 @@ class Vulkn(VulknDataTablesMixIn, VulknClickHouseDatabaseMixIn):
                  user='default',
                  password='',
                  host='localhost',
-                 port=9000,
-                 http_port=8123,
+                 port=None,
+                 http_port=None,
                  database='default',
                  workspace=None,
                  client='cli'):

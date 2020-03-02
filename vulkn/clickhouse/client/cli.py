@@ -89,6 +89,8 @@ class ClickHouseCLIClient(ClickHouseClient):
         settings = {**self._settings, **(settings_overrides or {})}
         external_file_opts = {**self._external_file_opts,
                               **(external_file_overrides or {})}
+        if auth_opts['port'] is None:
+            auth_opts['port'] = '9000'
         cmd = ['/usr/bin/clickhouse-client']
         if config_file:
             cmd += ['--config-file', config_file]
@@ -116,11 +118,14 @@ class ClickHouseCLIClient(ClickHouseClient):
         p = subprocess.run(cli,
                            input=query,
                            stdout=subprocess.PIPE,
+                           stderr=subprocess.PIPE,
                            universal_newlines=True)
         return p
 
     def execute(self, query, settings=None):
         q = self._q(None, query, settings=settings)
+        if q.returncode != 0:
+            raise Exception(q.stderr.strip())
         return q.returncode
 
     def select(self, query, settings=None):
@@ -130,6 +135,8 @@ class ClickHouseCLIClient(ClickHouseClient):
                         opts_overrides=opts_overrides,
                         settings_overrides=settings)
         q = self._q(cli, query, settings=settings)
+        if q.returncode != 0:
+            raise Exception(q.stderr.strip())
         return RecordSet(q.stdout)
         
     def insert(self, query, settings=None):

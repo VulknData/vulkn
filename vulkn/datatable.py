@@ -89,36 +89,30 @@ class JoinGroupDataTable(VulknDataTable):
         self._ctx = ctx
         self._tables = [dt]
 
-    def append(self, jointype, other, keys=None, strictness=JoinStrictness.All, global_mode=False, using=False):
+    def append(
+            self,
+            jointype,
+            other,
+            keys=None,
+            strictness=JoinStrictness.All,
+            global_mode=False,
+            using=False):
         self._tables.append((jointype, other, keys, strictness, global_mode, using,))
 
-    def __str__(self):
-        r = ''
-        if (isinstance(self._tables[0], SelectQueryDataTable)
-                or isinstance(self._tables[0], QueryStringDataTable)):
-            r = f'({self._tables[0]._get_query()})'
-            alias = getattr(self._tables[0], '_alias', None)
-            if alias:
-                r = r + f' AS "{alias[0]}"'
-        else:
-            r = str(self._tables[0])
+    def virtual(self):
+        r = self._tables[0].virtual()
         for t in self._tables[1:]:
-            global_mode = 'GLOBAL ' if t[4] else ''
-            table = ''
-            if (isinstance(t[1], SelectQueryDataTable) or isinstance(t[1], QueryStringDataTable)):
-                table = f'({t[1]._get_query()})'
-                alias = getattr(t[1], '_alias', None)
-                if alias:
-                    table = table + f' AS "{alias[0]}"'
-            else:
-                table = str(t[1])
-            r = r + f' {t[3]} {t[0]} JOIN {table}'
+            r = r + (' GLOBAL ' if t[4] else '')
+            other = t[1].virtual()
+            r = r + f' {t[3]} {t[0]} JOIN {other}'
             if t[2]:
                 if t[5]:
                     r = r + ' USING (' + ', '.join(map(str, t[2])) + ')'
                 else:
                     r = r + ' ON (' + ') AND ('.join(map(str, t[2])) + ')'
         return r
+
+    __str__ = virtual
 
 
 def aj(datatables, keys, global_mode=False):
@@ -130,48 +124,48 @@ def aj(datatables, keys, global_mode=False):
 
 def NumbersDataTable(ctx, count, system=False, mt=False):
     if system:
-        t = 'system.numbers' + ('_mt' if mt else '')
-        return SelectQueryDataTable(ctx, t).limit(count).select('*')
+        return BaseTableDataTable(ctx, 'system', 'numbers' + ('_mt' if mt else '')).limit(count)
     else:
         t = 'numbers' + ('_mt' if mt else '')
-        return SelectQueryDataTable(ctx, '{}({})'.format(t, count)).select('*')
+        return TableFunctionDataTable(ctx, '{}({})'.format(t, count))
 
 
 def RandomDataTable(ctx, count, start=0, end=((sys.maxsize*2)+1), system=False, mt=False):
     q = f'{start} + rand()%(if(mod == 0, mod - 1, ({end}-({start})+1) AS mod)) AS number'
     if system:
-        t = 'system.numbers' + ('_mt' if mt else '')
-        return SelectQueryDataTable(ctx, t).limit(count).select(q)
+        return (BaseTableDataTable(ctx, 'system', 'numbers' + ('_mt' if mt else ''))
+                .limit(count)
+                .select(q))
     else:
         t = 'numbers' + ('_mt' if mt else '')
-        return SelectQueryDataTable(ctx, '{}({})'.format(t, count)).select(q)
+        return TableFunctionDataTable(ctx, '{}({})'.format(t, count)).select(q)
 
 
 def RandomFloatDataTable(ctx, count, start=0, end=((sys.maxsize*2)+1), system=False, mt=False):
     maxsize = ((sys.maxsize*2)+1)
     q = f"{start} + rand64()%({end}-({start})) + rand64()/{maxsize} AS number"
     if system:
-        t = 'system.numbers' + ('_mt' if mt else '')
-        return SelectQueryDataTable(ctx, t).limit(count).select(q)
+        return (BaseTableDataTable(ctx, 'system', 'numbers' + ('_mt' if mt else ''))
+                .limit(count)
+                .select(q))
     else:
         t = 'numbers' + ('_mt' if mt else '')
-        return SelectQueryDataTable(ctx, '{}({})'.format(t, count)).select(q)
+        return TableFunctionDataTable(ctx, '{}({})'.format(t, count)).select(q)
 
 
 def OneDataTable(ctx):
-    return SelectQueryDataTable(ctx, 'system.one').select('*')
+    return BaseTableDataTable(ctx, 'system', 'one')
 
 
 def RangeDataTable(ctx, start, end, system=False, mt=False):
     if end <= start:
         raise Exception('end must be greater than start')
     if system or mt:
-        t = 'system.numbers' + ('_mt' if mt else '')
-        return (SelectQueryDataTable(ctx, t)
+        return (BaseTableDataTable(ctx, 'system', 'numbers' + ('_mt' if mt else ''))
                 .limit(end + 1 -(start))
                 .select('number + {} AS range'.format(str(start))))
     else:
-        return (SelectQueryDataTable(ctx, 'numbers({})'.format(end + 1 -(start)))
+        return (TableFunctionDataTable(ctx, 'numbers({})'.format(end + 1 -(start)))
                 .select('number + {} AS range'.format(str(start))))
 
 
@@ -188,6 +182,9 @@ class ShowSQLMixin:
         if len(statements) > 1:
             raise Exception('More than one statement is not supported')
         return sqlformat(statements[0].optimize(), oneline=not pretty_print)
+
+    def show_raw(self):
+        return self._get_query()
 
 
 class CachedQueryMixin:
@@ -281,6 +278,32 @@ class QueryExecutorMixin:
     e = exec
 
 
+class TableFunctionDataTable(VulknDataTable):
+    def __init__(self, ctx, function):
+        self._ctx = ctx
+        self._function = function
+        self._alias = None
+
+    def alias(self, alias_):
+        self._alias = alias_
+        return self
+
+    def virtual(self):
+        r = self._function
+        if self._alias:
+            r = r + f' AS "{self._alias}"'
+        return r
+
+    __str__ = virtual
+
+    def __getattr__(self, attrname):
+        attrs = ['alias']
+        if attrname.lower() not in attrs:
+            return getattr(SelectQueryDataTable(self._ctx, self), attrname)
+        else:
+            raise AttributeError
+
+
 class BaseTableDataTable(VulknDataTable):
     def __init__(self, ctx, database, table):
         self._ctx = ctx
@@ -288,11 +311,13 @@ class BaseTableDataTable(VulknDataTable):
         self._table = table
         self._alias = None
 
-    def __str__(self):
+    def virtual(self):
         r = f'"{self._database}"."{self._table}"'
         if self._alias:
             r = r + f' AS "{self._alias}"'
         return r
+
+    __str__ = virtual
 
     def __getattr__(self, attrname):
         attrs = ['alias']
@@ -302,6 +327,8 @@ class BaseTableDataTable(VulknDataTable):
             raise AttributeError    
 
     def alias(self, alias_):
+        if self._alias:
+            return SelectQueryDataTable(self._ctx, self).alias(alias_)
         self._alias = alias_
         return self
 
@@ -325,36 +352,44 @@ class BaseTableDataTable(VulknDataTable):
         return BaseTableDataTable(self._ctx, *(t.split('.')))
 
 
-class QueryStringDataTable(VulknDataTable, QueryExecutorMixin, ShowSQLMixin, CachedQueryMixin, TableWriterMixin):
+class QueryStringDataTable(
+        VulknDataTable, QueryExecutorMixin, ShowSQLMixin, CachedQueryMixin, TableWriterMixin):
     def __init__(self, ctx, query):
         self._ctx = ctx
         self._query = query
+        self._alias = None
+
+    def virtual(self):
+        r = f'({self._get_query()})'
+        if self._alias:
+            r = r + f' AS "{self._alias}"'
+        return r
+
+    __str__ = virtual
 
     def _get_query(self):
         return self._query
 
     def __getattr__(self, attrname):
-        attrs = ['limit','where','filter','limit_by','limitBy','head','first','distinct',
-            'order_by','orderBy','sort','prewhere','preWhere']
-        this = SelectQueryDataTable(self._ctx, '({})'.format(self._get_query()))
-        if attrname.lower() in attrs:
-            return getattr(this.select('*'), attrname)
-        else:
+        attrs = ['alias']
+        if attrname.lower() not in attrs:
+            this = SelectQueryDataTable(self._ctx, self)
             return getattr(this, attrname)
+        else:
+            raise AttributeError
 
     def alias(self, alias_):
-        this = SelectQueryDataTable(self._ctx, '({})'.format(self._get_query()))
-        this._alias = (alias_,)
-        return this
+        if self._alias is not None:
+            return SelectQueryDataTable(self._ctx, self).alias(alias_)
+        r = copy_set(self, None, None)
+        r._alias = alias_
+        return r
 
     as_ = alias
 
 
-class SelectQueryDataTable(VulknDataTable,
-                           QueryExecutorMixin,
-                           ShowSQLMixin,
-                           CachedQueryMixin,
-                           TableWriterMixin):
+class SelectQueryDataTable(
+        VulknDataTable, QueryExecutorMixin, ShowSQLMixin, CachedQueryMixin, TableWriterMixin):
     def __init__(self, ctx, source=None):
         self.max_rows = 100
         self.max_preview_rows = 30
@@ -403,11 +438,14 @@ class SelectQueryDataTable(VulknDataTable,
             dt = self._subquery() if getattr(self, attr) is not None else self
             return partial(copy_set, dt, attr)
         else:
+            print(f'Unknown attribute {attrname}')
             raise AttributeError
 
     def alias(self, alias_):
-        r = self._subquery()
-        r._table[0]._alias = (alias_,)
+        print(type(self))
+        a = copy.deepcopy(self).all() if not self._columns else self
+        r = a._subquery()
+        r._table[0]._alias = alias_
         return r
 
     as_ = alias
@@ -479,26 +517,20 @@ class SelectQueryDataTable(VulknDataTable,
 
     vectorizeBy = vectorize_by
 
-    def join(self, jointype, other, keys=None, strictness=JoinStrictness.All, global_mode=False, using=False):
+    def join(
+            self,
+            jointype,
+            other,
+            keys=None,
+            strictness=JoinStrictness.All,
+            global_mode=False,
+            using=False):
         this = copy_set(self, None, None)
         if this._table:
             if not isinstance(this._table[0], JoinGroupDataTable):
-                if isinstance(self._table[0], str):
-                    table = QueryStringDataTable(self._ctx, self._table[0])
-                    table._alias = this._alias
-                    this._table = (JoinGroupDataTable(this._ctx, table),)
-                else:
-                    this._table = (JoinGroupDataTable(this._ctx, self._table[0]),)
-            if isinstance(other, SelectQueryDataTable):
-                other_table = None
-                if isinstance(other._table[0], str):
-                    other_table = QueryStringDataTable(other._ctx, other._table[0])
-                    other_table._alias = other._alias
-                else:
-                    other_table = other
-                this._table[0].append(jointype, other_table, keys, strictness, global_mode, using)
-            else:
-                this._table[0].append(jointype, other, keys, strictness, global_mode, using)
+                table = copy.deepcopy(self._table[0])
+                this._table = (JoinGroupDataTable(this._ctx, table),)
+            this._table[0].append(jointype, other, keys, strictness, global_mode, using)
         else:
             raise Exception('No left table set')
         return this
@@ -537,12 +569,8 @@ class SelectQueryDataTable(VulknDataTable,
         else:
             q = f'{q} *'
         if self._table:
-            if isinstance(self._table[0], type(self)):
-                q = '{} FROM ({})'.format(q, self._table[0]._get_query())
-                if hasattr(self._table, '_alias') and self._table[0]._alias is not None:
-                    q = '{} AS "{}"'.format(q, self._table[0]._alias[0])
-            else:
-                q = '{} FROM {}'.format(q, str(self._table[0]))
+            # print(self._table[0])
+            q = '{} FROM {}'.format(q, str(self._table[0].virtual()))
         if self._array_join or self._left_array_join:
             if self._array_join:
                 q = '{} ARRAY JOIN {}'.format(q, ', '.join(map(str, self._array_join)))
@@ -577,6 +605,24 @@ class SelectQueryDataTable(VulknDataTable,
                 q = '{} OFFSET {}'.format(q, str(self._limit[1]))
         return q
 
+    def virtual(self):
+        r = ''
+        if self._columns:
+            r = '(' + self._get_query() + ')'
+        else:
+            if isinstance(self._table[0], SelectQueryDataTable):
+                r = '(' + self._table[0]._get_query() + ')'
+                if self._table[0]._alias:
+                    r = r + f' AS "{self._table[0]._alias}"'
+            if isinstance(self._table[0], JoinGroupDataTable):
+                r = self._table[0].virtual()
+            else:
+                r = self._table[0].virtual()
+                return r
+        if self._alias:
+            r = r + f' AS "{self._alias}"'
+        return r
+
     #def __repr__(self):
     #    return str(self.limit(self.max_rows).exec().show_pandas(self.max_preview_rows))
 
@@ -608,7 +654,10 @@ class UpdateQueryDataTable(VulknDataTable, ShowSQLMixin):
 
     def exec(self):
         r = self._ctx.exec(self._get_query())
-        d = self._ctx.table('system.mutations').select('*').where("database || '.' || table = '{}'".format(self._table)).exec()
+        d = (self._ctx.table('system.mutations')
+             .select('*')
+             .where("database || '.' || table = '{}'".format(self._table))
+             .exec())
         if not self._sync:
             return r
 
@@ -653,14 +702,16 @@ class DeleteQueryDataTable(VulknDataTable, ShowSQLMixin):
         settings = {'mutations_sync': 1} if self._sync else None
         if len(mutations) > 0:
             errors = [d['mutation_id'] + ': ' + d['latest_fail_reason'] for d in mutations]
-            raise Exception('There are unfinished failed mutations for this table: \n' + '\n'.join(errors))
+            raise Exception(
+                'There are unfinished failed mutations for this table: \n' + '\n'.join(errors))
         r = self._ctx._conn.execute(self._get_query(), settings=settings)
         d = (self._ctx
              .table('system.mutations')
              .select('*')
              .where("database || '.' || table = '{}'".format(self._table))
              .exec().to_records())
-        latest_fail_reason = '' if pd.np.isnan(d[0]['latest_fail_reason']) else str(d[0]['latest_fail_reason'])
+        latest_fail_reason = (
+            '' if pd.np.isnan(d[0]['latest_fail_reason']) else str(d[0]['latest_fail_reason']))
         if len(latest_fail_reason) > 0:
             raise Exception('Delete operation failed: ' + d[0]['latest_fail_reason'])
         if not self._sync:

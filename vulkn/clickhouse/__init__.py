@@ -11,6 +11,7 @@ import os
 
 
 def sqlformat(query, oneline=True, hilite=False):
+    r = query.strip()
     env = {'LC_ALL': 'C'}
     cmd = ['clickhouse-format']
     if oneline:
@@ -23,12 +24,12 @@ def sqlformat(query, oneline=True, hilite=False):
                            input=query.strip().replace('\\', ''),
                            env=env,
                            encoding='ascii')
+        r = p.stdout.strip()
         if p.returncode != 0:
             raise Exception
     except:
-        print(query.strip().replace('\\', ''))
-        raise
-    return str('{};'.format(p.stdout.strip()))
+        pass
+    return str('{};'.format(r))
 
 
 def net_list_tables(path):

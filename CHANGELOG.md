@@ -1,3 +1,23 @@
+## VULKИ release 19.0.10, 2020-03-02
+
+### Improvements
+
+- Refactor joins version 2 - new abstract classes for BaseTables and TableFunctions with virtual 
+representation for use in subselects.
+- http_port now defaults to port if not specified. (fixes #78)
+- Properly pass ClickHouse errors back to the user. (fixes #66)
+
+### Bug Fixes
+
+- Don't raise an exception if sqlformat can't find clickhouse-format binary. (fixes #76)
+- Add missing aggregate function name parameter to funcs.vector.vectorWindowAgg. (fixes #77)
+
+## VULKИ release 19.0.9, 2020-02-27
+
+### Bug Fixes
+
+- Fix missing http scheme.
+
 ## VULKИ release 19.0.8, 2020-02-27
 
 ### Backward Incompatible Changes

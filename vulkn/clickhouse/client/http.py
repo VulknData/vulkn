@@ -29,7 +29,7 @@ class ClickHouseHTTPClient(ClickHouseClient):
         host = self._auth.get('host')
         if not host.startswith('http'):
             host = f'http://{host}'
-        port = self._auth.get('http_port')
+        port = self._auth.get('http_port') or self._auth.get('port') or '8123'
         log.log(LogLevels.SQL, sqlformat(query))
         headers = {
             'X-ClickHouse-User': self._auth.get('user'),
@@ -47,6 +47,8 @@ class ClickHouseHTTPClient(ClickHouseClient):
 
     def execute(self, query, settings=None):
         q = self._q(query, settings=settings)
+        if q.status != 200:
+            raise Exception(q.data.decode('UTF8'))
         return q.status == 200
 
     def select(self, query: str, settings: dict=None) -> None:
