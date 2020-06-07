@@ -10,7 +10,7 @@ Vulkn is underpinned by the high-performance Open Source OLAP database, Yandex C
 
 ### Short-term Roadmap
 
-February/March 2020
+June/July 2020
 
 - Simple SQL and Vulkn ORM UDF support
 - Function cleanup/introspection
