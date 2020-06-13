@@ -49,6 +49,7 @@ parser.add_argument('--http_port', metavar='HTTP_PORT', default=None)
 parser.add_argument('--log-level', metavar='LOGLEVEL', default='INFO')
 parser.add_argument('--timing', action='store_true')
 parser.add_argument('--client', metavar='CLIENT', default='cli')
+parser.add_argument('--insecure', action='store_true', default=False)
 
 args = parser.parse_args()
 
@@ -73,12 +74,21 @@ if args.local:
                         workspace=args.workspace,
                         folio=args.folio,
                         port=args.port,
-                        http_port=args.http_port)
+                        http_port=args.http_port,
+                        insecure=True)
 
-v = vulkn.Vulkn(host=args.host, port=args.port, http_port=args.http_port, user=args.user, password=args.password, client=args.client)
+v = vulkn.Vulkn(host=args.host,
+                port=args.port,
+                http_port=args.http_port,
+                user=args.user,
+                password=args.password,
+                client=args.client,
+                insecure=args.insecure)
 
 vulkn.session.log.setLevel(args.log_level)
 vulkn.session.timing = args.timing
+
+log.debug(args)
 
 tags = [
     "The environmentally friendly real-time analytics engine powered by ClickHouse.",

@@ -7,6 +7,7 @@
 
 
 import urllib3
+import requests
 import logging
 
 
@@ -22,10 +23,17 @@ log = logging.getLogger()
 
 class ClickHouseHTTPClient(ClickHouseClient):
     def __init__(self, config_file: str=None, **kwargs: dict) -> None:
-        super(ClickHouseHTTPClient, self).__init__(config_file, **kwargs)      
-        self._http = urllib3.PoolManager(cert_reqs='CERT_NONE')
+        super(ClickHouseHTTPClient, self).__init__(config_file, **kwargs)
+        self._http = None
 
     def _q(self, query: str, settings: dict=None) -> dict:
+        if self._http is None:
+            http_kwargs = {}
+            if self._auth['insecure']:
+                http_kwargs['cert_reqs'] = 'CERT_NONE'
+                requests.packages.urllib3.disable_warnings()
+            log.debug(http_kwargs)
+            self._http = urllib3.PoolManager(**http_kwargs)
         host = self._auth.get('host')
         if not host.startswith('http'):
             host = f'http://{host}'
@@ -66,6 +74,7 @@ class ClickHouseHTTPClient(ClickHouseClient):
     def _setAuth(self, **kwargs: dict):
         self._auth = dict(filter(lambda k: k[0] in AUTH_OPTS.keys(), kwargs.items()))
         self._auth['http_port'] = kwargs.get('http_port')
+        self._auth['insecure'] = kwargs.get('insecure')
 
     def _setExternalFileOptions(self, **kwargs: dict):
         pass

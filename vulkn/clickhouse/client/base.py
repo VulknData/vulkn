@@ -62,4 +62,3 @@ class ClickHouseClient:
     def insert_blob(self, query: str, input_format: str='TSV', settings: dict=None) -> None:
         c = self._cli(settings=settings)
         c += ['--query', '{} FORMAT {}'.format(query, input_format)]
-

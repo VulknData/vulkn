@@ -10,14 +10,26 @@ import vulkn
 from vulkn.workspaces import LocalWorkSpace
 
 ws = LocalWorkSpace(persist=False)
-v = vulkn.Vulkn(host='localhost', port=9001)
+v = vulkn.Vulkn(host='localhost', http_port=8124)
 
-all_funcs = v.table('system.functions').select('*').orderBy('is_aggregate', 'name')
+all_funcs = v.table('system.functions').select('name').orderBy('is_aggregate', 'name')
 funcs = all_funcs.where('not is_aggregate').exec().to_records()
 agg_funcs = all_funcs.where('is_aggregate').exec().to_records()
 
 for f in funcs:
-    print(f"{f['name']},{f['alias_to']}")
+    print(f"{f['name']}")
 #print(agg_funcs)
 
-ws.stop()
+k = {}
+
+for f in funcs:
+    fname = f['name']
+    try:
+        k[fname] = v.select(f'toTypeName({fname}()) AS t').r[0]['t']
+    except:
+        try:
+            k[fname] = v.select(f'toTypeName({fname}(1)) AS t').r[0]['t']
+        except:
+            pass
+
+print(k)
