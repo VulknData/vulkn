@@ -78,7 +78,8 @@ class Vulkn(VulknDataTablesMixIn, VulknClickHouseDatabaseMixIn):
                  http_port=None,
                  database='default',
                  workspace=None,
-                 client='cli'):
+                 client='cli',
+                 insecure=False):
         if workspace is not None:
             port = workspace._port
             http_port = workspace._http_port
@@ -89,6 +90,7 @@ class Vulkn(VulknDataTablesMixIn, VulknClickHouseDatabaseMixIn):
         self._http_port = http_port
         self._database = database
         self._client = client
+        self._insecure = insecure
         self._conn = self._reload_conn()
         self.session = None
         self.scheduler = VulknScheduler(self)
@@ -117,4 +119,5 @@ class Vulkn(VulknDataTablesMixIn, VulknClickHouseDatabaseMixIn):
                      http_port=self._http_port,     
                      user=self._user,
                      password=self._password,
-                     database=self._database))
+                     database=self._database,
+                     insecure=self._insecure))
