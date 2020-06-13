@@ -1,7 +1,3 @@
-## NOTE - Is this project dead?
-
-Absolutely not! With COVID-19 the author has been tremendously busy semi-productionising real-time ClickHouse timeseries and usage analytics for a telecommunications wholesale provider to understand network impacts as existing systems struggled to keep up (*!*). Vulkn is alive and well.
-
 ## VULKИ
 
 VULKИ (Vulkn) is a specialized, environmentally friendly, eco-system for manipulating and managing large volumes of data at petabyte scale.
